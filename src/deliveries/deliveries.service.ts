@@ -240,7 +240,10 @@ export class DeliveriesService {
         throw new BadRequestException('Apenas o morador dono pode cancelar este pedido');
       }
 
-      if ([DeliveryStatus.PICKED_UP, DeliveryStatus.DELIVERED].includes(delivery.status)) {
+      if (
+        delivery.status === DeliveryStatus.PICKED_UP ||
+        delivery.status === DeliveryStatus.DELIVERED
+      ) {
         throw new BadRequestException('Não é possível cancelar após a coleta');
       }
 
