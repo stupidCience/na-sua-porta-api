@@ -1,0 +1,9 @@
+{
+  "email": "morador@test.com",
+  "password": "resident123",
+  "name": "Joao Morador",
+  "role": "RESIDENT",
+  "apartment": "101",
+  "block": "A",
+  "phone": "11999999999"
+}

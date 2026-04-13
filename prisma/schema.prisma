@@ -1,0 +1,116 @@
+// Prisma schema for "Na Sua Porta" MVP
+// Delivery platform for condominiums
+
+generator client {
+  provider = "prisma-client"
+  output   = "../src/generated"
+  previewFeatures = []
+}
+
+datasource db {
+  provider = "postgresql"
+}
+
+// Condominium model (multi-tenant support)
+model Condominium {
+  id        String   @id @default(cuid())
+  name      String
+  address   String?
+  active    Boolean  @default(true)
+
+  users     User[]
+  deliveries Delivery[]
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+// User model (handles both residents and delivery persons)
+model User {
+  id        String   @id @default(cuid())
+  email     String   @unique
+  password  String
+  name      String
+  phone     String?
+  role      UserRole @default(RESIDENT)
+  apartment String?  // Only for RESIDENT role (format: "101", "201", etc)
+  block     String?  // Only for RESIDENT role (format: "A", "B", etc)
+  active    Boolean  @default(true)
+
+  // Multi-condominium
+  condominiumId String?
+  condominium   Condominium? @relation(fields: [condominiumId], references: [id])
+
+  // Relations
+  createdDeliveries   Delivery[] @relation("CreatedBy")
+  acceptedDeliveries  Delivery[] @relation("AcceptedBy")
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([condominiumId])
+}
+
+enum UserRole {
+  RESIDENT
+  DELIVERY_PERSON
+}
+
+// Delivery model
+model Delivery {
+  id              String          @id @default(cuid())
+  status          DeliveryStatus  @default(REQUESTED)
+  
+  // Resident info
+  residentId      String
+  resident        User            @relation("CreatedBy", fields: [residentId], references: [id])
+  apartment       String
+  block           String
+  
+  // Delivery person info
+  deliveryPersonId String?
+  deliveryPerson   User?           @relation("AcceptedBy", fields: [deliveryPersonId], references: [id])
+
+  // Multi-condominium
+  condominiumId   String?
+  condominium     Condominium?    @relation(fields: [condominiumId], references: [id])
+  
+  // Delivery details
+  description     String?
+  notes           String?
+  rating          Int?     // 1-5 stars, set by resident after delivery
+  ratingComment   String?  // Optional comment on rating
+  
+  // Timestamps
+  createdAt       DateTime        @default(now())
+  updatedAt       DateTime        @updatedAt
+  acceptedAt      DateTime?
+  pickedUpAt      DateTime?
+  deliveredAt     DateTime?
+
+  @@index([residentId])
+  @@index([deliveryPersonId])
+  @@index([status])
+  @@index([condominiumId])
+}
+
+enum DeliveryStatus {
+  REQUESTED     // Initial state
+  ACCEPTED      // Delivery person accepted
+  PICKED_UP     // Item picked up from portaria
+  DELIVERED     // Delivered to apartment
+}
+
+// Event log for tracking delivery lifecycle
+model DeliveryEvent {
+  id          String   @id @default(cuid())
+  deliveryId  String
+  event       String   // e.g. "CREATED", "ACCEPTED", "PICKED_UP", "DELIVERED"
+  userId      String?  // Who triggered the event
+  metadata    String?  // JSON string for additional data
+  createdAt   DateTime @default(now())
+
+  @@index([deliveryId])
+  @@index([event])
+  @@index([createdAt])
+}
