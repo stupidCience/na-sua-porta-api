@@ -97,7 +97,7 @@ Base URL local: `http://localhost:3000/api`
 ## Deploy no Render
 
 - Root Directory: `NSP - Backend`
-- Build Command: `npm install && npm run db:generate && npm run db:push && npm run build`
+- Build Command: `npm install --include=dev && npm run db:push && npm run build`
 - Start Command: `npm run start:prod`
 
 Variaveis obrigatorias:
