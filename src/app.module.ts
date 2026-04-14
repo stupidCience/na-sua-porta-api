@@ -6,6 +6,9 @@ import { AuthModule } from './auth/auth.module';
 import { UsersModule } from './users/users.module';
 import { DeliveriesModule } from './deliveries/deliveries.module';
 import { PrismaModule } from './prisma/prisma.module';
+import { CondominiumsModule } from './condominiums/condominiums.module';
+import { OrdersModule } from './orders/orders.module';
+import { VendorsModule } from './vendors/vendors.module';
 
 @Module({
   imports: [
@@ -16,6 +19,9 @@ import { PrismaModule } from './prisma/prisma.module';
     AuthModule,
     UsersModule,
     DeliveriesModule,
+    CondominiumsModule,
+    OrdersModule,
+    VendorsModule,
   ],
   controllers: [AppController],
   providers: [AppService],

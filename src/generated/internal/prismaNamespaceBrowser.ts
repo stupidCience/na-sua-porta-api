@@ -54,6 +54,10 @@ export const ModelName = {
   Condominium: 'Condominium',
   User: 'User',
   Delivery: 'Delivery',
+  Vendor: 'Vendor',
+  MenuItem: 'MenuItem',
+  Order: 'Order',
+  OrderMessage: 'OrderMessage',
   DeliveryEvent: 'DeliveryEvent'
 } as const
 
@@ -78,6 +82,8 @@ export const CondominiumScalarFieldEnum = {
   name: 'name',
   address: 'address',
   active: 'active',
+  operatingHours: 'operatingHours',
+  maxActiveDeliveries: 'maxActiveDeliveries',
   createdAt: 'createdAt',
   updatedAt: 'updatedAt'
 } as const
@@ -95,6 +101,8 @@ export const UserScalarFieldEnum = {
   apartment: 'apartment',
   block: 'block',
   active: 'active',
+  vehicleInfo: 'vehicleInfo',
+  personalDocument: 'personalDocument',
   condominiumId: 'condominiumId',
   createdAt: 'createdAt',
   updatedAt: 'updatedAt'
@@ -106,13 +114,20 @@ export type UserScalarFieldEnum = (typeof UserScalarFieldEnum)[keyof typeof User
 export const DeliveryScalarFieldEnum = {
   id: 'id',
   status: 'status',
+  type: 'type',
   residentId: 'residentId',
   apartment: 'apartment',
   block: 'block',
   deliveryPersonId: 'deliveryPersonId',
   condominiumId: 'condominiumId',
+  orderId: 'orderId',
+  pickupOrigin: 'pickupOrigin',
   description: 'description',
   notes: 'notes',
+  externalPlatform: 'externalPlatform',
+  externalCode: 'externalCode',
+  deliveryCode: 'deliveryCode',
+  deliveryCodeGeneratedAt: 'deliveryCodeGeneratedAt',
   rating: 'rating',
   ratingComment: 'ratingComment',
   createdAt: 'createdAt',
@@ -123,6 +138,90 @@ export const DeliveryScalarFieldEnum = {
 } as const
 
 export type DeliveryScalarFieldEnum = (typeof DeliveryScalarFieldEnum)[keyof typeof DeliveryScalarFieldEnum]
+
+
+export const VendorScalarFieldEnum = {
+  id: 'id',
+  name: 'name',
+  description: 'description',
+  category: 'category',
+  imageUrl: 'imageUrl',
+  bannerUrl: 'bannerUrl',
+  aboutText: 'aboutText',
+  contactPhone: 'contactPhone',
+  cnpj: 'cnpj',
+  cnae: 'cnae',
+  legalRepresentativeDocument: 'legalRepresentativeDocument',
+  estimatedTimeMinutes: 'estimatedTimeMinutes',
+  minOrderValue: 'minOrderValue',
+  rating: 'rating',
+  type: 'type',
+  active: 'active',
+  condominiumId: 'condominiumId',
+  userId: 'userId',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+} as const
+
+export type VendorScalarFieldEnum = (typeof VendorScalarFieldEnum)[keyof typeof VendorScalarFieldEnum]
+
+
+export const MenuItemScalarFieldEnum = {
+  id: 'id',
+  name: 'name',
+  description: 'description',
+  price: 'price',
+  category: 'category',
+  available: 'available',
+  imageUrl: 'imageUrl',
+  vendorId: 'vendorId',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+} as const
+
+export type MenuItemScalarFieldEnum = (typeof MenuItemScalarFieldEnum)[keyof typeof MenuItemScalarFieldEnum]
+
+
+export const OrderScalarFieldEnum = {
+  id: 'id',
+  status: 'status',
+  paymentStatus: 'paymentStatus',
+  customerName: 'customerName',
+  apartment: 'apartment',
+  block: 'block',
+  description: 'description',
+  totalAmount: 'totalAmount',
+  source: 'source',
+  vendorId: 'vendorId',
+  condominiumId: 'condominiumId',
+  createdByUserId: 'createdByUserId',
+  acceptedAt: 'acceptedAt',
+  readyAt: 'readyAt',
+  sentAt: 'sentAt',
+  completedAt: 'completedAt',
+  cancelledAt: 'cancelledAt',
+  cancelReason: 'cancelReason',
+  cancelledByRole: 'cancelledByRole',
+  pickupCode: 'pickupCode',
+  pickupCodeGeneratedAt: 'pickupCodeGeneratedAt',
+  chatEnabledAt: 'chatEnabledAt',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+} as const
+
+export type OrderScalarFieldEnum = (typeof OrderScalarFieldEnum)[keyof typeof OrderScalarFieldEnum]
+
+
+export const OrderMessageScalarFieldEnum = {
+  id: 'id',
+  orderId: 'orderId',
+  senderId: 'senderId',
+  content: 'content',
+  expiresAt: 'expiresAt',
+  createdAt: 'createdAt'
+} as const
+
+export type OrderMessageScalarFieldEnum = (typeof OrderMessageScalarFieldEnum)[keyof typeof OrderMessageScalarFieldEnum]
 
 
 export const DeliveryEventScalarFieldEnum = {

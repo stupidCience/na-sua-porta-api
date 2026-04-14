@@ -34,6 +34,8 @@ export type UserMinAggregateOutputType = {
   apartment: string | null
   block: string | null
   active: boolean | null
+  vehicleInfo: string | null
+  personalDocument: string | null
   condominiumId: string | null
   createdAt: Date | null
   updatedAt: Date | null
@@ -49,6 +51,8 @@ export type UserMaxAggregateOutputType = {
   apartment: string | null
   block: string | null
   active: boolean | null
+  vehicleInfo: string | null
+  personalDocument: string | null
   condominiumId: string | null
   createdAt: Date | null
   updatedAt: Date | null
@@ -64,6 +68,8 @@ export type UserCountAggregateOutputType = {
   apartment: number
   block: number
   active: number
+  vehicleInfo: number
+  personalDocument: number
   condominiumId: number
   createdAt: number
   updatedAt: number
@@ -81,6 +87,8 @@ export type UserMinAggregateInputType = {
   apartment?: true
   block?: true
   active?: true
+  vehicleInfo?: true
+  personalDocument?: true
   condominiumId?: true
   createdAt?: true
   updatedAt?: true
@@ -96,6 +104,8 @@ export type UserMaxAggregateInputType = {
   apartment?: true
   block?: true
   active?: true
+  vehicleInfo?: true
+  personalDocument?: true
   condominiumId?: true
   createdAt?: true
   updatedAt?: true
@@ -111,6 +121,8 @@ export type UserCountAggregateInputType = {
   apartment?: true
   block?: true
   active?: true
+  vehicleInfo?: true
+  personalDocument?: true
   condominiumId?: true
   createdAt?: true
   updatedAt?: true
@@ -199,6 +211,8 @@ export type UserGroupByOutputType = {
   apartment: string | null
   block: string | null
   active: boolean
+  vehicleInfo: string | null
+  personalDocument: string | null
   condominiumId: string | null
   createdAt: Date
   updatedAt: Date
@@ -235,12 +249,17 @@ export type UserWhereInput = {
   apartment?: Prisma.StringNullableFilter<"User"> | string | null
   block?: Prisma.StringNullableFilter<"User"> | string | null
   active?: Prisma.BoolFilter<"User"> | boolean
+  vehicleInfo?: Prisma.StringNullableFilter<"User"> | string | null
+  personalDocument?: Prisma.StringNullableFilter<"User"> | string | null
   condominiumId?: Prisma.StringNullableFilter<"User"> | string | null
   createdAt?: Prisma.DateTimeFilter<"User"> | Date | string
   updatedAt?: Prisma.DateTimeFilter<"User"> | Date | string
   condominium?: Prisma.XOR<Prisma.CondominiumNullableScalarRelationFilter, Prisma.CondominiumWhereInput> | null
   createdDeliveries?: Prisma.DeliveryListRelationFilter
   acceptedDeliveries?: Prisma.DeliveryListRelationFilter
+  createdOrders?: Prisma.OrderListRelationFilter
+  orderMessages?: Prisma.OrderMessageListRelationFilter
+  vendorProfile?: Prisma.XOR<Prisma.VendorNullableScalarRelationFilter, Prisma.VendorWhereInput> | null
 }
 
 export type UserOrderByWithRelationInput = {
@@ -253,12 +272,17 @@ export type UserOrderByWithRelationInput = {
   apartment?: Prisma.SortOrderInput | Prisma.SortOrder
   block?: Prisma.SortOrderInput | Prisma.SortOrder
   active?: Prisma.SortOrder
+  vehicleInfo?: Prisma.SortOrderInput | Prisma.SortOrder
+  personalDocument?: Prisma.SortOrderInput | Prisma.SortOrder
   condominiumId?: Prisma.SortOrderInput | Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
   condominium?: Prisma.CondominiumOrderByWithRelationInput
   createdDeliveries?: Prisma.DeliveryOrderByRelationAggregateInput
   acceptedDeliveries?: Prisma.DeliveryOrderByRelationAggregateInput
+  createdOrders?: Prisma.OrderOrderByRelationAggregateInput
+  orderMessages?: Prisma.OrderMessageOrderByRelationAggregateInput
+  vendorProfile?: Prisma.VendorOrderByWithRelationInput
 }
 
 export type UserWhereUniqueInput = Prisma.AtLeast<{
@@ -274,12 +298,17 @@ export type UserWhereUniqueInput = Prisma.AtLeast<{
   apartment?: Prisma.StringNullableFilter<"User"> | string | null
   block?: Prisma.StringNullableFilter<"User"> | string | null
   active?: Prisma.BoolFilter<"User"> | boolean
+  vehicleInfo?: Prisma.StringNullableFilter<"User"> | string | null
+  personalDocument?: Prisma.StringNullableFilter<"User"> | string | null
   condominiumId?: Prisma.StringNullableFilter<"User"> | string | null
   createdAt?: Prisma.DateTimeFilter<"User"> | Date | string
   updatedAt?: Prisma.DateTimeFilter<"User"> | Date | string
   condominium?: Prisma.XOR<Prisma.CondominiumNullableScalarRelationFilter, Prisma.CondominiumWhereInput> | null
   createdDeliveries?: Prisma.DeliveryListRelationFilter
   acceptedDeliveries?: Prisma.DeliveryListRelationFilter
+  createdOrders?: Prisma.OrderListRelationFilter
+  orderMessages?: Prisma.OrderMessageListRelationFilter
+  vendorProfile?: Prisma.XOR<Prisma.VendorNullableScalarRelationFilter, Prisma.VendorWhereInput> | null
 }, "id" | "email">
 
 export type UserOrderByWithAggregationInput = {
@@ -292,6 +321,8 @@ export type UserOrderByWithAggregationInput = {
   apartment?: Prisma.SortOrderInput | Prisma.SortOrder
   block?: Prisma.SortOrderInput | Prisma.SortOrder
   active?: Prisma.SortOrder
+  vehicleInfo?: Prisma.SortOrderInput | Prisma.SortOrder
+  personalDocument?: Prisma.SortOrderInput | Prisma.SortOrder
   condominiumId?: Prisma.SortOrderInput | Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
@@ -313,6 +344,8 @@ export type UserScalarWhereWithAggregatesInput = {
   apartment?: Prisma.StringNullableWithAggregatesFilter<"User"> | string | null
   block?: Prisma.StringNullableWithAggregatesFilter<"User"> | string | null
   active?: Prisma.BoolWithAggregatesFilter<"User"> | boolean
+  vehicleInfo?: Prisma.StringNullableWithAggregatesFilter<"User"> | string | null
+  personalDocument?: Prisma.StringNullableWithAggregatesFilter<"User"> | string | null
   condominiumId?: Prisma.StringNullableWithAggregatesFilter<"User"> | string | null
   createdAt?: Prisma.DateTimeWithAggregatesFilter<"User"> | Date | string
   updatedAt?: Prisma.DateTimeWithAggregatesFilter<"User"> | Date | string
@@ -328,11 +361,16 @@ export type UserCreateInput = {
   apartment?: string | null
   block?: string | null
   active?: boolean
+  vehicleInfo?: string | null
+  personalDocument?: string | null
   createdAt?: Date | string
   updatedAt?: Date | string
   condominium?: Prisma.CondominiumCreateNestedOneWithoutUsersInput
   createdDeliveries?: Prisma.DeliveryCreateNestedManyWithoutResidentInput
   acceptedDeliveries?: Prisma.DeliveryCreateNestedManyWithoutDeliveryPersonInput
+  createdOrders?: Prisma.OrderCreateNestedManyWithoutCreatedByUserInput
+  orderMessages?: Prisma.OrderMessageCreateNestedManyWithoutSenderInput
+  vendorProfile?: Prisma.VendorCreateNestedOneWithoutUserInput
 }
 
 export type UserUncheckedCreateInput = {
@@ -345,11 +383,16 @@ export type UserUncheckedCreateInput = {
   apartment?: string | null
   block?: string | null
   active?: boolean
+  vehicleInfo?: string | null
+  personalDocument?: string | null
   condominiumId?: string | null
   createdAt?: Date | string
   updatedAt?: Date | string
   createdDeliveries?: Prisma.DeliveryUncheckedCreateNestedManyWithoutResidentInput
   acceptedDeliveries?: Prisma.DeliveryUncheckedCreateNestedManyWithoutDeliveryPersonInput
+  createdOrders?: Prisma.OrderUncheckedCreateNestedManyWithoutCreatedByUserInput
+  orderMessages?: Prisma.OrderMessageUncheckedCreateNestedManyWithoutSenderInput
+  vendorProfile?: Prisma.VendorUncheckedCreateNestedOneWithoutUserInput
 }
 
 export type UserUpdateInput = {
@@ -362,11 +405,16 @@ export type UserUpdateInput = {
   apartment?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   block?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   active?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  vehicleInfo?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  personalDocument?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   condominium?: Prisma.CondominiumUpdateOneWithoutUsersNestedInput
   createdDeliveries?: Prisma.DeliveryUpdateManyWithoutResidentNestedInput
   acceptedDeliveries?: Prisma.DeliveryUpdateManyWithoutDeliveryPersonNestedInput
+  createdOrders?: Prisma.OrderUpdateManyWithoutCreatedByUserNestedInput
+  orderMessages?: Prisma.OrderMessageUpdateManyWithoutSenderNestedInput
+  vendorProfile?: Prisma.VendorUpdateOneWithoutUserNestedInput
 }
 
 export type UserUncheckedUpdateInput = {
@@ -379,11 +427,16 @@ export type UserUncheckedUpdateInput = {
   apartment?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   block?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   active?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  vehicleInfo?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  personalDocument?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   condominiumId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   createdDeliveries?: Prisma.DeliveryUncheckedUpdateManyWithoutResidentNestedInput
   acceptedDeliveries?: Prisma.DeliveryUncheckedUpdateManyWithoutDeliveryPersonNestedInput
+  createdOrders?: Prisma.OrderUncheckedUpdateManyWithoutCreatedByUserNestedInput
+  orderMessages?: Prisma.OrderMessageUncheckedUpdateManyWithoutSenderNestedInput
+  vendorProfile?: Prisma.VendorUncheckedUpdateOneWithoutUserNestedInput
 }
 
 export type UserCreateManyInput = {
@@ -396,6 +449,8 @@ export type UserCreateManyInput = {
   apartment?: string | null
   block?: string | null
   active?: boolean
+  vehicleInfo?: string | null
+  personalDocument?: string | null
   condominiumId?: string | null
   createdAt?: Date | string
   updatedAt?: Date | string
@@ -411,6 +466,8 @@ export type UserUpdateManyMutationInput = {
   apartment?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   block?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   active?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  vehicleInfo?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  personalDocument?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
 }
@@ -425,6 +482,8 @@ export type UserUncheckedUpdateManyInput = {
   apartment?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   block?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   active?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  vehicleInfo?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  personalDocument?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   condominiumId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -450,6 +509,8 @@ export type UserCountOrderByAggregateInput = {
   apartment?: Prisma.SortOrder
   block?: Prisma.SortOrder
   active?: Prisma.SortOrder
+  vehicleInfo?: Prisma.SortOrder
+  personalDocument?: Prisma.SortOrder
   condominiumId?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
@@ -465,6 +526,8 @@ export type UserMaxOrderByAggregateInput = {
   apartment?: Prisma.SortOrder
   block?: Prisma.SortOrder
   active?: Prisma.SortOrder
+  vehicleInfo?: Prisma.SortOrder
+  personalDocument?: Prisma.SortOrder
   condominiumId?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
@@ -480,6 +543,8 @@ export type UserMinOrderByAggregateInput = {
   apartment?: Prisma.SortOrder
   block?: Prisma.SortOrder
   active?: Prisma.SortOrder
+  vehicleInfo?: Prisma.SortOrder
+  personalDocument?: Prisma.SortOrder
   condominiumId?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
@@ -571,6 +636,52 @@ export type UserUpdateOneWithoutAcceptedDeliveriesNestedInput = {
   update?: Prisma.XOR<Prisma.XOR<Prisma.UserUpdateToOneWithWhereWithoutAcceptedDeliveriesInput, Prisma.UserUpdateWithoutAcceptedDeliveriesInput>, Prisma.UserUncheckedUpdateWithoutAcceptedDeliveriesInput>
 }
 
+export type UserCreateNestedOneWithoutVendorProfileInput = {
+  create?: Prisma.XOR<Prisma.UserCreateWithoutVendorProfileInput, Prisma.UserUncheckedCreateWithoutVendorProfileInput>
+  connectOrCreate?: Prisma.UserCreateOrConnectWithoutVendorProfileInput
+  connect?: Prisma.UserWhereUniqueInput
+}
+
+export type UserUpdateOneWithoutVendorProfileNestedInput = {
+  create?: Prisma.XOR<Prisma.UserCreateWithoutVendorProfileInput, Prisma.UserUncheckedCreateWithoutVendorProfileInput>
+  connectOrCreate?: Prisma.UserCreateOrConnectWithoutVendorProfileInput
+  upsert?: Prisma.UserUpsertWithoutVendorProfileInput
+  disconnect?: Prisma.UserWhereInput | boolean
+  delete?: Prisma.UserWhereInput | boolean
+  connect?: Prisma.UserWhereUniqueInput
+  update?: Prisma.XOR<Prisma.XOR<Prisma.UserUpdateToOneWithWhereWithoutVendorProfileInput, Prisma.UserUpdateWithoutVendorProfileInput>, Prisma.UserUncheckedUpdateWithoutVendorProfileInput>
+}
+
+export type UserCreateNestedOneWithoutCreatedOrdersInput = {
+  create?: Prisma.XOR<Prisma.UserCreateWithoutCreatedOrdersInput, Prisma.UserUncheckedCreateWithoutCreatedOrdersInput>
+  connectOrCreate?: Prisma.UserCreateOrConnectWithoutCreatedOrdersInput
+  connect?: Prisma.UserWhereUniqueInput
+}
+
+export type UserUpdateOneWithoutCreatedOrdersNestedInput = {
+  create?: Prisma.XOR<Prisma.UserCreateWithoutCreatedOrdersInput, Prisma.UserUncheckedCreateWithoutCreatedOrdersInput>
+  connectOrCreate?: Prisma.UserCreateOrConnectWithoutCreatedOrdersInput
+  upsert?: Prisma.UserUpsertWithoutCreatedOrdersInput
+  disconnect?: Prisma.UserWhereInput | boolean
+  delete?: Prisma.UserWhereInput | boolean
+  connect?: Prisma.UserWhereUniqueInput
+  update?: Prisma.XOR<Prisma.XOR<Prisma.UserUpdateToOneWithWhereWithoutCreatedOrdersInput, Prisma.UserUpdateWithoutCreatedOrdersInput>, Prisma.UserUncheckedUpdateWithoutCreatedOrdersInput>
+}
+
+export type UserCreateNestedOneWithoutOrderMessagesInput = {
+  create?: Prisma.XOR<Prisma.UserCreateWithoutOrderMessagesInput, Prisma.UserUncheckedCreateWithoutOrderMessagesInput>
+  connectOrCreate?: Prisma.UserCreateOrConnectWithoutOrderMessagesInput
+  connect?: Prisma.UserWhereUniqueInput
+}
+
+export type UserUpdateOneRequiredWithoutOrderMessagesNestedInput = {
+  create?: Prisma.XOR<Prisma.UserCreateWithoutOrderMessagesInput, Prisma.UserUncheckedCreateWithoutOrderMessagesInput>
+  connectOrCreate?: Prisma.UserCreateOrConnectWithoutOrderMessagesInput
+  upsert?: Prisma.UserUpsertWithoutOrderMessagesInput
+  connect?: Prisma.UserWhereUniqueInput
+  update?: Prisma.XOR<Prisma.XOR<Prisma.UserUpdateToOneWithWhereWithoutOrderMessagesInput, Prisma.UserUpdateWithoutOrderMessagesInput>, Prisma.UserUncheckedUpdateWithoutOrderMessagesInput>
+}
+
 export type UserCreateWithoutCondominiumInput = {
   id?: string
   email: string
@@ -581,10 +692,15 @@ export type UserCreateWithoutCondominiumInput = {
   apartment?: string | null
   block?: string | null
   active?: boolean
+  vehicleInfo?: string | null
+  personalDocument?: string | null
   createdAt?: Date | string
   updatedAt?: Date | string
   createdDeliveries?: Prisma.DeliveryCreateNestedManyWithoutResidentInput
   acceptedDeliveries?: Prisma.DeliveryCreateNestedManyWithoutDeliveryPersonInput
+  createdOrders?: Prisma.OrderCreateNestedManyWithoutCreatedByUserInput
+  orderMessages?: Prisma.OrderMessageCreateNestedManyWithoutSenderInput
+  vendorProfile?: Prisma.VendorCreateNestedOneWithoutUserInput
 }
 
 export type UserUncheckedCreateWithoutCondominiumInput = {
@@ -597,10 +713,15 @@ export type UserUncheckedCreateWithoutCondominiumInput = {
   apartment?: string | null
   block?: string | null
   active?: boolean
+  vehicleInfo?: string | null
+  personalDocument?: string | null
   createdAt?: Date | string
   updatedAt?: Date | string
   createdDeliveries?: Prisma.DeliveryUncheckedCreateNestedManyWithoutResidentInput
   acceptedDeliveries?: Prisma.DeliveryUncheckedCreateNestedManyWithoutDeliveryPersonInput
+  createdOrders?: Prisma.OrderUncheckedCreateNestedManyWithoutCreatedByUserInput
+  orderMessages?: Prisma.OrderMessageUncheckedCreateNestedManyWithoutSenderInput
+  vendorProfile?: Prisma.VendorUncheckedCreateNestedOneWithoutUserInput
 }
 
 export type UserCreateOrConnectWithoutCondominiumInput = {
@@ -642,6 +763,8 @@ export type UserScalarWhereInput = {
   apartment?: Prisma.StringNullableFilter<"User"> | string | null
   block?: Prisma.StringNullableFilter<"User"> | string | null
   active?: Prisma.BoolFilter<"User"> | boolean
+  vehicleInfo?: Prisma.StringNullableFilter<"User"> | string | null
+  personalDocument?: Prisma.StringNullableFilter<"User"> | string | null
   condominiumId?: Prisma.StringNullableFilter<"User"> | string | null
   createdAt?: Prisma.DateTimeFilter<"User"> | Date | string
   updatedAt?: Prisma.DateTimeFilter<"User"> | Date | string
@@ -657,10 +780,15 @@ export type UserCreateWithoutCreatedDeliveriesInput = {
   apartment?: string | null
   block?: string | null
   active?: boolean
+  vehicleInfo?: string | null
+  personalDocument?: string | null
   createdAt?: Date | string
   updatedAt?: Date | string
   condominium?: Prisma.CondominiumCreateNestedOneWithoutUsersInput
   acceptedDeliveries?: Prisma.DeliveryCreateNestedManyWithoutDeliveryPersonInput
+  createdOrders?: Prisma.OrderCreateNestedManyWithoutCreatedByUserInput
+  orderMessages?: Prisma.OrderMessageCreateNestedManyWithoutSenderInput
+  vendorProfile?: Prisma.VendorCreateNestedOneWithoutUserInput
 }
 
 export type UserUncheckedCreateWithoutCreatedDeliveriesInput = {
@@ -673,10 +801,15 @@ export type UserUncheckedCreateWithoutCreatedDeliveriesInput = {
   apartment?: string | null
   block?: string | null
   active?: boolean
+  vehicleInfo?: string | null
+  personalDocument?: string | null
   condominiumId?: string | null
   createdAt?: Date | string
   updatedAt?: Date | string
   acceptedDeliveries?: Prisma.DeliveryUncheckedCreateNestedManyWithoutDeliveryPersonInput
+  createdOrders?: Prisma.OrderUncheckedCreateNestedManyWithoutCreatedByUserInput
+  orderMessages?: Prisma.OrderMessageUncheckedCreateNestedManyWithoutSenderInput
+  vendorProfile?: Prisma.VendorUncheckedCreateNestedOneWithoutUserInput
 }
 
 export type UserCreateOrConnectWithoutCreatedDeliveriesInput = {
@@ -694,10 +827,15 @@ export type UserCreateWithoutAcceptedDeliveriesInput = {
   apartment?: string | null
   block?: string | null
   active?: boolean
+  vehicleInfo?: string | null
+  personalDocument?: string | null
   createdAt?: Date | string
   updatedAt?: Date | string
   condominium?: Prisma.CondominiumCreateNestedOneWithoutUsersInput
   createdDeliveries?: Prisma.DeliveryCreateNestedManyWithoutResidentInput
+  createdOrders?: Prisma.OrderCreateNestedManyWithoutCreatedByUserInput
+  orderMessages?: Prisma.OrderMessageCreateNestedManyWithoutSenderInput
+  vendorProfile?: Prisma.VendorCreateNestedOneWithoutUserInput
 }
 
 export type UserUncheckedCreateWithoutAcceptedDeliveriesInput = {
@@ -710,10 +848,15 @@ export type UserUncheckedCreateWithoutAcceptedDeliveriesInput = {
   apartment?: string | null
   block?: string | null
   active?: boolean
+  vehicleInfo?: string | null
+  personalDocument?: string | null
   condominiumId?: string | null
   createdAt?: Date | string
   updatedAt?: Date | string
   createdDeliveries?: Prisma.DeliveryUncheckedCreateNestedManyWithoutResidentInput
+  createdOrders?: Prisma.OrderUncheckedCreateNestedManyWithoutCreatedByUserInput
+  orderMessages?: Prisma.OrderMessageUncheckedCreateNestedManyWithoutSenderInput
+  vendorProfile?: Prisma.VendorUncheckedCreateNestedOneWithoutUserInput
 }
 
 export type UserCreateOrConnectWithoutAcceptedDeliveriesInput = {
@@ -742,10 +885,15 @@ export type UserUpdateWithoutCreatedDeliveriesInput = {
   apartment?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   block?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   active?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  vehicleInfo?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  personalDocument?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   condominium?: Prisma.CondominiumUpdateOneWithoutUsersNestedInput
   acceptedDeliveries?: Prisma.DeliveryUpdateManyWithoutDeliveryPersonNestedInput
+  createdOrders?: Prisma.OrderUpdateManyWithoutCreatedByUserNestedInput
+  orderMessages?: Prisma.OrderMessageUpdateManyWithoutSenderNestedInput
+  vendorProfile?: Prisma.VendorUpdateOneWithoutUserNestedInput
 }
 
 export type UserUncheckedUpdateWithoutCreatedDeliveriesInput = {
@@ -758,10 +906,15 @@ export type UserUncheckedUpdateWithoutCreatedDeliveriesInput = {
   apartment?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   block?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   active?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  vehicleInfo?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  personalDocument?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   condominiumId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   acceptedDeliveries?: Prisma.DeliveryUncheckedUpdateManyWithoutDeliveryPersonNestedInput
+  createdOrders?: Prisma.OrderUncheckedUpdateManyWithoutCreatedByUserNestedInput
+  orderMessages?: Prisma.OrderMessageUncheckedUpdateManyWithoutSenderNestedInput
+  vendorProfile?: Prisma.VendorUncheckedUpdateOneWithoutUserNestedInput
 }
 
 export type UserUpsertWithoutAcceptedDeliveriesInput = {
@@ -785,10 +938,15 @@ export type UserUpdateWithoutAcceptedDeliveriesInput = {
   apartment?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   block?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   active?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  vehicleInfo?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  personalDocument?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   condominium?: Prisma.CondominiumUpdateOneWithoutUsersNestedInput
   createdDeliveries?: Prisma.DeliveryUpdateManyWithoutResidentNestedInput
+  createdOrders?: Prisma.OrderUpdateManyWithoutCreatedByUserNestedInput
+  orderMessages?: Prisma.OrderMessageUpdateManyWithoutSenderNestedInput
+  vendorProfile?: Prisma.VendorUpdateOneWithoutUserNestedInput
 }
 
 export type UserUncheckedUpdateWithoutAcceptedDeliveriesInput = {
@@ -801,10 +959,315 @@ export type UserUncheckedUpdateWithoutAcceptedDeliveriesInput = {
   apartment?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   block?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   active?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  vehicleInfo?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  personalDocument?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   condominiumId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   createdDeliveries?: Prisma.DeliveryUncheckedUpdateManyWithoutResidentNestedInput
+  createdOrders?: Prisma.OrderUncheckedUpdateManyWithoutCreatedByUserNestedInput
+  orderMessages?: Prisma.OrderMessageUncheckedUpdateManyWithoutSenderNestedInput
+  vendorProfile?: Prisma.VendorUncheckedUpdateOneWithoutUserNestedInput
+}
+
+export type UserCreateWithoutVendorProfileInput = {
+  id?: string
+  email: string
+  password: string
+  name: string
+  phone?: string | null
+  role?: $Enums.UserRole
+  apartment?: string | null
+  block?: string | null
+  active?: boolean
+  vehicleInfo?: string | null
+  personalDocument?: string | null
+  createdAt?: Date | string
+  updatedAt?: Date | string
+  condominium?: Prisma.CondominiumCreateNestedOneWithoutUsersInput
+  createdDeliveries?: Prisma.DeliveryCreateNestedManyWithoutResidentInput
+  acceptedDeliveries?: Prisma.DeliveryCreateNestedManyWithoutDeliveryPersonInput
+  createdOrders?: Prisma.OrderCreateNestedManyWithoutCreatedByUserInput
+  orderMessages?: Prisma.OrderMessageCreateNestedManyWithoutSenderInput
+}
+
+export type UserUncheckedCreateWithoutVendorProfileInput = {
+  id?: string
+  email: string
+  password: string
+  name: string
+  phone?: string | null
+  role?: $Enums.UserRole
+  apartment?: string | null
+  block?: string | null
+  active?: boolean
+  vehicleInfo?: string | null
+  personalDocument?: string | null
+  condominiumId?: string | null
+  createdAt?: Date | string
+  updatedAt?: Date | string
+  createdDeliveries?: Prisma.DeliveryUncheckedCreateNestedManyWithoutResidentInput
+  acceptedDeliveries?: Prisma.DeliveryUncheckedCreateNestedManyWithoutDeliveryPersonInput
+  createdOrders?: Prisma.OrderUncheckedCreateNestedManyWithoutCreatedByUserInput
+  orderMessages?: Prisma.OrderMessageUncheckedCreateNestedManyWithoutSenderInput
+}
+
+export type UserCreateOrConnectWithoutVendorProfileInput = {
+  where: Prisma.UserWhereUniqueInput
+  create: Prisma.XOR<Prisma.UserCreateWithoutVendorProfileInput, Prisma.UserUncheckedCreateWithoutVendorProfileInput>
+}
+
+export type UserUpsertWithoutVendorProfileInput = {
+  update: Prisma.XOR<Prisma.UserUpdateWithoutVendorProfileInput, Prisma.UserUncheckedUpdateWithoutVendorProfileInput>
+  create: Prisma.XOR<Prisma.UserCreateWithoutVendorProfileInput, Prisma.UserUncheckedCreateWithoutVendorProfileInput>
+  where?: Prisma.UserWhereInput
+}
+
+export type UserUpdateToOneWithWhereWithoutVendorProfileInput = {
+  where?: Prisma.UserWhereInput
+  data: Prisma.XOR<Prisma.UserUpdateWithoutVendorProfileInput, Prisma.UserUncheckedUpdateWithoutVendorProfileInput>
+}
+
+export type UserUpdateWithoutVendorProfileInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  email?: Prisma.StringFieldUpdateOperationsInput | string
+  password?: Prisma.StringFieldUpdateOperationsInput | string
+  name?: Prisma.StringFieldUpdateOperationsInput | string
+  phone?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  role?: Prisma.EnumUserRoleFieldUpdateOperationsInput | $Enums.UserRole
+  apartment?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  block?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  active?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  vehicleInfo?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  personalDocument?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  condominium?: Prisma.CondominiumUpdateOneWithoutUsersNestedInput
+  createdDeliveries?: Prisma.DeliveryUpdateManyWithoutResidentNestedInput
+  acceptedDeliveries?: Prisma.DeliveryUpdateManyWithoutDeliveryPersonNestedInput
+  createdOrders?: Prisma.OrderUpdateManyWithoutCreatedByUserNestedInput
+  orderMessages?: Prisma.OrderMessageUpdateManyWithoutSenderNestedInput
+}
+
+export type UserUncheckedUpdateWithoutVendorProfileInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  email?: Prisma.StringFieldUpdateOperationsInput | string
+  password?: Prisma.StringFieldUpdateOperationsInput | string
+  name?: Prisma.StringFieldUpdateOperationsInput | string
+  phone?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  role?: Prisma.EnumUserRoleFieldUpdateOperationsInput | $Enums.UserRole
+  apartment?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  block?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  active?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  vehicleInfo?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  personalDocument?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  condominiumId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  createdDeliveries?: Prisma.DeliveryUncheckedUpdateManyWithoutResidentNestedInput
+  acceptedDeliveries?: Prisma.DeliveryUncheckedUpdateManyWithoutDeliveryPersonNestedInput
+  createdOrders?: Prisma.OrderUncheckedUpdateManyWithoutCreatedByUserNestedInput
+  orderMessages?: Prisma.OrderMessageUncheckedUpdateManyWithoutSenderNestedInput
+}
+
+export type UserCreateWithoutCreatedOrdersInput = {
+  id?: string
+  email: string
+  password: string
+  name: string
+  phone?: string | null
+  role?: $Enums.UserRole
+  apartment?: string | null
+  block?: string | null
+  active?: boolean
+  vehicleInfo?: string | null
+  personalDocument?: string | null
+  createdAt?: Date | string
+  updatedAt?: Date | string
+  condominium?: Prisma.CondominiumCreateNestedOneWithoutUsersInput
+  createdDeliveries?: Prisma.DeliveryCreateNestedManyWithoutResidentInput
+  acceptedDeliveries?: Prisma.DeliveryCreateNestedManyWithoutDeliveryPersonInput
+  orderMessages?: Prisma.OrderMessageCreateNestedManyWithoutSenderInput
+  vendorProfile?: Prisma.VendorCreateNestedOneWithoutUserInput
+}
+
+export type UserUncheckedCreateWithoutCreatedOrdersInput = {
+  id?: string
+  email: string
+  password: string
+  name: string
+  phone?: string | null
+  role?: $Enums.UserRole
+  apartment?: string | null
+  block?: string | null
+  active?: boolean
+  vehicleInfo?: string | null
+  personalDocument?: string | null
+  condominiumId?: string | null
+  createdAt?: Date | string
+  updatedAt?: Date | string
+  createdDeliveries?: Prisma.DeliveryUncheckedCreateNestedManyWithoutResidentInput
+  acceptedDeliveries?: Prisma.DeliveryUncheckedCreateNestedManyWithoutDeliveryPersonInput
+  orderMessages?: Prisma.OrderMessageUncheckedCreateNestedManyWithoutSenderInput
+  vendorProfile?: Prisma.VendorUncheckedCreateNestedOneWithoutUserInput
+}
+
+export type UserCreateOrConnectWithoutCreatedOrdersInput = {
+  where: Prisma.UserWhereUniqueInput
+  create: Prisma.XOR<Prisma.UserCreateWithoutCreatedOrdersInput, Prisma.UserUncheckedCreateWithoutCreatedOrdersInput>
+}
+
+export type UserUpsertWithoutCreatedOrdersInput = {
+  update: Prisma.XOR<Prisma.UserUpdateWithoutCreatedOrdersInput, Prisma.UserUncheckedUpdateWithoutCreatedOrdersInput>
+  create: Prisma.XOR<Prisma.UserCreateWithoutCreatedOrdersInput, Prisma.UserUncheckedCreateWithoutCreatedOrdersInput>
+  where?: Prisma.UserWhereInput
+}
+
+export type UserUpdateToOneWithWhereWithoutCreatedOrdersInput = {
+  where?: Prisma.UserWhereInput
+  data: Prisma.XOR<Prisma.UserUpdateWithoutCreatedOrdersInput, Prisma.UserUncheckedUpdateWithoutCreatedOrdersInput>
+}
+
+export type UserUpdateWithoutCreatedOrdersInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  email?: Prisma.StringFieldUpdateOperationsInput | string
+  password?: Prisma.StringFieldUpdateOperationsInput | string
+  name?: Prisma.StringFieldUpdateOperationsInput | string
+  phone?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  role?: Prisma.EnumUserRoleFieldUpdateOperationsInput | $Enums.UserRole
+  apartment?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  block?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  active?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  vehicleInfo?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  personalDocument?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  condominium?: Prisma.CondominiumUpdateOneWithoutUsersNestedInput
+  createdDeliveries?: Prisma.DeliveryUpdateManyWithoutResidentNestedInput
+  acceptedDeliveries?: Prisma.DeliveryUpdateManyWithoutDeliveryPersonNestedInput
+  orderMessages?: Prisma.OrderMessageUpdateManyWithoutSenderNestedInput
+  vendorProfile?: Prisma.VendorUpdateOneWithoutUserNestedInput
+}
+
+export type UserUncheckedUpdateWithoutCreatedOrdersInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  email?: Prisma.StringFieldUpdateOperationsInput | string
+  password?: Prisma.StringFieldUpdateOperationsInput | string
+  name?: Prisma.StringFieldUpdateOperationsInput | string
+  phone?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  role?: Prisma.EnumUserRoleFieldUpdateOperationsInput | $Enums.UserRole
+  apartment?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  block?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  active?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  vehicleInfo?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  personalDocument?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  condominiumId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  createdDeliveries?: Prisma.DeliveryUncheckedUpdateManyWithoutResidentNestedInput
+  acceptedDeliveries?: Prisma.DeliveryUncheckedUpdateManyWithoutDeliveryPersonNestedInput
+  orderMessages?: Prisma.OrderMessageUncheckedUpdateManyWithoutSenderNestedInput
+  vendorProfile?: Prisma.VendorUncheckedUpdateOneWithoutUserNestedInput
+}
+
+export type UserCreateWithoutOrderMessagesInput = {
+  id?: string
+  email: string
+  password: string
+  name: string
+  phone?: string | null
+  role?: $Enums.UserRole
+  apartment?: string | null
+  block?: string | null
+  active?: boolean
+  vehicleInfo?: string | null
+  personalDocument?: string | null
+  createdAt?: Date | string
+  updatedAt?: Date | string
+  condominium?: Prisma.CondominiumCreateNestedOneWithoutUsersInput
+  createdDeliveries?: Prisma.DeliveryCreateNestedManyWithoutResidentInput
+  acceptedDeliveries?: Prisma.DeliveryCreateNestedManyWithoutDeliveryPersonInput
+  createdOrders?: Prisma.OrderCreateNestedManyWithoutCreatedByUserInput
+  vendorProfile?: Prisma.VendorCreateNestedOneWithoutUserInput
+}
+
+export type UserUncheckedCreateWithoutOrderMessagesInput = {
+  id?: string
+  email: string
+  password: string
+  name: string
+  phone?: string | null
+  role?: $Enums.UserRole
+  apartment?: string | null
+  block?: string | null
+  active?: boolean
+  vehicleInfo?: string | null
+  personalDocument?: string | null
+  condominiumId?: string | null
+  createdAt?: Date | string
+  updatedAt?: Date | string
+  createdDeliveries?: Prisma.DeliveryUncheckedCreateNestedManyWithoutResidentInput
+  acceptedDeliveries?: Prisma.DeliveryUncheckedCreateNestedManyWithoutDeliveryPersonInput
+  createdOrders?: Prisma.OrderUncheckedCreateNestedManyWithoutCreatedByUserInput
+  vendorProfile?: Prisma.VendorUncheckedCreateNestedOneWithoutUserInput
+}
+
+export type UserCreateOrConnectWithoutOrderMessagesInput = {
+  where: Prisma.UserWhereUniqueInput
+  create: Prisma.XOR<Prisma.UserCreateWithoutOrderMessagesInput, Prisma.UserUncheckedCreateWithoutOrderMessagesInput>
+}
+
+export type UserUpsertWithoutOrderMessagesInput = {
+  update: Prisma.XOR<Prisma.UserUpdateWithoutOrderMessagesInput, Prisma.UserUncheckedUpdateWithoutOrderMessagesInput>
+  create: Prisma.XOR<Prisma.UserCreateWithoutOrderMessagesInput, Prisma.UserUncheckedCreateWithoutOrderMessagesInput>
+  where?: Prisma.UserWhereInput
+}
+
+export type UserUpdateToOneWithWhereWithoutOrderMessagesInput = {
+  where?: Prisma.UserWhereInput
+  data: Prisma.XOR<Prisma.UserUpdateWithoutOrderMessagesInput, Prisma.UserUncheckedUpdateWithoutOrderMessagesInput>
+}
+
+export type UserUpdateWithoutOrderMessagesInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  email?: Prisma.StringFieldUpdateOperationsInput | string
+  password?: Prisma.StringFieldUpdateOperationsInput | string
+  name?: Prisma.StringFieldUpdateOperationsInput | string
+  phone?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  role?: Prisma.EnumUserRoleFieldUpdateOperationsInput | $Enums.UserRole
+  apartment?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  block?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  active?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  vehicleInfo?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  personalDocument?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  condominium?: Prisma.CondominiumUpdateOneWithoutUsersNestedInput
+  createdDeliveries?: Prisma.DeliveryUpdateManyWithoutResidentNestedInput
+  acceptedDeliveries?: Prisma.DeliveryUpdateManyWithoutDeliveryPersonNestedInput
+  createdOrders?: Prisma.OrderUpdateManyWithoutCreatedByUserNestedInput
+  vendorProfile?: Prisma.VendorUpdateOneWithoutUserNestedInput
+}
+
+export type UserUncheckedUpdateWithoutOrderMessagesInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  email?: Prisma.StringFieldUpdateOperationsInput | string
+  password?: Prisma.StringFieldUpdateOperationsInput | string
+  name?: Prisma.StringFieldUpdateOperationsInput | string
+  phone?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  role?: Prisma.EnumUserRoleFieldUpdateOperationsInput | $Enums.UserRole
+  apartment?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  block?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  active?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  vehicleInfo?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  personalDocument?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  condominiumId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  createdDeliveries?: Prisma.DeliveryUncheckedUpdateManyWithoutResidentNestedInput
+  acceptedDeliveries?: Prisma.DeliveryUncheckedUpdateManyWithoutDeliveryPersonNestedInput
+  createdOrders?: Prisma.OrderUncheckedUpdateManyWithoutCreatedByUserNestedInput
+  vendorProfile?: Prisma.VendorUncheckedUpdateOneWithoutUserNestedInput
 }
 
 export type UserCreateManyCondominiumInput = {
@@ -817,6 +1280,8 @@ export type UserCreateManyCondominiumInput = {
   apartment?: string | null
   block?: string | null
   active?: boolean
+  vehicleInfo?: string | null
+  personalDocument?: string | null
   createdAt?: Date | string
   updatedAt?: Date | string
 }
@@ -831,10 +1296,15 @@ export type UserUpdateWithoutCondominiumInput = {
   apartment?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   block?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   active?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  vehicleInfo?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  personalDocument?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   createdDeliveries?: Prisma.DeliveryUpdateManyWithoutResidentNestedInput
   acceptedDeliveries?: Prisma.DeliveryUpdateManyWithoutDeliveryPersonNestedInput
+  createdOrders?: Prisma.OrderUpdateManyWithoutCreatedByUserNestedInput
+  orderMessages?: Prisma.OrderMessageUpdateManyWithoutSenderNestedInput
+  vendorProfile?: Prisma.VendorUpdateOneWithoutUserNestedInput
 }
 
 export type UserUncheckedUpdateWithoutCondominiumInput = {
@@ -847,10 +1317,15 @@ export type UserUncheckedUpdateWithoutCondominiumInput = {
   apartment?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   block?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   active?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  vehicleInfo?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  personalDocument?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   createdDeliveries?: Prisma.DeliveryUncheckedUpdateManyWithoutResidentNestedInput
   acceptedDeliveries?: Prisma.DeliveryUncheckedUpdateManyWithoutDeliveryPersonNestedInput
+  createdOrders?: Prisma.OrderUncheckedUpdateManyWithoutCreatedByUserNestedInput
+  orderMessages?: Prisma.OrderMessageUncheckedUpdateManyWithoutSenderNestedInput
+  vendorProfile?: Prisma.VendorUncheckedUpdateOneWithoutUserNestedInput
 }
 
 export type UserUncheckedUpdateManyWithoutCondominiumInput = {
@@ -863,6 +1338,8 @@ export type UserUncheckedUpdateManyWithoutCondominiumInput = {
   apartment?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   block?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   active?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  vehicleInfo?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  personalDocument?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
 }
@@ -875,11 +1352,15 @@ export type UserUncheckedUpdateManyWithoutCondominiumInput = {
 export type UserCountOutputType = {
   createdDeliveries: number
   acceptedDeliveries: number
+  createdOrders: number
+  orderMessages: number
 }
 
 export type UserCountOutputTypeSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   createdDeliveries?: boolean | UserCountOutputTypeCountCreatedDeliveriesArgs
   acceptedDeliveries?: boolean | UserCountOutputTypeCountAcceptedDeliveriesArgs
+  createdOrders?: boolean | UserCountOutputTypeCountCreatedOrdersArgs
+  orderMessages?: boolean | UserCountOutputTypeCountOrderMessagesArgs
 }
 
 /**
@@ -906,6 +1387,20 @@ export type UserCountOutputTypeCountAcceptedDeliveriesArgs<ExtArgs extends runti
   where?: Prisma.DeliveryWhereInput
 }
 
+/**
+ * UserCountOutputType without action
+ */
+export type UserCountOutputTypeCountCreatedOrdersArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  where?: Prisma.OrderWhereInput
+}
+
+/**
+ * UserCountOutputType without action
+ */
+export type UserCountOutputTypeCountOrderMessagesArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  where?: Prisma.OrderMessageWhereInput
+}
+
 
 export type UserSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetSelect<{
   id?: boolean
@@ -917,12 +1412,17 @@ export type UserSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = r
   apartment?: boolean
   block?: boolean
   active?: boolean
+  vehicleInfo?: boolean
+  personalDocument?: boolean
   condominiumId?: boolean
   createdAt?: boolean
   updatedAt?: boolean
   condominium?: boolean | Prisma.User$condominiumArgs<ExtArgs>
   createdDeliveries?: boolean | Prisma.User$createdDeliveriesArgs<ExtArgs>
   acceptedDeliveries?: boolean | Prisma.User$acceptedDeliveriesArgs<ExtArgs>
+  createdOrders?: boolean | Prisma.User$createdOrdersArgs<ExtArgs>
+  orderMessages?: boolean | Prisma.User$orderMessagesArgs<ExtArgs>
+  vendorProfile?: boolean | Prisma.User$vendorProfileArgs<ExtArgs>
   _count?: boolean | Prisma.UserCountOutputTypeDefaultArgs<ExtArgs>
 }, ExtArgs["result"]["user"]>
 
@@ -936,6 +1436,8 @@ export type UserSelectCreateManyAndReturn<ExtArgs extends runtime.Types.Extensio
   apartment?: boolean
   block?: boolean
   active?: boolean
+  vehicleInfo?: boolean
+  personalDocument?: boolean
   condominiumId?: boolean
   createdAt?: boolean
   updatedAt?: boolean
@@ -952,6 +1454,8 @@ export type UserSelectUpdateManyAndReturn<ExtArgs extends runtime.Types.Extensio
   apartment?: boolean
   block?: boolean
   active?: boolean
+  vehicleInfo?: boolean
+  personalDocument?: boolean
   condominiumId?: boolean
   createdAt?: boolean
   updatedAt?: boolean
@@ -968,16 +1472,21 @@ export type UserSelectScalar = {
   apartment?: boolean
   block?: boolean
   active?: boolean
+  vehicleInfo?: boolean
+  personalDocument?: boolean
   condominiumId?: boolean
   createdAt?: boolean
   updatedAt?: boolean
 }
 
-export type UserOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "email" | "password" | "name" | "phone" | "role" | "apartment" | "block" | "active" | "condominiumId" | "createdAt" | "updatedAt", ExtArgs["result"]["user"]>
+export type UserOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "email" | "password" | "name" | "phone" | "role" | "apartment" | "block" | "active" | "vehicleInfo" | "personalDocument" | "condominiumId" | "createdAt" | "updatedAt", ExtArgs["result"]["user"]>
 export type UserInclude<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   condominium?: boolean | Prisma.User$condominiumArgs<ExtArgs>
   createdDeliveries?: boolean | Prisma.User$createdDeliveriesArgs<ExtArgs>
   acceptedDeliveries?: boolean | Prisma.User$acceptedDeliveriesArgs<ExtArgs>
+  createdOrders?: boolean | Prisma.User$createdOrdersArgs<ExtArgs>
+  orderMessages?: boolean | Prisma.User$orderMessagesArgs<ExtArgs>
+  vendorProfile?: boolean | Prisma.User$vendorProfileArgs<ExtArgs>
   _count?: boolean | Prisma.UserCountOutputTypeDefaultArgs<ExtArgs>
 }
 export type UserIncludeCreateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
@@ -993,6 +1502,9 @@ export type $UserPayload<ExtArgs extends runtime.Types.Extensions.InternalArgs =
     condominium: Prisma.$CondominiumPayload<ExtArgs> | null
     createdDeliveries: Prisma.$DeliveryPayload<ExtArgs>[]
     acceptedDeliveries: Prisma.$DeliveryPayload<ExtArgs>[]
+    createdOrders: Prisma.$OrderPayload<ExtArgs>[]
+    orderMessages: Prisma.$OrderMessagePayload<ExtArgs>[]
+    vendorProfile: Prisma.$VendorPayload<ExtArgs> | null
   }
   scalars: runtime.Types.Extensions.GetPayloadResult<{
     id: string
@@ -1004,6 +1516,8 @@ export type $UserPayload<ExtArgs extends runtime.Types.Extensions.InternalArgs =
     apartment: string | null
     block: string | null
     active: boolean
+    vehicleInfo: string | null
+    personalDocument: string | null
     condominiumId: string | null
     createdAt: Date
     updatedAt: Date
@@ -1404,6 +1918,9 @@ export interface Prisma__UserClient<T, Null = never, ExtArgs extends runtime.Typ
   condominium<T extends Prisma.User$condominiumArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.User$condominiumArgs<ExtArgs>>): Prisma.Prisma__CondominiumClient<runtime.Types.Result.GetResult<Prisma.$CondominiumPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
   createdDeliveries<T extends Prisma.User$createdDeliveriesArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.User$createdDeliveriesArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$DeliveryPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   acceptedDeliveries<T extends Prisma.User$acceptedDeliveriesArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.User$acceptedDeliveriesArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$DeliveryPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
+  createdOrders<T extends Prisma.User$createdOrdersArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.User$createdOrdersArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$OrderPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
+  orderMessages<T extends Prisma.User$orderMessagesArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.User$orderMessagesArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$OrderMessagePayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
+  vendorProfile<T extends Prisma.User$vendorProfileArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.User$vendorProfileArgs<ExtArgs>>): Prisma.Prisma__VendorClient<runtime.Types.Result.GetResult<Prisma.$VendorPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
   /**
    * Attaches callbacks for the resolution and/or rejection of the Promise.
    * @param onfulfilled The callback to execute when the Promise is resolved.
@@ -1442,6 +1959,8 @@ export interface UserFieldRefs {
   readonly apartment: Prisma.FieldRef<"User", 'String'>
   readonly block: Prisma.FieldRef<"User", 'String'>
   readonly active: Prisma.FieldRef<"User", 'Boolean'>
+  readonly vehicleInfo: Prisma.FieldRef<"User", 'String'>
+  readonly personalDocument: Prisma.FieldRef<"User", 'String'>
   readonly condominiumId: Prisma.FieldRef<"User", 'String'>
   readonly createdAt: Prisma.FieldRef<"User", 'DateTime'>
   readonly updatedAt: Prisma.FieldRef<"User", 'DateTime'>
@@ -1910,6 +2429,73 @@ export type User$acceptedDeliveriesArgs<ExtArgs extends runtime.Types.Extensions
   take?: number
   skip?: number
   distinct?: Prisma.DeliveryScalarFieldEnum | Prisma.DeliveryScalarFieldEnum[]
+}
+
+/**
+ * User.createdOrders
+ */
+export type User$createdOrdersArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  /**
+   * Select specific fields to fetch from the Order
+   */
+  select?: Prisma.OrderSelect<ExtArgs> | null
+  /**
+   * Omit specific fields from the Order
+   */
+  omit?: Prisma.OrderOmit<ExtArgs> | null
+  /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.OrderInclude<ExtArgs> | null
+  where?: Prisma.OrderWhereInput
+  orderBy?: Prisma.OrderOrderByWithRelationInput | Prisma.OrderOrderByWithRelationInput[]
+  cursor?: Prisma.OrderWhereUniqueInput
+  take?: number
+  skip?: number
+  distinct?: Prisma.OrderScalarFieldEnum | Prisma.OrderScalarFieldEnum[]
+}
+
+/**
+ * User.orderMessages
+ */
+export type User$orderMessagesArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  /**
+   * Select specific fields to fetch from the OrderMessage
+   */
+  select?: Prisma.OrderMessageSelect<ExtArgs> | null
+  /**
+   * Omit specific fields from the OrderMessage
+   */
+  omit?: Prisma.OrderMessageOmit<ExtArgs> | null
+  /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.OrderMessageInclude<ExtArgs> | null
+  where?: Prisma.OrderMessageWhereInput
+  orderBy?: Prisma.OrderMessageOrderByWithRelationInput | Prisma.OrderMessageOrderByWithRelationInput[]
+  cursor?: Prisma.OrderMessageWhereUniqueInput
+  take?: number
+  skip?: number
+  distinct?: Prisma.OrderMessageScalarFieldEnum | Prisma.OrderMessageScalarFieldEnum[]
+}
+
+/**
+ * User.vendorProfile
+ */
+export type User$vendorProfileArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  /**
+   * Select specific fields to fetch from the Vendor
+   */
+  select?: Prisma.VendorSelect<ExtArgs> | null
+  /**
+   * Omit specific fields from the Vendor
+   */
+  omit?: Prisma.VendorOmit<ExtArgs> | null
+  /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.VendorInclude<ExtArgs> | null
+  where?: Prisma.VendorWhereInput
 }
 
 /**

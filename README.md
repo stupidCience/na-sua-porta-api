@@ -1,166 +1,95 @@
-# 🚀 NSP Backend - API Documentation
+﻿# NSP Backend
 
-API RESTful em NestJS para a plataforma Na Sua Porta - Entregas para Condomínios.
+API do projeto Na Sua Porta.
 
-## ⚙️ Setup Rápido
+Stack: NestJS + Prisma + PostgreSQL + JWT + Socket.IO.
 
-### 1. Instalar dependências
+## Setup rapido
+
 ```bash
 npm install
-```
-
-### 2. Configurar ambiente
-```bash
-cp .env.example .env.local
-# Editar .env.local com seus dados
-```
-
-### 3. Setup do Banco de Dados
-```bash
 npm run db:generate
 npm run db:push
 npm run db:seed
+npm run start:dev
 ```
 
-### 4. Iniciar servidor
-```bash
-npm run start:dev  # Desenvolvimento
-```
+Base URL local: `http://localhost:3000/api`
 
-**API rodando em:** http://localhost:3000/api
+## Scripts
 
----
+- `npm run start`
+- `npm run start:dev`
+- `npm run build`
+- `npm run test`
+- `npm run db:generate`
+- `npm run db:push`
+- `npm run db:seed`
+- `npm run db:studio`
 
-## 📋 Endpoints Principais
+## Modulos principais
 
-### 🔐 Autenticação
-- `POST /auth/register` - Registrar novo usuário
-- `POST /auth/login` - Fazer login
+- `auth`: login e registro
+- `users`: perfil e gestao de usuarios do condominio
+- `deliveries`: ciclo da entrega e metricas
+- `orders`: pedidos e hub de chats
+- `vendors`: operacao do comercio
+- `condominiums`: configuracoes do condominio
 
-### 📦 Deliveries
-- `POST /deliveries` - Criar pedido (Morador)
-- `GET /deliveries` - Listar pedidos
-- `GET /deliveries/available` - Pedidos disponíveis (Entregador)
-- `GET /deliveries/my-deliveries` - Minhas entregas
-- `PATCH /deliveries/:id/accept` - Aceitar pedido
-- `PATCH /deliveries/:id/status` - Atualizar status
+## Endpoints principais
 
----
+## Auth
 
-## 🔐 Credentials de Teste
+- `POST /auth/register`
+- `POST /auth/login`
 
-Após rodar `npm run db:seed`:
+## Deliveries
 
-**Morador:**
-- Email: morador@test.com
-- Senha: resident123
+- `POST /deliveries`
+- `GET /deliveries`
+- `GET /deliveries/available`
+- `GET /deliveries/my-deliveries`
+- `GET /deliveries/history`
+- `GET /deliveries/stats`
+- `PATCH /deliveries/:id/accept`
+- `PATCH /deliveries/:id/status`
+- `PATCH /deliveries/:id/cancel`
+- `PATCH /deliveries/:id/rate`
 
-**Entregador:**
-- Email: entregador@test.com  
-- Senha: delivery123
+## Orders + Chats
 
----
+- `GET /orders`
+- `GET /orders/chats`
+- `GET /orders/:id/messages?kind=ORDER|DELIVERY`
+- `POST /orders/:id/messages?kind=ORDER|DELIVERY`
 
-## 📡 WebSocket Events
+## Vendors
 
-```javascript
-// Servidor emite:
-socket.on('delivery_created', (delivery) => {});
-socket.on('delivery_accepted', (delivery) => {});
-socket.on('delivery_updated', (delivery) => {});
+- `GET /vendors/me/orders`
+- `PATCH /vendors/me/orders/:orderId/status`
+- `PATCH /vendors/me/orders/:orderId/cancel`
+- `GET /vendors/me/orders/:orderId/messages`
+- `POST /vendors/me/orders/:orderId/messages`
 
-// Cliente envia:
-socket.emit('register-user', userId);
-```
+## Regras de negocio importantes
 
----
+- Entrega: `REQUESTED -> ACCEPTED -> PICKED_UP -> DELIVERED`
+- Pedido comercio: `PENDING -> ACCEPTED -> READY -> SENT -> COMPLETED`
+- Janela de cancelamento do comercio: **2 minutos apos aceite** (`acceptedAt`).
+- Chat de entrega e pedido em tempo real, com retencao de 7 dias.
 
-Ver `README_SETUP.md` para documentação completa.
-<a href="https://www.npmjs.com/~nestjscore" target="_blank"><img src="https://img.shields.io/npm/l/@nestjs/core.svg" alt="Package License" /></a>
-<a href="https://www.npmjs.com/~nestjscore" target="_blank"><img src="https://img.shields.io/npm/dm/@nestjs/common.svg" alt="NPM Downloads" /></a>
-<a href="https://circleci.com/gh/nestjs/nest" target="_blank"><img src="https://img.shields.io/circleci/build/github/nestjs/nest/master" alt="CircleCI" /></a>
-<a href="https://discord.gg/G7Qnnhy" target="_blank"><img src="https://img.shields.io/badge/discord-online-brightgreen.svg" alt="Discord"/></a>
-<a href="https://opencollective.com/nest#backer" target="_blank"><img src="https://opencollective.com/nest/backers/badge.svg" alt="Backers on Open Collective" /></a>
-<a href="https://opencollective.com/nest#sponsor" target="_blank"><img src="https://opencollective.com/nest/sponsors/badge.svg" alt="Sponsors on Open Collective" /></a>
-  <a href="https://paypal.me/kamilmysliwiec" target="_blank"><img src="https://img.shields.io/badge/Donate-PayPal-ff3f59.svg" alt="Donate us"/></a>
-    <a href="https://opencollective.com/nest#sponsor"  target="_blank"><img src="https://img.shields.io/badge/Support%20us-Open%20Collective-41B883.svg" alt="Support us"></a>
-  <a href="https://twitter.com/nestframework" target="_blank"><img src="https://img.shields.io/twitter/follow/nestframework.svg?style=social&label=Follow" alt="Follow us on Twitter"></a>
-</p>
-  <!--[![Backers on Open Collective](https://opencollective.com/nest/backers/badge.svg)](https://opencollective.com/nest#backer)
-  [![Sponsors on Open Collective](https://opencollective.com/nest/sponsors/badge.svg)](https://opencollective.com/nest#sponsor)-->
+## Eventos Socket.IO
 
-## Description
+- `delivery_created`
+- `delivery_accepted`
+- `delivery_updated`
+- `delivery_cancelled`
+- `order_created`
+- `order_updated`
+- `order_message`
+- `delivery_message`
 
-[Nest](https://github.com/nestjs/nest) framework TypeScript starter repository.
+## Troubleshooting
 
-## Project setup
-
-```bash
-$ npm install
-```
-
-## Compile and run the project
-
-```bash
-# development
-$ npm run start
-
-# watch mode
-$ npm run start:dev
-
-# production mode
-$ npm run start:prod
-```
-
-## Run tests
-
-```bash
-# unit tests
-$ npm run test
-
-# e2e tests
-$ npm run test:e2e
-
-# test coverage
-$ npm run test:cov
-```
-
-## Deployment
-
-When you're ready to deploy your NestJS application to production, there are some key steps you can take to ensure it runs as efficiently as possible. Check out the [deployment documentation](https://docs.nestjs.com/deployment) for more information.
-
-If you are looking for a cloud-based platform to deploy your NestJS application, check out [Mau](https://mau.nestjs.com), our official platform for deploying NestJS applications on AWS. Mau makes deployment straightforward and fast, requiring just a few simple steps:
-
-```bash
-$ npm install -g @nestjs/mau
-$ mau deploy
-```
-
-With Mau, you can deploy your application in just a few clicks, allowing you to focus on building features rather than managing infrastructure.
-
-## Resources
-
-Check out a few resources that may come in handy when working with NestJS:
-
-- Visit the [NestJS Documentation](https://docs.nestjs.com) to learn more about the framework.
-- For questions and support, please visit our [Discord channel](https://discord.gg/G7Qnnhy).
-- To dive deeper and get more hands-on experience, check out our official video [courses](https://courses.nestjs.com/).
-- Deploy your application to AWS with the help of [NestJS Mau](https://mau.nestjs.com) in just a few clicks.
-- Visualize your application graph and interact with the NestJS application in real-time using [NestJS Devtools](https://devtools.nestjs.com).
-- Need help with your project (part-time to full-time)? Check out our official [enterprise support](https://enterprise.nestjs.com).
-- To stay in the loop and get updates, follow us on [X](https://x.com/nestframework) and [LinkedIn](https://linkedin.com/company/nestjs).
-- Looking for a job, or have a job to offer? Check out our official [Jobs board](https://jobs.nestjs.com).
-
-## Support
-
-Nest is an MIT-licensed open source project. It can grow thanks to the sponsors and support by the amazing backers. If you'd like to join them, please [read more here](https://docs.nestjs.com/support).
-
-## Stay in touch
-
-- Author - [Kamil Myśliwiec](https://twitter.com/kammysliwiec)
-- Website - [https://nestjs.com](https://nestjs.com/)
-- Twitter - [@nestframework](https://twitter.com/nestframework)
-
-## License
-
-Nest is [MIT licensed](https://github.com/nestjs/nest/blob/master/LICENSE).
+- `EADDRINUSE :3000`: finalize processo anterior antes de iniciar novo servidor.
+- Erro de schema Prisma: rode `npm run db:push` e `npm run db:generate`.

@@ -55,6 +55,26 @@ export type User = Prisma.UserModel
  */
 export type Delivery = Prisma.DeliveryModel
 /**
+ * Model Vendor
+ * 
+ */
+export type Vendor = Prisma.VendorModel
+/**
+ * Model MenuItem
+ * 
+ */
+export type MenuItem = Prisma.MenuItemModel
+/**
+ * Model Order
+ * 
+ */
+export type Order = Prisma.OrderModel
+/**
+ * Model OrderMessage
+ * 
+ */
+export type OrderMessage = Prisma.OrderMessageModel
+/**
  * Model DeliveryEvent
  * 
  */

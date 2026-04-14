@@ -37,13 +37,20 @@ export type DeliverySumAggregateOutputType = {
 export type DeliveryMinAggregateOutputType = {
   id: string | null
   status: $Enums.DeliveryStatus | null
+  type: $Enums.DeliveryType | null
   residentId: string | null
   apartment: string | null
   block: string | null
   deliveryPersonId: string | null
   condominiumId: string | null
+  orderId: string | null
+  pickupOrigin: string | null
   description: string | null
   notes: string | null
+  externalPlatform: string | null
+  externalCode: string | null
+  deliveryCode: string | null
+  deliveryCodeGeneratedAt: Date | null
   rating: number | null
   ratingComment: string | null
   createdAt: Date | null
@@ -56,13 +63,20 @@ export type DeliveryMinAggregateOutputType = {
 export type DeliveryMaxAggregateOutputType = {
   id: string | null
   status: $Enums.DeliveryStatus | null
+  type: $Enums.DeliveryType | null
   residentId: string | null
   apartment: string | null
   block: string | null
   deliveryPersonId: string | null
   condominiumId: string | null
+  orderId: string | null
+  pickupOrigin: string | null
   description: string | null
   notes: string | null
+  externalPlatform: string | null
+  externalCode: string | null
+  deliveryCode: string | null
+  deliveryCodeGeneratedAt: Date | null
   rating: number | null
   ratingComment: string | null
   createdAt: Date | null
@@ -75,13 +89,20 @@ export type DeliveryMaxAggregateOutputType = {
 export type DeliveryCountAggregateOutputType = {
   id: number
   status: number
+  type: number
   residentId: number
   apartment: number
   block: number
   deliveryPersonId: number
   condominiumId: number
+  orderId: number
+  pickupOrigin: number
   description: number
   notes: number
+  externalPlatform: number
+  externalCode: number
+  deliveryCode: number
+  deliveryCodeGeneratedAt: number
   rating: number
   ratingComment: number
   createdAt: number
@@ -104,13 +125,20 @@ export type DeliverySumAggregateInputType = {
 export type DeliveryMinAggregateInputType = {
   id?: true
   status?: true
+  type?: true
   residentId?: true
   apartment?: true
   block?: true
   deliveryPersonId?: true
   condominiumId?: true
+  orderId?: true
+  pickupOrigin?: true
   description?: true
   notes?: true
+  externalPlatform?: true
+  externalCode?: true
+  deliveryCode?: true
+  deliveryCodeGeneratedAt?: true
   rating?: true
   ratingComment?: true
   createdAt?: true
@@ -123,13 +151,20 @@ export type DeliveryMinAggregateInputType = {
 export type DeliveryMaxAggregateInputType = {
   id?: true
   status?: true
+  type?: true
   residentId?: true
   apartment?: true
   block?: true
   deliveryPersonId?: true
   condominiumId?: true
+  orderId?: true
+  pickupOrigin?: true
   description?: true
   notes?: true
+  externalPlatform?: true
+  externalCode?: true
+  deliveryCode?: true
+  deliveryCodeGeneratedAt?: true
   rating?: true
   ratingComment?: true
   createdAt?: true
@@ -142,13 +177,20 @@ export type DeliveryMaxAggregateInputType = {
 export type DeliveryCountAggregateInputType = {
   id?: true
   status?: true
+  type?: true
   residentId?: true
   apartment?: true
   block?: true
   deliveryPersonId?: true
   condominiumId?: true
+  orderId?: true
+  pickupOrigin?: true
   description?: true
   notes?: true
+  externalPlatform?: true
+  externalCode?: true
+  deliveryCode?: true
+  deliveryCodeGeneratedAt?: true
   rating?: true
   ratingComment?: true
   createdAt?: true
@@ -248,13 +290,20 @@ export type DeliveryGroupByArgs<ExtArgs extends runtime.Types.Extensions.Interna
 export type DeliveryGroupByOutputType = {
   id: string
   status: $Enums.DeliveryStatus
+  type: $Enums.DeliveryType
   residentId: string
   apartment: string
   block: string
   deliveryPersonId: string | null
   condominiumId: string | null
+  orderId: string | null
+  pickupOrigin: string | null
   description: string | null
   notes: string | null
+  externalPlatform: string | null
+  externalCode: string | null
+  deliveryCode: string | null
+  deliveryCodeGeneratedAt: Date | null
   rating: number | null
   ratingComment: string | null
   createdAt: Date
@@ -290,13 +339,20 @@ export type DeliveryWhereInput = {
   NOT?: Prisma.DeliveryWhereInput | Prisma.DeliveryWhereInput[]
   id?: Prisma.StringFilter<"Delivery"> | string
   status?: Prisma.EnumDeliveryStatusFilter<"Delivery"> | $Enums.DeliveryStatus
+  type?: Prisma.EnumDeliveryTypeFilter<"Delivery"> | $Enums.DeliveryType
   residentId?: Prisma.StringFilter<"Delivery"> | string
   apartment?: Prisma.StringFilter<"Delivery"> | string
   block?: Prisma.StringFilter<"Delivery"> | string
   deliveryPersonId?: Prisma.StringNullableFilter<"Delivery"> | string | null
   condominiumId?: Prisma.StringNullableFilter<"Delivery"> | string | null
+  orderId?: Prisma.StringNullableFilter<"Delivery"> | string | null
+  pickupOrigin?: Prisma.StringNullableFilter<"Delivery"> | string | null
   description?: Prisma.StringNullableFilter<"Delivery"> | string | null
   notes?: Prisma.StringNullableFilter<"Delivery"> | string | null
+  externalPlatform?: Prisma.StringNullableFilter<"Delivery"> | string | null
+  externalCode?: Prisma.StringNullableFilter<"Delivery"> | string | null
+  deliveryCode?: Prisma.StringNullableFilter<"Delivery"> | string | null
+  deliveryCodeGeneratedAt?: Prisma.DateTimeNullableFilter<"Delivery"> | Date | string | null
   rating?: Prisma.IntNullableFilter<"Delivery"> | number | null
   ratingComment?: Prisma.StringNullableFilter<"Delivery"> | string | null
   createdAt?: Prisma.DateTimeFilter<"Delivery"> | Date | string
@@ -307,18 +363,26 @@ export type DeliveryWhereInput = {
   resident?: Prisma.XOR<Prisma.UserScalarRelationFilter, Prisma.UserWhereInput>
   deliveryPerson?: Prisma.XOR<Prisma.UserNullableScalarRelationFilter, Prisma.UserWhereInput> | null
   condominium?: Prisma.XOR<Prisma.CondominiumNullableScalarRelationFilter, Prisma.CondominiumWhereInput> | null
+  order?: Prisma.XOR<Prisma.OrderNullableScalarRelationFilter, Prisma.OrderWhereInput> | null
 }
 
 export type DeliveryOrderByWithRelationInput = {
   id?: Prisma.SortOrder
   status?: Prisma.SortOrder
+  type?: Prisma.SortOrder
   residentId?: Prisma.SortOrder
   apartment?: Prisma.SortOrder
   block?: Prisma.SortOrder
   deliveryPersonId?: Prisma.SortOrderInput | Prisma.SortOrder
   condominiumId?: Prisma.SortOrderInput | Prisma.SortOrder
+  orderId?: Prisma.SortOrderInput | Prisma.SortOrder
+  pickupOrigin?: Prisma.SortOrderInput | Prisma.SortOrder
   description?: Prisma.SortOrderInput | Prisma.SortOrder
   notes?: Prisma.SortOrderInput | Prisma.SortOrder
+  externalPlatform?: Prisma.SortOrderInput | Prisma.SortOrder
+  externalCode?: Prisma.SortOrderInput | Prisma.SortOrder
+  deliveryCode?: Prisma.SortOrderInput | Prisma.SortOrder
+  deliveryCodeGeneratedAt?: Prisma.SortOrderInput | Prisma.SortOrder
   rating?: Prisma.SortOrderInput | Prisma.SortOrder
   ratingComment?: Prisma.SortOrderInput | Prisma.SortOrder
   createdAt?: Prisma.SortOrder
@@ -329,21 +393,29 @@ export type DeliveryOrderByWithRelationInput = {
   resident?: Prisma.UserOrderByWithRelationInput
   deliveryPerson?: Prisma.UserOrderByWithRelationInput
   condominium?: Prisma.CondominiumOrderByWithRelationInput
+  order?: Prisma.OrderOrderByWithRelationInput
 }
 
 export type DeliveryWhereUniqueInput = Prisma.AtLeast<{
   id?: string
+  orderId?: string
   AND?: Prisma.DeliveryWhereInput | Prisma.DeliveryWhereInput[]
   OR?: Prisma.DeliveryWhereInput[]
   NOT?: Prisma.DeliveryWhereInput | Prisma.DeliveryWhereInput[]
   status?: Prisma.EnumDeliveryStatusFilter<"Delivery"> | $Enums.DeliveryStatus
+  type?: Prisma.EnumDeliveryTypeFilter<"Delivery"> | $Enums.DeliveryType
   residentId?: Prisma.StringFilter<"Delivery"> | string
   apartment?: Prisma.StringFilter<"Delivery"> | string
   block?: Prisma.StringFilter<"Delivery"> | string
   deliveryPersonId?: Prisma.StringNullableFilter<"Delivery"> | string | null
   condominiumId?: Prisma.StringNullableFilter<"Delivery"> | string | null
+  pickupOrigin?: Prisma.StringNullableFilter<"Delivery"> | string | null
   description?: Prisma.StringNullableFilter<"Delivery"> | string | null
   notes?: Prisma.StringNullableFilter<"Delivery"> | string | null
+  externalPlatform?: Prisma.StringNullableFilter<"Delivery"> | string | null
+  externalCode?: Prisma.StringNullableFilter<"Delivery"> | string | null
+  deliveryCode?: Prisma.StringNullableFilter<"Delivery"> | string | null
+  deliveryCodeGeneratedAt?: Prisma.DateTimeNullableFilter<"Delivery"> | Date | string | null
   rating?: Prisma.IntNullableFilter<"Delivery"> | number | null
   ratingComment?: Prisma.StringNullableFilter<"Delivery"> | string | null
   createdAt?: Prisma.DateTimeFilter<"Delivery"> | Date | string
@@ -354,18 +426,26 @@ export type DeliveryWhereUniqueInput = Prisma.AtLeast<{
   resident?: Prisma.XOR<Prisma.UserScalarRelationFilter, Prisma.UserWhereInput>
   deliveryPerson?: Prisma.XOR<Prisma.UserNullableScalarRelationFilter, Prisma.UserWhereInput> | null
   condominium?: Prisma.XOR<Prisma.CondominiumNullableScalarRelationFilter, Prisma.CondominiumWhereInput> | null
-}, "id">
+  order?: Prisma.XOR<Prisma.OrderNullableScalarRelationFilter, Prisma.OrderWhereInput> | null
+}, "id" | "orderId">
 
 export type DeliveryOrderByWithAggregationInput = {
   id?: Prisma.SortOrder
   status?: Prisma.SortOrder
+  type?: Prisma.SortOrder
   residentId?: Prisma.SortOrder
   apartment?: Prisma.SortOrder
   block?: Prisma.SortOrder
   deliveryPersonId?: Prisma.SortOrderInput | Prisma.SortOrder
   condominiumId?: Prisma.SortOrderInput | Prisma.SortOrder
+  orderId?: Prisma.SortOrderInput | Prisma.SortOrder
+  pickupOrigin?: Prisma.SortOrderInput | Prisma.SortOrder
   description?: Prisma.SortOrderInput | Prisma.SortOrder
   notes?: Prisma.SortOrderInput | Prisma.SortOrder
+  externalPlatform?: Prisma.SortOrderInput | Prisma.SortOrder
+  externalCode?: Prisma.SortOrderInput | Prisma.SortOrder
+  deliveryCode?: Prisma.SortOrderInput | Prisma.SortOrder
+  deliveryCodeGeneratedAt?: Prisma.SortOrderInput | Prisma.SortOrder
   rating?: Prisma.SortOrderInput | Prisma.SortOrder
   ratingComment?: Prisma.SortOrderInput | Prisma.SortOrder
   createdAt?: Prisma.SortOrder
@@ -386,13 +466,20 @@ export type DeliveryScalarWhereWithAggregatesInput = {
   NOT?: Prisma.DeliveryScalarWhereWithAggregatesInput | Prisma.DeliveryScalarWhereWithAggregatesInput[]
   id?: Prisma.StringWithAggregatesFilter<"Delivery"> | string
   status?: Prisma.EnumDeliveryStatusWithAggregatesFilter<"Delivery"> | $Enums.DeliveryStatus
+  type?: Prisma.EnumDeliveryTypeWithAggregatesFilter<"Delivery"> | $Enums.DeliveryType
   residentId?: Prisma.StringWithAggregatesFilter<"Delivery"> | string
   apartment?: Prisma.StringWithAggregatesFilter<"Delivery"> | string
   block?: Prisma.StringWithAggregatesFilter<"Delivery"> | string
   deliveryPersonId?: Prisma.StringNullableWithAggregatesFilter<"Delivery"> | string | null
   condominiumId?: Prisma.StringNullableWithAggregatesFilter<"Delivery"> | string | null
+  orderId?: Prisma.StringNullableWithAggregatesFilter<"Delivery"> | string | null
+  pickupOrigin?: Prisma.StringNullableWithAggregatesFilter<"Delivery"> | string | null
   description?: Prisma.StringNullableWithAggregatesFilter<"Delivery"> | string | null
   notes?: Prisma.StringNullableWithAggregatesFilter<"Delivery"> | string | null
+  externalPlatform?: Prisma.StringNullableWithAggregatesFilter<"Delivery"> | string | null
+  externalCode?: Prisma.StringNullableWithAggregatesFilter<"Delivery"> | string | null
+  deliveryCode?: Prisma.StringNullableWithAggregatesFilter<"Delivery"> | string | null
+  deliveryCodeGeneratedAt?: Prisma.DateTimeNullableWithAggregatesFilter<"Delivery"> | Date | string | null
   rating?: Prisma.IntNullableWithAggregatesFilter<"Delivery"> | number | null
   ratingComment?: Prisma.StringNullableWithAggregatesFilter<"Delivery"> | string | null
   createdAt?: Prisma.DateTimeWithAggregatesFilter<"Delivery"> | Date | string
@@ -405,10 +492,16 @@ export type DeliveryScalarWhereWithAggregatesInput = {
 export type DeliveryCreateInput = {
   id?: string
   status?: $Enums.DeliveryStatus
+  type?: $Enums.DeliveryType
   apartment: string
   block: string
+  pickupOrigin?: string | null
   description?: string | null
   notes?: string | null
+  externalPlatform?: string | null
+  externalCode?: string | null
+  deliveryCode?: string | null
+  deliveryCodeGeneratedAt?: Date | string | null
   rating?: number | null
   ratingComment?: string | null
   createdAt?: Date | string
@@ -419,18 +512,26 @@ export type DeliveryCreateInput = {
   resident: Prisma.UserCreateNestedOneWithoutCreatedDeliveriesInput
   deliveryPerson?: Prisma.UserCreateNestedOneWithoutAcceptedDeliveriesInput
   condominium?: Prisma.CondominiumCreateNestedOneWithoutDeliveriesInput
+  order?: Prisma.OrderCreateNestedOneWithoutDeliveryInput
 }
 
 export type DeliveryUncheckedCreateInput = {
   id?: string
   status?: $Enums.DeliveryStatus
+  type?: $Enums.DeliveryType
   residentId: string
   apartment: string
   block: string
   deliveryPersonId?: string | null
   condominiumId?: string | null
+  orderId?: string | null
+  pickupOrigin?: string | null
   description?: string | null
   notes?: string | null
+  externalPlatform?: string | null
+  externalCode?: string | null
+  deliveryCode?: string | null
+  deliveryCodeGeneratedAt?: Date | string | null
   rating?: number | null
   ratingComment?: string | null
   createdAt?: Date | string
@@ -443,10 +544,16 @@ export type DeliveryUncheckedCreateInput = {
 export type DeliveryUpdateInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   status?: Prisma.EnumDeliveryStatusFieldUpdateOperationsInput | $Enums.DeliveryStatus
+  type?: Prisma.EnumDeliveryTypeFieldUpdateOperationsInput | $Enums.DeliveryType
   apartment?: Prisma.StringFieldUpdateOperationsInput | string
   block?: Prisma.StringFieldUpdateOperationsInput | string
+  pickupOrigin?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   description?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   notes?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  externalPlatform?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  externalCode?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  deliveryCode?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  deliveryCodeGeneratedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   rating?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   ratingComment?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -457,18 +564,26 @@ export type DeliveryUpdateInput = {
   resident?: Prisma.UserUpdateOneRequiredWithoutCreatedDeliveriesNestedInput
   deliveryPerson?: Prisma.UserUpdateOneWithoutAcceptedDeliveriesNestedInput
   condominium?: Prisma.CondominiumUpdateOneWithoutDeliveriesNestedInput
+  order?: Prisma.OrderUpdateOneWithoutDeliveryNestedInput
 }
 
 export type DeliveryUncheckedUpdateInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   status?: Prisma.EnumDeliveryStatusFieldUpdateOperationsInput | $Enums.DeliveryStatus
+  type?: Prisma.EnumDeliveryTypeFieldUpdateOperationsInput | $Enums.DeliveryType
   residentId?: Prisma.StringFieldUpdateOperationsInput | string
   apartment?: Prisma.StringFieldUpdateOperationsInput | string
   block?: Prisma.StringFieldUpdateOperationsInput | string
   deliveryPersonId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   condominiumId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  orderId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  pickupOrigin?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   description?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   notes?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  externalPlatform?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  externalCode?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  deliveryCode?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  deliveryCodeGeneratedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   rating?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   ratingComment?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -481,13 +596,20 @@ export type DeliveryUncheckedUpdateInput = {
 export type DeliveryCreateManyInput = {
   id?: string
   status?: $Enums.DeliveryStatus
+  type?: $Enums.DeliveryType
   residentId: string
   apartment: string
   block: string
   deliveryPersonId?: string | null
   condominiumId?: string | null
+  orderId?: string | null
+  pickupOrigin?: string | null
   description?: string | null
   notes?: string | null
+  externalPlatform?: string | null
+  externalCode?: string | null
+  deliveryCode?: string | null
+  deliveryCodeGeneratedAt?: Date | string | null
   rating?: number | null
   ratingComment?: string | null
   createdAt?: Date | string
@@ -500,10 +622,16 @@ export type DeliveryCreateManyInput = {
 export type DeliveryUpdateManyMutationInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   status?: Prisma.EnumDeliveryStatusFieldUpdateOperationsInput | $Enums.DeliveryStatus
+  type?: Prisma.EnumDeliveryTypeFieldUpdateOperationsInput | $Enums.DeliveryType
   apartment?: Prisma.StringFieldUpdateOperationsInput | string
   block?: Prisma.StringFieldUpdateOperationsInput | string
+  pickupOrigin?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   description?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   notes?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  externalPlatform?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  externalCode?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  deliveryCode?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  deliveryCodeGeneratedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   rating?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   ratingComment?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -516,13 +644,20 @@ export type DeliveryUpdateManyMutationInput = {
 export type DeliveryUncheckedUpdateManyInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   status?: Prisma.EnumDeliveryStatusFieldUpdateOperationsInput | $Enums.DeliveryStatus
+  type?: Prisma.EnumDeliveryTypeFieldUpdateOperationsInput | $Enums.DeliveryType
   residentId?: Prisma.StringFieldUpdateOperationsInput | string
   apartment?: Prisma.StringFieldUpdateOperationsInput | string
   block?: Prisma.StringFieldUpdateOperationsInput | string
   deliveryPersonId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   condominiumId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  orderId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  pickupOrigin?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   description?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   notes?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  externalPlatform?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  externalCode?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  deliveryCode?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  deliveryCodeGeneratedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   rating?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   ratingComment?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -545,13 +680,20 @@ export type DeliveryOrderByRelationAggregateInput = {
 export type DeliveryCountOrderByAggregateInput = {
   id?: Prisma.SortOrder
   status?: Prisma.SortOrder
+  type?: Prisma.SortOrder
   residentId?: Prisma.SortOrder
   apartment?: Prisma.SortOrder
   block?: Prisma.SortOrder
   deliveryPersonId?: Prisma.SortOrder
   condominiumId?: Prisma.SortOrder
+  orderId?: Prisma.SortOrder
+  pickupOrigin?: Prisma.SortOrder
   description?: Prisma.SortOrder
   notes?: Prisma.SortOrder
+  externalPlatform?: Prisma.SortOrder
+  externalCode?: Prisma.SortOrder
+  deliveryCode?: Prisma.SortOrder
+  deliveryCodeGeneratedAt?: Prisma.SortOrder
   rating?: Prisma.SortOrder
   ratingComment?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
@@ -568,13 +710,20 @@ export type DeliveryAvgOrderByAggregateInput = {
 export type DeliveryMaxOrderByAggregateInput = {
   id?: Prisma.SortOrder
   status?: Prisma.SortOrder
+  type?: Prisma.SortOrder
   residentId?: Prisma.SortOrder
   apartment?: Prisma.SortOrder
   block?: Prisma.SortOrder
   deliveryPersonId?: Prisma.SortOrder
   condominiumId?: Prisma.SortOrder
+  orderId?: Prisma.SortOrder
+  pickupOrigin?: Prisma.SortOrder
   description?: Prisma.SortOrder
   notes?: Prisma.SortOrder
+  externalPlatform?: Prisma.SortOrder
+  externalCode?: Prisma.SortOrder
+  deliveryCode?: Prisma.SortOrder
+  deliveryCodeGeneratedAt?: Prisma.SortOrder
   rating?: Prisma.SortOrder
   ratingComment?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
@@ -587,13 +736,20 @@ export type DeliveryMaxOrderByAggregateInput = {
 export type DeliveryMinOrderByAggregateInput = {
   id?: Prisma.SortOrder
   status?: Prisma.SortOrder
+  type?: Prisma.SortOrder
   residentId?: Prisma.SortOrder
   apartment?: Prisma.SortOrder
   block?: Prisma.SortOrder
   deliveryPersonId?: Prisma.SortOrder
   condominiumId?: Prisma.SortOrder
+  orderId?: Prisma.SortOrder
+  pickupOrigin?: Prisma.SortOrder
   description?: Prisma.SortOrder
   notes?: Prisma.SortOrder
+  externalPlatform?: Prisma.SortOrder
+  externalCode?: Prisma.SortOrder
+  deliveryCode?: Prisma.SortOrder
+  deliveryCodeGeneratedAt?: Prisma.SortOrder
   rating?: Prisma.SortOrder
   ratingComment?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
@@ -605,6 +761,11 @@ export type DeliveryMinOrderByAggregateInput = {
 
 export type DeliverySumOrderByAggregateInput = {
   rating?: Prisma.SortOrder
+}
+
+export type DeliveryNullableScalarRelationFilter = {
+  is?: Prisma.DeliveryWhereInput | null
+  isNot?: Prisma.DeliveryWhereInput | null
 }
 
 export type DeliveryCreateNestedManyWithoutCondominiumInput = {
@@ -737,25 +898,59 @@ export type EnumDeliveryStatusFieldUpdateOperationsInput = {
   set?: $Enums.DeliveryStatus
 }
 
-export type NullableIntFieldUpdateOperationsInput = {
-  set?: number | null
-  increment?: number
-  decrement?: number
-  multiply?: number
-  divide?: number
+export type EnumDeliveryTypeFieldUpdateOperationsInput = {
+  set?: $Enums.DeliveryType
 }
 
 export type NullableDateTimeFieldUpdateOperationsInput = {
   set?: Date | string | null
 }
 
+export type DeliveryCreateNestedOneWithoutOrderInput = {
+  create?: Prisma.XOR<Prisma.DeliveryCreateWithoutOrderInput, Prisma.DeliveryUncheckedCreateWithoutOrderInput>
+  connectOrCreate?: Prisma.DeliveryCreateOrConnectWithoutOrderInput
+  connect?: Prisma.DeliveryWhereUniqueInput
+}
+
+export type DeliveryUncheckedCreateNestedOneWithoutOrderInput = {
+  create?: Prisma.XOR<Prisma.DeliveryCreateWithoutOrderInput, Prisma.DeliveryUncheckedCreateWithoutOrderInput>
+  connectOrCreate?: Prisma.DeliveryCreateOrConnectWithoutOrderInput
+  connect?: Prisma.DeliveryWhereUniqueInput
+}
+
+export type DeliveryUpdateOneWithoutOrderNestedInput = {
+  create?: Prisma.XOR<Prisma.DeliveryCreateWithoutOrderInput, Prisma.DeliveryUncheckedCreateWithoutOrderInput>
+  connectOrCreate?: Prisma.DeliveryCreateOrConnectWithoutOrderInput
+  upsert?: Prisma.DeliveryUpsertWithoutOrderInput
+  disconnect?: Prisma.DeliveryWhereInput | boolean
+  delete?: Prisma.DeliveryWhereInput | boolean
+  connect?: Prisma.DeliveryWhereUniqueInput
+  update?: Prisma.XOR<Prisma.XOR<Prisma.DeliveryUpdateToOneWithWhereWithoutOrderInput, Prisma.DeliveryUpdateWithoutOrderInput>, Prisma.DeliveryUncheckedUpdateWithoutOrderInput>
+}
+
+export type DeliveryUncheckedUpdateOneWithoutOrderNestedInput = {
+  create?: Prisma.XOR<Prisma.DeliveryCreateWithoutOrderInput, Prisma.DeliveryUncheckedCreateWithoutOrderInput>
+  connectOrCreate?: Prisma.DeliveryCreateOrConnectWithoutOrderInput
+  upsert?: Prisma.DeliveryUpsertWithoutOrderInput
+  disconnect?: Prisma.DeliveryWhereInput | boolean
+  delete?: Prisma.DeliveryWhereInput | boolean
+  connect?: Prisma.DeliveryWhereUniqueInput
+  update?: Prisma.XOR<Prisma.XOR<Prisma.DeliveryUpdateToOneWithWhereWithoutOrderInput, Prisma.DeliveryUpdateWithoutOrderInput>, Prisma.DeliveryUncheckedUpdateWithoutOrderInput>
+}
+
 export type DeliveryCreateWithoutCondominiumInput = {
   id?: string
   status?: $Enums.DeliveryStatus
+  type?: $Enums.DeliveryType
   apartment: string
   block: string
+  pickupOrigin?: string | null
   description?: string | null
   notes?: string | null
+  externalPlatform?: string | null
+  externalCode?: string | null
+  deliveryCode?: string | null
+  deliveryCodeGeneratedAt?: Date | string | null
   rating?: number | null
   ratingComment?: string | null
   createdAt?: Date | string
@@ -765,17 +960,25 @@ export type DeliveryCreateWithoutCondominiumInput = {
   deliveredAt?: Date | string | null
   resident: Prisma.UserCreateNestedOneWithoutCreatedDeliveriesInput
   deliveryPerson?: Prisma.UserCreateNestedOneWithoutAcceptedDeliveriesInput
+  order?: Prisma.OrderCreateNestedOneWithoutDeliveryInput
 }
 
 export type DeliveryUncheckedCreateWithoutCondominiumInput = {
   id?: string
   status?: $Enums.DeliveryStatus
+  type?: $Enums.DeliveryType
   residentId: string
   apartment: string
   block: string
   deliveryPersonId?: string | null
+  orderId?: string | null
+  pickupOrigin?: string | null
   description?: string | null
   notes?: string | null
+  externalPlatform?: string | null
+  externalCode?: string | null
+  deliveryCode?: string | null
+  deliveryCodeGeneratedAt?: Date | string | null
   rating?: number | null
   ratingComment?: string | null
   createdAt?: Date | string
@@ -817,13 +1020,20 @@ export type DeliveryScalarWhereInput = {
   NOT?: Prisma.DeliveryScalarWhereInput | Prisma.DeliveryScalarWhereInput[]
   id?: Prisma.StringFilter<"Delivery"> | string
   status?: Prisma.EnumDeliveryStatusFilter<"Delivery"> | $Enums.DeliveryStatus
+  type?: Prisma.EnumDeliveryTypeFilter<"Delivery"> | $Enums.DeliveryType
   residentId?: Prisma.StringFilter<"Delivery"> | string
   apartment?: Prisma.StringFilter<"Delivery"> | string
   block?: Prisma.StringFilter<"Delivery"> | string
   deliveryPersonId?: Prisma.StringNullableFilter<"Delivery"> | string | null
   condominiumId?: Prisma.StringNullableFilter<"Delivery"> | string | null
+  orderId?: Prisma.StringNullableFilter<"Delivery"> | string | null
+  pickupOrigin?: Prisma.StringNullableFilter<"Delivery"> | string | null
   description?: Prisma.StringNullableFilter<"Delivery"> | string | null
   notes?: Prisma.StringNullableFilter<"Delivery"> | string | null
+  externalPlatform?: Prisma.StringNullableFilter<"Delivery"> | string | null
+  externalCode?: Prisma.StringNullableFilter<"Delivery"> | string | null
+  deliveryCode?: Prisma.StringNullableFilter<"Delivery"> | string | null
+  deliveryCodeGeneratedAt?: Prisma.DateTimeNullableFilter<"Delivery"> | Date | string | null
   rating?: Prisma.IntNullableFilter<"Delivery"> | number | null
   ratingComment?: Prisma.StringNullableFilter<"Delivery"> | string | null
   createdAt?: Prisma.DateTimeFilter<"Delivery"> | Date | string
@@ -836,10 +1046,16 @@ export type DeliveryScalarWhereInput = {
 export type DeliveryCreateWithoutResidentInput = {
   id?: string
   status?: $Enums.DeliveryStatus
+  type?: $Enums.DeliveryType
   apartment: string
   block: string
+  pickupOrigin?: string | null
   description?: string | null
   notes?: string | null
+  externalPlatform?: string | null
+  externalCode?: string | null
+  deliveryCode?: string | null
+  deliveryCodeGeneratedAt?: Date | string | null
   rating?: number | null
   ratingComment?: string | null
   createdAt?: Date | string
@@ -849,17 +1065,25 @@ export type DeliveryCreateWithoutResidentInput = {
   deliveredAt?: Date | string | null
   deliveryPerson?: Prisma.UserCreateNestedOneWithoutAcceptedDeliveriesInput
   condominium?: Prisma.CondominiumCreateNestedOneWithoutDeliveriesInput
+  order?: Prisma.OrderCreateNestedOneWithoutDeliveryInput
 }
 
 export type DeliveryUncheckedCreateWithoutResidentInput = {
   id?: string
   status?: $Enums.DeliveryStatus
+  type?: $Enums.DeliveryType
   apartment: string
   block: string
   deliveryPersonId?: string | null
   condominiumId?: string | null
+  orderId?: string | null
+  pickupOrigin?: string | null
   description?: string | null
   notes?: string | null
+  externalPlatform?: string | null
+  externalCode?: string | null
+  deliveryCode?: string | null
+  deliveryCodeGeneratedAt?: Date | string | null
   rating?: number | null
   ratingComment?: string | null
   createdAt?: Date | string
@@ -882,10 +1106,16 @@ export type DeliveryCreateManyResidentInputEnvelope = {
 export type DeliveryCreateWithoutDeliveryPersonInput = {
   id?: string
   status?: $Enums.DeliveryStatus
+  type?: $Enums.DeliveryType
   apartment: string
   block: string
+  pickupOrigin?: string | null
   description?: string | null
   notes?: string | null
+  externalPlatform?: string | null
+  externalCode?: string | null
+  deliveryCode?: string | null
+  deliveryCodeGeneratedAt?: Date | string | null
   rating?: number | null
   ratingComment?: string | null
   createdAt?: Date | string
@@ -895,17 +1125,25 @@ export type DeliveryCreateWithoutDeliveryPersonInput = {
   deliveredAt?: Date | string | null
   resident: Prisma.UserCreateNestedOneWithoutCreatedDeliveriesInput
   condominium?: Prisma.CondominiumCreateNestedOneWithoutDeliveriesInput
+  order?: Prisma.OrderCreateNestedOneWithoutDeliveryInput
 }
 
 export type DeliveryUncheckedCreateWithoutDeliveryPersonInput = {
   id?: string
   status?: $Enums.DeliveryStatus
+  type?: $Enums.DeliveryType
   residentId: string
   apartment: string
   block: string
   condominiumId?: string | null
+  orderId?: string | null
+  pickupOrigin?: string | null
   description?: string | null
   notes?: string | null
+  externalPlatform?: string | null
+  externalCode?: string | null
+  deliveryCode?: string | null
+  deliveryCodeGeneratedAt?: Date | string | null
   rating?: number | null
   ratingComment?: string | null
   createdAt?: Date | string
@@ -957,15 +1195,138 @@ export type DeliveryUpdateManyWithWhereWithoutDeliveryPersonInput = {
   data: Prisma.XOR<Prisma.DeliveryUpdateManyMutationInput, Prisma.DeliveryUncheckedUpdateManyWithoutDeliveryPersonInput>
 }
 
-export type DeliveryCreateManyCondominiumInput = {
+export type DeliveryCreateWithoutOrderInput = {
   id?: string
   status?: $Enums.DeliveryStatus
+  type?: $Enums.DeliveryType
+  apartment: string
+  block: string
+  pickupOrigin?: string | null
+  description?: string | null
+  notes?: string | null
+  externalPlatform?: string | null
+  externalCode?: string | null
+  deliveryCode?: string | null
+  deliveryCodeGeneratedAt?: Date | string | null
+  rating?: number | null
+  ratingComment?: string | null
+  createdAt?: Date | string
+  updatedAt?: Date | string
+  acceptedAt?: Date | string | null
+  pickedUpAt?: Date | string | null
+  deliveredAt?: Date | string | null
+  resident: Prisma.UserCreateNestedOneWithoutCreatedDeliveriesInput
+  deliveryPerson?: Prisma.UserCreateNestedOneWithoutAcceptedDeliveriesInput
+  condominium?: Prisma.CondominiumCreateNestedOneWithoutDeliveriesInput
+}
+
+export type DeliveryUncheckedCreateWithoutOrderInput = {
+  id?: string
+  status?: $Enums.DeliveryStatus
+  type?: $Enums.DeliveryType
   residentId: string
   apartment: string
   block: string
   deliveryPersonId?: string | null
+  condominiumId?: string | null
+  pickupOrigin?: string | null
   description?: string | null
   notes?: string | null
+  externalPlatform?: string | null
+  externalCode?: string | null
+  deliveryCode?: string | null
+  deliveryCodeGeneratedAt?: Date | string | null
+  rating?: number | null
+  ratingComment?: string | null
+  createdAt?: Date | string
+  updatedAt?: Date | string
+  acceptedAt?: Date | string | null
+  pickedUpAt?: Date | string | null
+  deliveredAt?: Date | string | null
+}
+
+export type DeliveryCreateOrConnectWithoutOrderInput = {
+  where: Prisma.DeliveryWhereUniqueInput
+  create: Prisma.XOR<Prisma.DeliveryCreateWithoutOrderInput, Prisma.DeliveryUncheckedCreateWithoutOrderInput>
+}
+
+export type DeliveryUpsertWithoutOrderInput = {
+  update: Prisma.XOR<Prisma.DeliveryUpdateWithoutOrderInput, Prisma.DeliveryUncheckedUpdateWithoutOrderInput>
+  create: Prisma.XOR<Prisma.DeliveryCreateWithoutOrderInput, Prisma.DeliveryUncheckedCreateWithoutOrderInput>
+  where?: Prisma.DeliveryWhereInput
+}
+
+export type DeliveryUpdateToOneWithWhereWithoutOrderInput = {
+  where?: Prisma.DeliveryWhereInput
+  data: Prisma.XOR<Prisma.DeliveryUpdateWithoutOrderInput, Prisma.DeliveryUncheckedUpdateWithoutOrderInput>
+}
+
+export type DeliveryUpdateWithoutOrderInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  status?: Prisma.EnumDeliveryStatusFieldUpdateOperationsInput | $Enums.DeliveryStatus
+  type?: Prisma.EnumDeliveryTypeFieldUpdateOperationsInput | $Enums.DeliveryType
+  apartment?: Prisma.StringFieldUpdateOperationsInput | string
+  block?: Prisma.StringFieldUpdateOperationsInput | string
+  pickupOrigin?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  description?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  notes?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  externalPlatform?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  externalCode?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  deliveryCode?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  deliveryCodeGeneratedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  rating?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  ratingComment?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  acceptedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  pickedUpAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  deliveredAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  resident?: Prisma.UserUpdateOneRequiredWithoutCreatedDeliveriesNestedInput
+  deliveryPerson?: Prisma.UserUpdateOneWithoutAcceptedDeliveriesNestedInput
+  condominium?: Prisma.CondominiumUpdateOneWithoutDeliveriesNestedInput
+}
+
+export type DeliveryUncheckedUpdateWithoutOrderInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  status?: Prisma.EnumDeliveryStatusFieldUpdateOperationsInput | $Enums.DeliveryStatus
+  type?: Prisma.EnumDeliveryTypeFieldUpdateOperationsInput | $Enums.DeliveryType
+  residentId?: Prisma.StringFieldUpdateOperationsInput | string
+  apartment?: Prisma.StringFieldUpdateOperationsInput | string
+  block?: Prisma.StringFieldUpdateOperationsInput | string
+  deliveryPersonId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  condominiumId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  pickupOrigin?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  description?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  notes?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  externalPlatform?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  externalCode?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  deliveryCode?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  deliveryCodeGeneratedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  rating?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  ratingComment?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  acceptedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  pickedUpAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  deliveredAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+}
+
+export type DeliveryCreateManyCondominiumInput = {
+  id?: string
+  status?: $Enums.DeliveryStatus
+  type?: $Enums.DeliveryType
+  residentId: string
+  apartment: string
+  block: string
+  deliveryPersonId?: string | null
+  orderId?: string | null
+  pickupOrigin?: string | null
+  description?: string | null
+  notes?: string | null
+  externalPlatform?: string | null
+  externalCode?: string | null
+  deliveryCode?: string | null
+  deliveryCodeGeneratedAt?: Date | string | null
   rating?: number | null
   ratingComment?: string | null
   createdAt?: Date | string
@@ -978,10 +1339,16 @@ export type DeliveryCreateManyCondominiumInput = {
 export type DeliveryUpdateWithoutCondominiumInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   status?: Prisma.EnumDeliveryStatusFieldUpdateOperationsInput | $Enums.DeliveryStatus
+  type?: Prisma.EnumDeliveryTypeFieldUpdateOperationsInput | $Enums.DeliveryType
   apartment?: Prisma.StringFieldUpdateOperationsInput | string
   block?: Prisma.StringFieldUpdateOperationsInput | string
+  pickupOrigin?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   description?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   notes?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  externalPlatform?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  externalCode?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  deliveryCode?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  deliveryCodeGeneratedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   rating?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   ratingComment?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -991,17 +1358,25 @@ export type DeliveryUpdateWithoutCondominiumInput = {
   deliveredAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   resident?: Prisma.UserUpdateOneRequiredWithoutCreatedDeliveriesNestedInput
   deliveryPerson?: Prisma.UserUpdateOneWithoutAcceptedDeliveriesNestedInput
+  order?: Prisma.OrderUpdateOneWithoutDeliveryNestedInput
 }
 
 export type DeliveryUncheckedUpdateWithoutCondominiumInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   status?: Prisma.EnumDeliveryStatusFieldUpdateOperationsInput | $Enums.DeliveryStatus
+  type?: Prisma.EnumDeliveryTypeFieldUpdateOperationsInput | $Enums.DeliveryType
   residentId?: Prisma.StringFieldUpdateOperationsInput | string
   apartment?: Prisma.StringFieldUpdateOperationsInput | string
   block?: Prisma.StringFieldUpdateOperationsInput | string
   deliveryPersonId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  orderId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  pickupOrigin?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   description?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   notes?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  externalPlatform?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  externalCode?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  deliveryCode?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  deliveryCodeGeneratedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   rating?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   ratingComment?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -1014,12 +1389,19 @@ export type DeliveryUncheckedUpdateWithoutCondominiumInput = {
 export type DeliveryUncheckedUpdateManyWithoutCondominiumInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   status?: Prisma.EnumDeliveryStatusFieldUpdateOperationsInput | $Enums.DeliveryStatus
+  type?: Prisma.EnumDeliveryTypeFieldUpdateOperationsInput | $Enums.DeliveryType
   residentId?: Prisma.StringFieldUpdateOperationsInput | string
   apartment?: Prisma.StringFieldUpdateOperationsInput | string
   block?: Prisma.StringFieldUpdateOperationsInput | string
   deliveryPersonId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  orderId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  pickupOrigin?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   description?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   notes?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  externalPlatform?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  externalCode?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  deliveryCode?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  deliveryCodeGeneratedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   rating?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   ratingComment?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -1032,12 +1414,19 @@ export type DeliveryUncheckedUpdateManyWithoutCondominiumInput = {
 export type DeliveryCreateManyResidentInput = {
   id?: string
   status?: $Enums.DeliveryStatus
+  type?: $Enums.DeliveryType
   apartment: string
   block: string
   deliveryPersonId?: string | null
   condominiumId?: string | null
+  orderId?: string | null
+  pickupOrigin?: string | null
   description?: string | null
   notes?: string | null
+  externalPlatform?: string | null
+  externalCode?: string | null
+  deliveryCode?: string | null
+  deliveryCodeGeneratedAt?: Date | string | null
   rating?: number | null
   ratingComment?: string | null
   createdAt?: Date | string
@@ -1050,12 +1439,19 @@ export type DeliveryCreateManyResidentInput = {
 export type DeliveryCreateManyDeliveryPersonInput = {
   id?: string
   status?: $Enums.DeliveryStatus
+  type?: $Enums.DeliveryType
   residentId: string
   apartment: string
   block: string
   condominiumId?: string | null
+  orderId?: string | null
+  pickupOrigin?: string | null
   description?: string | null
   notes?: string | null
+  externalPlatform?: string | null
+  externalCode?: string | null
+  deliveryCode?: string | null
+  deliveryCodeGeneratedAt?: Date | string | null
   rating?: number | null
   ratingComment?: string | null
   createdAt?: Date | string
@@ -1068,10 +1464,16 @@ export type DeliveryCreateManyDeliveryPersonInput = {
 export type DeliveryUpdateWithoutResidentInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   status?: Prisma.EnumDeliveryStatusFieldUpdateOperationsInput | $Enums.DeliveryStatus
+  type?: Prisma.EnumDeliveryTypeFieldUpdateOperationsInput | $Enums.DeliveryType
   apartment?: Prisma.StringFieldUpdateOperationsInput | string
   block?: Prisma.StringFieldUpdateOperationsInput | string
+  pickupOrigin?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   description?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   notes?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  externalPlatform?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  externalCode?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  deliveryCode?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  deliveryCodeGeneratedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   rating?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   ratingComment?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -1081,17 +1483,25 @@ export type DeliveryUpdateWithoutResidentInput = {
   deliveredAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   deliveryPerson?: Prisma.UserUpdateOneWithoutAcceptedDeliveriesNestedInput
   condominium?: Prisma.CondominiumUpdateOneWithoutDeliveriesNestedInput
+  order?: Prisma.OrderUpdateOneWithoutDeliveryNestedInput
 }
 
 export type DeliveryUncheckedUpdateWithoutResidentInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   status?: Prisma.EnumDeliveryStatusFieldUpdateOperationsInput | $Enums.DeliveryStatus
+  type?: Prisma.EnumDeliveryTypeFieldUpdateOperationsInput | $Enums.DeliveryType
   apartment?: Prisma.StringFieldUpdateOperationsInput | string
   block?: Prisma.StringFieldUpdateOperationsInput | string
   deliveryPersonId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   condominiumId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  orderId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  pickupOrigin?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   description?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   notes?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  externalPlatform?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  externalCode?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  deliveryCode?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  deliveryCodeGeneratedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   rating?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   ratingComment?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -1104,12 +1514,19 @@ export type DeliveryUncheckedUpdateWithoutResidentInput = {
 export type DeliveryUncheckedUpdateManyWithoutResidentInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   status?: Prisma.EnumDeliveryStatusFieldUpdateOperationsInput | $Enums.DeliveryStatus
+  type?: Prisma.EnumDeliveryTypeFieldUpdateOperationsInput | $Enums.DeliveryType
   apartment?: Prisma.StringFieldUpdateOperationsInput | string
   block?: Prisma.StringFieldUpdateOperationsInput | string
   deliveryPersonId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   condominiumId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  orderId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  pickupOrigin?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   description?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   notes?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  externalPlatform?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  externalCode?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  deliveryCode?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  deliveryCodeGeneratedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   rating?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   ratingComment?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -1122,10 +1539,16 @@ export type DeliveryUncheckedUpdateManyWithoutResidentInput = {
 export type DeliveryUpdateWithoutDeliveryPersonInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   status?: Prisma.EnumDeliveryStatusFieldUpdateOperationsInput | $Enums.DeliveryStatus
+  type?: Prisma.EnumDeliveryTypeFieldUpdateOperationsInput | $Enums.DeliveryType
   apartment?: Prisma.StringFieldUpdateOperationsInput | string
   block?: Prisma.StringFieldUpdateOperationsInput | string
+  pickupOrigin?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   description?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   notes?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  externalPlatform?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  externalCode?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  deliveryCode?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  deliveryCodeGeneratedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   rating?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   ratingComment?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -1135,17 +1558,25 @@ export type DeliveryUpdateWithoutDeliveryPersonInput = {
   deliveredAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   resident?: Prisma.UserUpdateOneRequiredWithoutCreatedDeliveriesNestedInput
   condominium?: Prisma.CondominiumUpdateOneWithoutDeliveriesNestedInput
+  order?: Prisma.OrderUpdateOneWithoutDeliveryNestedInput
 }
 
 export type DeliveryUncheckedUpdateWithoutDeliveryPersonInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   status?: Prisma.EnumDeliveryStatusFieldUpdateOperationsInput | $Enums.DeliveryStatus
+  type?: Prisma.EnumDeliveryTypeFieldUpdateOperationsInput | $Enums.DeliveryType
   residentId?: Prisma.StringFieldUpdateOperationsInput | string
   apartment?: Prisma.StringFieldUpdateOperationsInput | string
   block?: Prisma.StringFieldUpdateOperationsInput | string
   condominiumId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  orderId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  pickupOrigin?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   description?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   notes?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  externalPlatform?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  externalCode?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  deliveryCode?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  deliveryCodeGeneratedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   rating?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   ratingComment?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -1158,12 +1589,19 @@ export type DeliveryUncheckedUpdateWithoutDeliveryPersonInput = {
 export type DeliveryUncheckedUpdateManyWithoutDeliveryPersonInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   status?: Prisma.EnumDeliveryStatusFieldUpdateOperationsInput | $Enums.DeliveryStatus
+  type?: Prisma.EnumDeliveryTypeFieldUpdateOperationsInput | $Enums.DeliveryType
   residentId?: Prisma.StringFieldUpdateOperationsInput | string
   apartment?: Prisma.StringFieldUpdateOperationsInput | string
   block?: Prisma.StringFieldUpdateOperationsInput | string
   condominiumId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  orderId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  pickupOrigin?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   description?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   notes?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  externalPlatform?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  externalCode?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  deliveryCode?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  deliveryCodeGeneratedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   rating?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   ratingComment?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -1178,13 +1616,20 @@ export type DeliveryUncheckedUpdateManyWithoutDeliveryPersonInput = {
 export type DeliverySelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetSelect<{
   id?: boolean
   status?: boolean
+  type?: boolean
   residentId?: boolean
   apartment?: boolean
   block?: boolean
   deliveryPersonId?: boolean
   condominiumId?: boolean
+  orderId?: boolean
+  pickupOrigin?: boolean
   description?: boolean
   notes?: boolean
+  externalPlatform?: boolean
+  externalCode?: boolean
+  deliveryCode?: boolean
+  deliveryCodeGeneratedAt?: boolean
   rating?: boolean
   ratingComment?: boolean
   createdAt?: boolean
@@ -1195,18 +1640,26 @@ export type DeliverySelect<ExtArgs extends runtime.Types.Extensions.InternalArgs
   resident?: boolean | Prisma.UserDefaultArgs<ExtArgs>
   deliveryPerson?: boolean | Prisma.Delivery$deliveryPersonArgs<ExtArgs>
   condominium?: boolean | Prisma.Delivery$condominiumArgs<ExtArgs>
+  order?: boolean | Prisma.Delivery$orderArgs<ExtArgs>
 }, ExtArgs["result"]["delivery"]>
 
 export type DeliverySelectCreateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetSelect<{
   id?: boolean
   status?: boolean
+  type?: boolean
   residentId?: boolean
   apartment?: boolean
   block?: boolean
   deliveryPersonId?: boolean
   condominiumId?: boolean
+  orderId?: boolean
+  pickupOrigin?: boolean
   description?: boolean
   notes?: boolean
+  externalPlatform?: boolean
+  externalCode?: boolean
+  deliveryCode?: boolean
+  deliveryCodeGeneratedAt?: boolean
   rating?: boolean
   ratingComment?: boolean
   createdAt?: boolean
@@ -1217,18 +1670,26 @@ export type DeliverySelectCreateManyAndReturn<ExtArgs extends runtime.Types.Exte
   resident?: boolean | Prisma.UserDefaultArgs<ExtArgs>
   deliveryPerson?: boolean | Prisma.Delivery$deliveryPersonArgs<ExtArgs>
   condominium?: boolean | Prisma.Delivery$condominiumArgs<ExtArgs>
+  order?: boolean | Prisma.Delivery$orderArgs<ExtArgs>
 }, ExtArgs["result"]["delivery"]>
 
 export type DeliverySelectUpdateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetSelect<{
   id?: boolean
   status?: boolean
+  type?: boolean
   residentId?: boolean
   apartment?: boolean
   block?: boolean
   deliveryPersonId?: boolean
   condominiumId?: boolean
+  orderId?: boolean
+  pickupOrigin?: boolean
   description?: boolean
   notes?: boolean
+  externalPlatform?: boolean
+  externalCode?: boolean
+  deliveryCode?: boolean
+  deliveryCodeGeneratedAt?: boolean
   rating?: boolean
   ratingComment?: boolean
   createdAt?: boolean
@@ -1239,18 +1700,26 @@ export type DeliverySelectUpdateManyAndReturn<ExtArgs extends runtime.Types.Exte
   resident?: boolean | Prisma.UserDefaultArgs<ExtArgs>
   deliveryPerson?: boolean | Prisma.Delivery$deliveryPersonArgs<ExtArgs>
   condominium?: boolean | Prisma.Delivery$condominiumArgs<ExtArgs>
+  order?: boolean | Prisma.Delivery$orderArgs<ExtArgs>
 }, ExtArgs["result"]["delivery"]>
 
 export type DeliverySelectScalar = {
   id?: boolean
   status?: boolean
+  type?: boolean
   residentId?: boolean
   apartment?: boolean
   block?: boolean
   deliveryPersonId?: boolean
   condominiumId?: boolean
+  orderId?: boolean
+  pickupOrigin?: boolean
   description?: boolean
   notes?: boolean
+  externalPlatform?: boolean
+  externalCode?: boolean
+  deliveryCode?: boolean
+  deliveryCodeGeneratedAt?: boolean
   rating?: boolean
   ratingComment?: boolean
   createdAt?: boolean
@@ -1260,21 +1729,24 @@ export type DeliverySelectScalar = {
   deliveredAt?: boolean
 }
 
-export type DeliveryOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "status" | "residentId" | "apartment" | "block" | "deliveryPersonId" | "condominiumId" | "description" | "notes" | "rating" | "ratingComment" | "createdAt" | "updatedAt" | "acceptedAt" | "pickedUpAt" | "deliveredAt", ExtArgs["result"]["delivery"]>
+export type DeliveryOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "status" | "type" | "residentId" | "apartment" | "block" | "deliveryPersonId" | "condominiumId" | "orderId" | "pickupOrigin" | "description" | "notes" | "externalPlatform" | "externalCode" | "deliveryCode" | "deliveryCodeGeneratedAt" | "rating" | "ratingComment" | "createdAt" | "updatedAt" | "acceptedAt" | "pickedUpAt" | "deliveredAt", ExtArgs["result"]["delivery"]>
 export type DeliveryInclude<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   resident?: boolean | Prisma.UserDefaultArgs<ExtArgs>
   deliveryPerson?: boolean | Prisma.Delivery$deliveryPersonArgs<ExtArgs>
   condominium?: boolean | Prisma.Delivery$condominiumArgs<ExtArgs>
+  order?: boolean | Prisma.Delivery$orderArgs<ExtArgs>
 }
 export type DeliveryIncludeCreateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   resident?: boolean | Prisma.UserDefaultArgs<ExtArgs>
   deliveryPerson?: boolean | Prisma.Delivery$deliveryPersonArgs<ExtArgs>
   condominium?: boolean | Prisma.Delivery$condominiumArgs<ExtArgs>
+  order?: boolean | Prisma.Delivery$orderArgs<ExtArgs>
 }
 export type DeliveryIncludeUpdateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   resident?: boolean | Prisma.UserDefaultArgs<ExtArgs>
   deliveryPerson?: boolean | Prisma.Delivery$deliveryPersonArgs<ExtArgs>
   condominium?: boolean | Prisma.Delivery$condominiumArgs<ExtArgs>
+  order?: boolean | Prisma.Delivery$orderArgs<ExtArgs>
 }
 
 export type $DeliveryPayload<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
@@ -1283,17 +1755,25 @@ export type $DeliveryPayload<ExtArgs extends runtime.Types.Extensions.InternalAr
     resident: Prisma.$UserPayload<ExtArgs>
     deliveryPerson: Prisma.$UserPayload<ExtArgs> | null
     condominium: Prisma.$CondominiumPayload<ExtArgs> | null
+    order: Prisma.$OrderPayload<ExtArgs> | null
   }
   scalars: runtime.Types.Extensions.GetPayloadResult<{
     id: string
     status: $Enums.DeliveryStatus
+    type: $Enums.DeliveryType
     residentId: string
     apartment: string
     block: string
     deliveryPersonId: string | null
     condominiumId: string | null
+    orderId: string | null
+    pickupOrigin: string | null
     description: string | null
     notes: string | null
+    externalPlatform: string | null
+    externalCode: string | null
+    deliveryCode: string | null
+    deliveryCodeGeneratedAt: Date | null
     rating: number | null
     ratingComment: string | null
     createdAt: Date
@@ -1698,6 +2178,7 @@ export interface Prisma__DeliveryClient<T, Null = never, ExtArgs extends runtime
   resident<T extends Prisma.UserDefaultArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.UserDefaultArgs<ExtArgs>>): Prisma.Prisma__UserClient<runtime.Types.Result.GetResult<Prisma.$UserPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | Null, Null, ExtArgs, GlobalOmitOptions>
   deliveryPerson<T extends Prisma.Delivery$deliveryPersonArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Delivery$deliveryPersonArgs<ExtArgs>>): Prisma.Prisma__UserClient<runtime.Types.Result.GetResult<Prisma.$UserPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
   condominium<T extends Prisma.Delivery$condominiumArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Delivery$condominiumArgs<ExtArgs>>): Prisma.Prisma__CondominiumClient<runtime.Types.Result.GetResult<Prisma.$CondominiumPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
+  order<T extends Prisma.Delivery$orderArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Delivery$orderArgs<ExtArgs>>): Prisma.Prisma__OrderClient<runtime.Types.Result.GetResult<Prisma.$OrderPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
   /**
    * Attaches callbacks for the resolution and/or rejection of the Promise.
    * @param onfulfilled The callback to execute when the Promise is resolved.
@@ -1729,13 +2210,20 @@ export interface Prisma__DeliveryClient<T, Null = never, ExtArgs extends runtime
 export interface DeliveryFieldRefs {
   readonly id: Prisma.FieldRef<"Delivery", 'String'>
   readonly status: Prisma.FieldRef<"Delivery", 'DeliveryStatus'>
+  readonly type: Prisma.FieldRef<"Delivery", 'DeliveryType'>
   readonly residentId: Prisma.FieldRef<"Delivery", 'String'>
   readonly apartment: Prisma.FieldRef<"Delivery", 'String'>
   readonly block: Prisma.FieldRef<"Delivery", 'String'>
   readonly deliveryPersonId: Prisma.FieldRef<"Delivery", 'String'>
   readonly condominiumId: Prisma.FieldRef<"Delivery", 'String'>
+  readonly orderId: Prisma.FieldRef<"Delivery", 'String'>
+  readonly pickupOrigin: Prisma.FieldRef<"Delivery", 'String'>
   readonly description: Prisma.FieldRef<"Delivery", 'String'>
   readonly notes: Prisma.FieldRef<"Delivery", 'String'>
+  readonly externalPlatform: Prisma.FieldRef<"Delivery", 'String'>
+  readonly externalCode: Prisma.FieldRef<"Delivery", 'String'>
+  readonly deliveryCode: Prisma.FieldRef<"Delivery", 'String'>
+  readonly deliveryCodeGeneratedAt: Prisma.FieldRef<"Delivery", 'DateTime'>
   readonly rating: Prisma.FieldRef<"Delivery", 'Int'>
   readonly ratingComment: Prisma.FieldRef<"Delivery", 'String'>
   readonly createdAt: Prisma.FieldRef<"Delivery", 'DateTime'>
@@ -2179,6 +2667,25 @@ export type Delivery$condominiumArgs<ExtArgs extends runtime.Types.Extensions.In
    */
   include?: Prisma.CondominiumInclude<ExtArgs> | null
   where?: Prisma.CondominiumWhereInput
+}
+
+/**
+ * Delivery.order
+ */
+export type Delivery$orderArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  /**
+   * Select specific fields to fetch from the Order
+   */
+  select?: Prisma.OrderSelect<ExtArgs> | null
+  /**
+   * Omit specific fields from the Order
+   */
+  omit?: Prisma.OrderOmit<ExtArgs> | null
+  /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.OrderInclude<ExtArgs> | null
+  where?: Prisma.OrderWhereInput
 }
 
 /**

@@ -11,7 +11,9 @@
 
 export const UserRole = {
   RESIDENT: 'RESIDENT',
-  DELIVERY_PERSON: 'DELIVERY_PERSON'
+  DELIVERY_PERSON: 'DELIVERY_PERSON',
+  VENDOR: 'VENDOR',
+  CONDOMINIUM_ADMIN: 'CONDOMINIUM_ADMIN'
 } as const
 
 export type UserRole = (typeof UserRole)[keyof typeof UserRole]
@@ -25,3 +27,39 @@ export const DeliveryStatus = {
 } as const
 
 export type DeliveryStatus = (typeof DeliveryStatus)[keyof typeof DeliveryStatus]
+
+
+export const DeliveryType = {
+  PORTARIA: 'PORTARIA',
+  MARKETPLACE: 'MARKETPLACE'
+} as const
+
+export type DeliveryType = (typeof DeliveryType)[keyof typeof DeliveryType]
+
+
+export const VendorType = {
+  RESIDENT: 'RESIDENT',
+  EXTERNAL: 'EXTERNAL'
+} as const
+
+export type VendorType = (typeof VendorType)[keyof typeof VendorType]
+
+
+export const OrderStatus = {
+  PENDING: 'PENDING',
+  ACCEPTED: 'ACCEPTED',
+  READY: 'READY',
+  SENT: 'SENT',
+  COMPLETED: 'COMPLETED',
+  CANCELLED: 'CANCELLED'
+} as const
+
+export type OrderStatus = (typeof OrderStatus)[keyof typeof OrderStatus]
+
+
+export const PaymentStatus = {
+  PENDING: 'PENDING',
+  PAID: 'PAID'
+} as const
+
+export type PaymentStatus = (typeof PaymentStatus)[keyof typeof PaymentStatus]

@@ -23,6 +23,16 @@ export class AuthService {
     role: UserRole = UserRole.RESIDENT,
     apartment?: string,
     block?: string,
+    condominiumId?: string,
+    condominiumName?: string,
+    personalDocument?: string,
+    vendorName?: string,
+    vendorCategory?: string,
+    vendorDescription?: string,
+    vendorCnpj?: string,
+    vendorCnae?: string,
+    vendorLegalDocument?: string,
+    vendorContactPhone?: string,
   ) {
     const user = await this.usersService.create(
       email,
@@ -31,7 +41,19 @@ export class AuthService {
       role,
       apartment,
       block,
+      condominiumId,
+      condominiumName,
+      personalDocument,
+      vendorName,
+      vendorCategory,
+      vendorDescription,
+      vendorCnpj,
+      vendorCnae,
+      vendorLegalDocument,
+      vendorContactPhone,
     );
+
+    const fullUser = await this.usersService.findById(user.id);
 
     const payload: JwtPayload = {
       sub: user.id,
@@ -47,8 +69,12 @@ export class AuthService {
         name: user.name,
         role: user.role,
         condominiumId: user.condominiumId,
+        condominiumName: (fullUser as any)?.condominium?.name ?? null,
         apartment: user.apartment,
         block: user.block,
+        personalDocument: (fullUser as any)?.personalDocument ?? null,
+        isVendor: user.role === UserRole.VENDOR,
+        vendorId: (fullUser as any)?.vendorProfile?.id ?? null,
       },
     };
   }
@@ -57,7 +83,7 @@ export class AuthService {
     const user = await this.usersService.findByEmail(email);
 
     if (!user) {
-      throw new UnauthorizedException('Invalid credentials');
+      throw new UnauthorizedException('Email ou senha inválidos');
     }
 
     const isPasswordValid = await this.usersService.validatePassword(
@@ -66,7 +92,7 @@ export class AuthService {
     );
 
     if (!isPasswordValid) {
-      throw new UnauthorizedException('Invalid credentials');
+      throw new UnauthorizedException('Email ou senha inválidos');
     }
 
     const payload: JwtPayload = {
@@ -83,8 +109,12 @@ export class AuthService {
         name: user.name,
         role: user.role,
         condominiumId: user.condominiumId,
+        condominiumName: (user as any)?.condominium?.name ?? null,
         apartment: user.apartment,
         block: user.block,
+        personalDocument: (user as any)?.personalDocument ?? null,
+        isVendor: user.role === UserRole.VENDOR,
+        vendorId: (user as any)?.vendorProfile?.id ?? null,
       },
     };
   }
@@ -92,7 +122,7 @@ export class AuthService {
   async validateToken(payload: JwtPayload) {
     const user = await this.usersService.findById(payload.sub);
     if (!user) {
-      throw new UnauthorizedException('User not found');
+      throw new UnauthorizedException('Usuário não encontrado');
     }
     return user;
   }

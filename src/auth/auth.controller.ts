@@ -8,10 +8,44 @@ export class AuthController {
 
   @Post('register')
   async register(@Body() body: any) {
-    const { email, password, name, role = UserRole.RESIDENT, apartment, block } = body;
+    const {
+      email,
+      password,
+      name,
+      role = UserRole.RESIDENT,
+      apartment,
+      block,
+      condominiumId,
+      condominiumName,
+      personalDocument,
+      vendorName,
+      vendorCategory,
+      vendorDescription,
+      vendorCnpj,
+      vendorCnae,
+      vendorLegalDocument,
+      vendorContactPhone,
+    } = body;
 
     if (!email || !password || !name) {
-      throw new BadRequestException('Missing required fields');
+      throw new BadRequestException('Preencha email, senha e nome para continuar');
+    }
+
+    if ((role === UserRole.DELIVERY_PERSON || role === UserRole.VENDOR) && !condominiumId?.trim()) {
+      throw new BadRequestException('Código do condomínio é obrigatório para esta conta');
+    }
+
+    if (role === UserRole.DELIVERY_PERSON && !personalDocument?.trim()) {
+      throw new BadRequestException('Documento pessoal (RG/CPF) é obrigatório para entregadores');
+    }
+
+    if (role === UserRole.VENDOR) {
+      if (!vendorName?.trim()) {
+        throw new BadRequestException('Nome do comércio é obrigatório');
+      }
+      if (!vendorCnpj?.trim() || !vendorCnae?.trim() || !vendorLegalDocument?.trim()) {
+        throw new BadRequestException('CNPJ, CNAE e documento do responsável são obrigatórios para comerciantes');
+      }
     }
 
     return this.authService.register(
@@ -21,6 +55,16 @@ export class AuthController {
       role,
       apartment,
       block,
+      condominiumId,
+      condominiumName,
+      personalDocument,
+      vendorName,
+      vendorCategory,
+      vendorDescription,
+      vendorCnpj,
+      vendorCnae,
+      vendorLegalDocument,
+      vendorContactPhone,
     );
   }
 
@@ -29,7 +73,7 @@ export class AuthController {
     const { email, password } = body;
 
     if (!email || !password) {
-      throw new BadRequestException('Email and password are required');
+      throw new BadRequestException('Email e senha são obrigatórios');
     }
 
     return this.authService.login(email, password);

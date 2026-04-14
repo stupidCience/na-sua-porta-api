@@ -18,8 +18,14 @@ model Condominium {
   address   String?
   active    Boolean  @default(true)
 
-  users     User[]
+  // Service configuration
+  operatingHours      String?  // e.g. "08:00–22:00"
+  maxActiveDeliveries Int?     // max simultaneous active deliveries
+
+  users      User[]
   deliveries Delivery[]
+  vendors    Vendor[]
+  orders     Order[]
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
@@ -37,6 +43,9 @@ model User {
   block     String?  // Only for RESIDENT role (format: "A", "B", etc)
   active    Boolean  @default(true)
 
+  vehicleInfo String? // Only for DELIVERY_PERSON (e.g. "Moto - ABC-1234")
+  personalDocument String? // Required for DELIVERY_PERSON (RG/CPF)
+
   // Multi-condominium
   condominiumId String?
   condominium   Condominium? @relation(fields: [condominiumId], references: [id])
@@ -44,6 +53,9 @@ model User {
   // Relations
   createdDeliveries   Delivery[] @relation("CreatedBy")
   acceptedDeliveries  Delivery[] @relation("AcceptedBy")
+  createdOrders       Order[]    @relation("OrderCreatedBy")
+  orderMessages       OrderMessage[]
+  vendorProfile       Vendor?
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
@@ -54,12 +66,15 @@ model User {
 enum UserRole {
   RESIDENT
   DELIVERY_PERSON
+  VENDOR
+  CONDOMINIUM_ADMIN
 }
 
 // Delivery model
 model Delivery {
   id              String          @id @default(cuid())
   status          DeliveryStatus  @default(REQUESTED)
+  type            DeliveryType    @default(PORTARIA)
   
   // Resident info
   residentId      String
@@ -74,10 +89,19 @@ model Delivery {
   // Multi-condominium
   condominiumId   String?
   condominium     Condominium?    @relation(fields: [condominiumId], references: [id])
+
+  // Marketplace relation
+  orderId         String?         @unique
+  order           Order?          @relation(fields: [orderId], references: [id])
   
   // Delivery details
+  pickupOrigin    String?  // e.g. "Portaria" or vendor name for marketplace
   description     String?
   notes           String?
+  externalPlatform String?  // Platform the resident ordered from (e.g. "iFood", "Amazon")
+  externalCode    String?  // Receiving code informed by the resident
+  deliveryCode    String?  // Code generated on acceptance, required to mark as DELIVERED
+  deliveryCodeGeneratedAt DateTime?
   rating          Int?     // 1-5 stars, set by resident after delivery
   ratingComment   String?  // Optional comment on rating
   
@@ -92,6 +116,102 @@ model Delivery {
   @@index([deliveryPersonId])
   @@index([status])
   @@index([condominiumId])
+  @@index([type])
+}
+
+model Vendor {
+  id            String     @id @default(cuid())
+  name          String
+  description   String?
+  category      String?    // e.g. "Restaurante", "Mercado", "Farmácia"
+  imageUrl      String?
+  bannerUrl     String?
+  aboutText     String?
+  contactPhone  String?
+  cnpj          String?
+  cnae          String?
+  legalRepresentativeDocument String?
+  estimatedTimeMinutes Int? @default(30)
+  minOrderValue Float?     @default(0)
+  rating        Float?     @default(4.5)
+  type          VendorType @default(RESIDENT)
+  active        Boolean    @default(true)
+
+  condominiumId String?
+  condominium   Condominium? @relation(fields: [condominiumId], references: [id])
+
+  userId        String?    @unique
+  user          User?      @relation(fields: [userId], references: [id])
+
+  menuItems     MenuItem[]
+  orders        Order[]
+
+  createdAt     DateTime   @default(now())
+  updatedAt     DateTime   @updatedAt
+
+  @@index([condominiumId])
+  @@index([type])
+}
+
+model MenuItem {
+  id          String   @id @default(cuid())
+  name        String
+  description String?
+  price       Float
+  category    String?
+  available   Boolean  @default(true)
+  imageUrl    String?
+
+  vendorId    String
+  vendor      Vendor   @relation(fields: [vendorId], references: [id])
+
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  @@index([vendorId])
+}
+
+model Order {
+  id             String        @id @default(cuid())
+  status         OrderStatus   @default(PENDING)
+  paymentStatus  PaymentStatus @default(PENDING)
+
+  customerName   String
+  apartment      String
+  block          String?
+  description    String
+  totalAmount    Float         @default(0)
+  source         String?  // e.g. "app", "whatsapp"
+
+  vendorId       String?
+  vendor         Vendor?       @relation(fields: [vendorId], references: [id])
+
+  condominiumId  String?
+  condominium    Condominium?  @relation(fields: [condominiumId], references: [id])
+
+  createdByUserId String?
+  createdByUser   User?        @relation("OrderCreatedBy", fields: [createdByUserId], references: [id])
+
+  delivery       Delivery?
+  messages       OrderMessage[]
+
+  acceptedAt     DateTime?
+  readyAt        DateTime?
+  sentAt         DateTime?
+  completedAt    DateTime?
+  cancelledAt    DateTime?
+  cancelReason   String?
+  cancelledByRole UserRole?
+  pickupCode     String?
+  pickupCodeGeneratedAt DateTime?
+  chatEnabledAt  DateTime?
+
+  createdAt      DateTime      @default(now())
+  updatedAt      DateTime      @updatedAt
+
+  @@index([status])
+  @@index([paymentStatus])
+  @@index([condominiumId])
 }
 
 enum DeliveryStatus {
@@ -99,6 +219,45 @@ enum DeliveryStatus {
   ACCEPTED      // Delivery person accepted
   PICKED_UP     // Item picked up from portaria
   DELIVERED     // Delivered to apartment
+}
+
+enum DeliveryType {
+  PORTARIA
+  MARKETPLACE
+}
+
+enum VendorType {
+  RESIDENT
+  EXTERNAL
+}
+
+enum OrderStatus {
+  PENDING
+  ACCEPTED
+  READY
+  SENT
+  COMPLETED
+  CANCELLED
+}
+
+enum PaymentStatus {
+  PENDING
+  PAID
+}
+
+model OrderMessage {
+  id          String   @id @default(cuid())
+  orderId     String
+  order       Order    @relation(fields: [orderId], references: [id])
+  senderId    String
+  sender      User     @relation(fields: [senderId], references: [id])
+  content     String
+  expiresAt   DateTime
+  createdAt   DateTime @default(now())
+
+  @@index([orderId])
+  @@index([senderId])
+  @@index([expiresAt])
 }
 
 // Event log for tracking delivery lifecycle

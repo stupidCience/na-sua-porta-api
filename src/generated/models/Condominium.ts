@@ -20,8 +20,18 @@ export type CondominiumModel = runtime.Types.Result.DefaultSelection<Prisma.$Con
 
 export type AggregateCondominium = {
   _count: CondominiumCountAggregateOutputType | null
+  _avg: CondominiumAvgAggregateOutputType | null
+  _sum: CondominiumSumAggregateOutputType | null
   _min: CondominiumMinAggregateOutputType | null
   _max: CondominiumMaxAggregateOutputType | null
+}
+
+export type CondominiumAvgAggregateOutputType = {
+  maxActiveDeliveries: number | null
+}
+
+export type CondominiumSumAggregateOutputType = {
+  maxActiveDeliveries: number | null
 }
 
 export type CondominiumMinAggregateOutputType = {
@@ -29,6 +39,8 @@ export type CondominiumMinAggregateOutputType = {
   name: string | null
   address: string | null
   active: boolean | null
+  operatingHours: string | null
+  maxActiveDeliveries: number | null
   createdAt: Date | null
   updatedAt: Date | null
 }
@@ -38,6 +50,8 @@ export type CondominiumMaxAggregateOutputType = {
   name: string | null
   address: string | null
   active: boolean | null
+  operatingHours: string | null
+  maxActiveDeliveries: number | null
   createdAt: Date | null
   updatedAt: Date | null
 }
@@ -47,17 +61,29 @@ export type CondominiumCountAggregateOutputType = {
   name: number
   address: number
   active: number
+  operatingHours: number
+  maxActiveDeliveries: number
   createdAt: number
   updatedAt: number
   _all: number
 }
 
 
+export type CondominiumAvgAggregateInputType = {
+  maxActiveDeliveries?: true
+}
+
+export type CondominiumSumAggregateInputType = {
+  maxActiveDeliveries?: true
+}
+
 export type CondominiumMinAggregateInputType = {
   id?: true
   name?: true
   address?: true
   active?: true
+  operatingHours?: true
+  maxActiveDeliveries?: true
   createdAt?: true
   updatedAt?: true
 }
@@ -67,6 +93,8 @@ export type CondominiumMaxAggregateInputType = {
   name?: true
   address?: true
   active?: true
+  operatingHours?: true
+  maxActiveDeliveries?: true
   createdAt?: true
   updatedAt?: true
 }
@@ -76,6 +104,8 @@ export type CondominiumCountAggregateInputType = {
   name?: true
   address?: true
   active?: true
+  operatingHours?: true
+  maxActiveDeliveries?: true
   createdAt?: true
   updatedAt?: true
   _all?: true
@@ -119,6 +149,18 @@ export type CondominiumAggregateArgs<ExtArgs extends runtime.Types.Extensions.In
   /**
    * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
    * 
+   * Select which fields to average
+  **/
+  _avg?: CondominiumAvgAggregateInputType
+  /**
+   * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+   * 
+   * Select which fields to sum
+  **/
+  _sum?: CondominiumSumAggregateInputType
+  /**
+   * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+   * 
    * Select which fields to find the minimum value
   **/
   _min?: CondominiumMinAggregateInputType
@@ -149,6 +191,8 @@ export type CondominiumGroupByArgs<ExtArgs extends runtime.Types.Extensions.Inte
   take?: number
   skip?: number
   _count?: CondominiumCountAggregateInputType | true
+  _avg?: CondominiumAvgAggregateInputType
+  _sum?: CondominiumSumAggregateInputType
   _min?: CondominiumMinAggregateInputType
   _max?: CondominiumMaxAggregateInputType
 }
@@ -158,9 +202,13 @@ export type CondominiumGroupByOutputType = {
   name: string
   address: string | null
   active: boolean
+  operatingHours: string | null
+  maxActiveDeliveries: number | null
   createdAt: Date
   updatedAt: Date
   _count: CondominiumCountAggregateOutputType | null
+  _avg: CondominiumAvgAggregateOutputType | null
+  _sum: CondominiumSumAggregateOutputType | null
   _min: CondominiumMinAggregateOutputType | null
   _max: CondominiumMaxAggregateOutputType | null
 }
@@ -188,10 +236,14 @@ export type CondominiumWhereInput = {
   name?: Prisma.StringFilter<"Condominium"> | string
   address?: Prisma.StringNullableFilter<"Condominium"> | string | null
   active?: Prisma.BoolFilter<"Condominium"> | boolean
+  operatingHours?: Prisma.StringNullableFilter<"Condominium"> | string | null
+  maxActiveDeliveries?: Prisma.IntNullableFilter<"Condominium"> | number | null
   createdAt?: Prisma.DateTimeFilter<"Condominium"> | Date | string
   updatedAt?: Prisma.DateTimeFilter<"Condominium"> | Date | string
   users?: Prisma.UserListRelationFilter
   deliveries?: Prisma.DeliveryListRelationFilter
+  vendors?: Prisma.VendorListRelationFilter
+  orders?: Prisma.OrderListRelationFilter
 }
 
 export type CondominiumOrderByWithRelationInput = {
@@ -199,10 +251,14 @@ export type CondominiumOrderByWithRelationInput = {
   name?: Prisma.SortOrder
   address?: Prisma.SortOrderInput | Prisma.SortOrder
   active?: Prisma.SortOrder
+  operatingHours?: Prisma.SortOrderInput | Prisma.SortOrder
+  maxActiveDeliveries?: Prisma.SortOrderInput | Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
   users?: Prisma.UserOrderByRelationAggregateInput
   deliveries?: Prisma.DeliveryOrderByRelationAggregateInput
+  vendors?: Prisma.VendorOrderByRelationAggregateInput
+  orders?: Prisma.OrderOrderByRelationAggregateInput
 }
 
 export type CondominiumWhereUniqueInput = Prisma.AtLeast<{
@@ -213,10 +269,14 @@ export type CondominiumWhereUniqueInput = Prisma.AtLeast<{
   name?: Prisma.StringFilter<"Condominium"> | string
   address?: Prisma.StringNullableFilter<"Condominium"> | string | null
   active?: Prisma.BoolFilter<"Condominium"> | boolean
+  operatingHours?: Prisma.StringNullableFilter<"Condominium"> | string | null
+  maxActiveDeliveries?: Prisma.IntNullableFilter<"Condominium"> | number | null
   createdAt?: Prisma.DateTimeFilter<"Condominium"> | Date | string
   updatedAt?: Prisma.DateTimeFilter<"Condominium"> | Date | string
   users?: Prisma.UserListRelationFilter
   deliveries?: Prisma.DeliveryListRelationFilter
+  vendors?: Prisma.VendorListRelationFilter
+  orders?: Prisma.OrderListRelationFilter
 }, "id">
 
 export type CondominiumOrderByWithAggregationInput = {
@@ -224,11 +284,15 @@ export type CondominiumOrderByWithAggregationInput = {
   name?: Prisma.SortOrder
   address?: Prisma.SortOrderInput | Prisma.SortOrder
   active?: Prisma.SortOrder
+  operatingHours?: Prisma.SortOrderInput | Prisma.SortOrder
+  maxActiveDeliveries?: Prisma.SortOrderInput | Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
   _count?: Prisma.CondominiumCountOrderByAggregateInput
+  _avg?: Prisma.CondominiumAvgOrderByAggregateInput
   _max?: Prisma.CondominiumMaxOrderByAggregateInput
   _min?: Prisma.CondominiumMinOrderByAggregateInput
+  _sum?: Prisma.CondominiumSumOrderByAggregateInput
 }
 
 export type CondominiumScalarWhereWithAggregatesInput = {
@@ -239,6 +303,8 @@ export type CondominiumScalarWhereWithAggregatesInput = {
   name?: Prisma.StringWithAggregatesFilter<"Condominium"> | string
   address?: Prisma.StringNullableWithAggregatesFilter<"Condominium"> | string | null
   active?: Prisma.BoolWithAggregatesFilter<"Condominium"> | boolean
+  operatingHours?: Prisma.StringNullableWithAggregatesFilter<"Condominium"> | string | null
+  maxActiveDeliveries?: Prisma.IntNullableWithAggregatesFilter<"Condominium"> | number | null
   createdAt?: Prisma.DateTimeWithAggregatesFilter<"Condominium"> | Date | string
   updatedAt?: Prisma.DateTimeWithAggregatesFilter<"Condominium"> | Date | string
 }
@@ -248,10 +314,14 @@ export type CondominiumCreateInput = {
   name: string
   address?: string | null
   active?: boolean
+  operatingHours?: string | null
+  maxActiveDeliveries?: number | null
   createdAt?: Date | string
   updatedAt?: Date | string
   users?: Prisma.UserCreateNestedManyWithoutCondominiumInput
   deliveries?: Prisma.DeliveryCreateNestedManyWithoutCondominiumInput
+  vendors?: Prisma.VendorCreateNestedManyWithoutCondominiumInput
+  orders?: Prisma.OrderCreateNestedManyWithoutCondominiumInput
 }
 
 export type CondominiumUncheckedCreateInput = {
@@ -259,10 +329,14 @@ export type CondominiumUncheckedCreateInput = {
   name: string
   address?: string | null
   active?: boolean
+  operatingHours?: string | null
+  maxActiveDeliveries?: number | null
   createdAt?: Date | string
   updatedAt?: Date | string
   users?: Prisma.UserUncheckedCreateNestedManyWithoutCondominiumInput
   deliveries?: Prisma.DeliveryUncheckedCreateNestedManyWithoutCondominiumInput
+  vendors?: Prisma.VendorUncheckedCreateNestedManyWithoutCondominiumInput
+  orders?: Prisma.OrderUncheckedCreateNestedManyWithoutCondominiumInput
 }
 
 export type CondominiumUpdateInput = {
@@ -270,10 +344,14 @@ export type CondominiumUpdateInput = {
   name?: Prisma.StringFieldUpdateOperationsInput | string
   address?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   active?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  operatingHours?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  maxActiveDeliveries?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   users?: Prisma.UserUpdateManyWithoutCondominiumNestedInput
   deliveries?: Prisma.DeliveryUpdateManyWithoutCondominiumNestedInput
+  vendors?: Prisma.VendorUpdateManyWithoutCondominiumNestedInput
+  orders?: Prisma.OrderUpdateManyWithoutCondominiumNestedInput
 }
 
 export type CondominiumUncheckedUpdateInput = {
@@ -281,10 +359,14 @@ export type CondominiumUncheckedUpdateInput = {
   name?: Prisma.StringFieldUpdateOperationsInput | string
   address?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   active?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  operatingHours?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  maxActiveDeliveries?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   users?: Prisma.UserUncheckedUpdateManyWithoutCondominiumNestedInput
   deliveries?: Prisma.DeliveryUncheckedUpdateManyWithoutCondominiumNestedInput
+  vendors?: Prisma.VendorUncheckedUpdateManyWithoutCondominiumNestedInput
+  orders?: Prisma.OrderUncheckedUpdateManyWithoutCondominiumNestedInput
 }
 
 export type CondominiumCreateManyInput = {
@@ -292,6 +374,8 @@ export type CondominiumCreateManyInput = {
   name: string
   address?: string | null
   active?: boolean
+  operatingHours?: string | null
+  maxActiveDeliveries?: number | null
   createdAt?: Date | string
   updatedAt?: Date | string
 }
@@ -301,6 +385,8 @@ export type CondominiumUpdateManyMutationInput = {
   name?: Prisma.StringFieldUpdateOperationsInput | string
   address?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   active?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  operatingHours?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  maxActiveDeliveries?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
 }
@@ -310,6 +396,8 @@ export type CondominiumUncheckedUpdateManyInput = {
   name?: Prisma.StringFieldUpdateOperationsInput | string
   address?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   active?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  operatingHours?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  maxActiveDeliveries?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
 }
@@ -319,8 +407,14 @@ export type CondominiumCountOrderByAggregateInput = {
   name?: Prisma.SortOrder
   address?: Prisma.SortOrder
   active?: Prisma.SortOrder
+  operatingHours?: Prisma.SortOrder
+  maxActiveDeliveries?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
+}
+
+export type CondominiumAvgOrderByAggregateInput = {
+  maxActiveDeliveries?: Prisma.SortOrder
 }
 
 export type CondominiumMaxOrderByAggregateInput = {
@@ -328,6 +422,8 @@ export type CondominiumMaxOrderByAggregateInput = {
   name?: Prisma.SortOrder
   address?: Prisma.SortOrder
   active?: Prisma.SortOrder
+  operatingHours?: Prisma.SortOrder
+  maxActiveDeliveries?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
 }
@@ -337,8 +433,14 @@ export type CondominiumMinOrderByAggregateInput = {
   name?: Prisma.SortOrder
   address?: Prisma.SortOrder
   active?: Prisma.SortOrder
+  operatingHours?: Prisma.SortOrder
+  maxActiveDeliveries?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
+}
+
+export type CondominiumSumOrderByAggregateInput = {
+  maxActiveDeliveries?: Prisma.SortOrder
 }
 
 export type CondominiumNullableScalarRelationFilter = {
@@ -356,6 +458,14 @@ export type NullableStringFieldUpdateOperationsInput = {
 
 export type BoolFieldUpdateOperationsInput = {
   set?: boolean
+}
+
+export type NullableIntFieldUpdateOperationsInput = {
+  set?: number | null
+  increment?: number
+  decrement?: number
+  multiply?: number
+  divide?: number
 }
 
 export type DateTimeFieldUpdateOperationsInput = {
@@ -394,14 +504,50 @@ export type CondominiumUpdateOneWithoutDeliveriesNestedInput = {
   update?: Prisma.XOR<Prisma.XOR<Prisma.CondominiumUpdateToOneWithWhereWithoutDeliveriesInput, Prisma.CondominiumUpdateWithoutDeliveriesInput>, Prisma.CondominiumUncheckedUpdateWithoutDeliveriesInput>
 }
 
+export type CondominiumCreateNestedOneWithoutVendorsInput = {
+  create?: Prisma.XOR<Prisma.CondominiumCreateWithoutVendorsInput, Prisma.CondominiumUncheckedCreateWithoutVendorsInput>
+  connectOrCreate?: Prisma.CondominiumCreateOrConnectWithoutVendorsInput
+  connect?: Prisma.CondominiumWhereUniqueInput
+}
+
+export type CondominiumUpdateOneWithoutVendorsNestedInput = {
+  create?: Prisma.XOR<Prisma.CondominiumCreateWithoutVendorsInput, Prisma.CondominiumUncheckedCreateWithoutVendorsInput>
+  connectOrCreate?: Prisma.CondominiumCreateOrConnectWithoutVendorsInput
+  upsert?: Prisma.CondominiumUpsertWithoutVendorsInput
+  disconnect?: Prisma.CondominiumWhereInput | boolean
+  delete?: Prisma.CondominiumWhereInput | boolean
+  connect?: Prisma.CondominiumWhereUniqueInput
+  update?: Prisma.XOR<Prisma.XOR<Prisma.CondominiumUpdateToOneWithWhereWithoutVendorsInput, Prisma.CondominiumUpdateWithoutVendorsInput>, Prisma.CondominiumUncheckedUpdateWithoutVendorsInput>
+}
+
+export type CondominiumCreateNestedOneWithoutOrdersInput = {
+  create?: Prisma.XOR<Prisma.CondominiumCreateWithoutOrdersInput, Prisma.CondominiumUncheckedCreateWithoutOrdersInput>
+  connectOrCreate?: Prisma.CondominiumCreateOrConnectWithoutOrdersInput
+  connect?: Prisma.CondominiumWhereUniqueInput
+}
+
+export type CondominiumUpdateOneWithoutOrdersNestedInput = {
+  create?: Prisma.XOR<Prisma.CondominiumCreateWithoutOrdersInput, Prisma.CondominiumUncheckedCreateWithoutOrdersInput>
+  connectOrCreate?: Prisma.CondominiumCreateOrConnectWithoutOrdersInput
+  upsert?: Prisma.CondominiumUpsertWithoutOrdersInput
+  disconnect?: Prisma.CondominiumWhereInput | boolean
+  delete?: Prisma.CondominiumWhereInput | boolean
+  connect?: Prisma.CondominiumWhereUniqueInput
+  update?: Prisma.XOR<Prisma.XOR<Prisma.CondominiumUpdateToOneWithWhereWithoutOrdersInput, Prisma.CondominiumUpdateWithoutOrdersInput>, Prisma.CondominiumUncheckedUpdateWithoutOrdersInput>
+}
+
 export type CondominiumCreateWithoutUsersInput = {
   id?: string
   name: string
   address?: string | null
   active?: boolean
+  operatingHours?: string | null
+  maxActiveDeliveries?: number | null
   createdAt?: Date | string
   updatedAt?: Date | string
   deliveries?: Prisma.DeliveryCreateNestedManyWithoutCondominiumInput
+  vendors?: Prisma.VendorCreateNestedManyWithoutCondominiumInput
+  orders?: Prisma.OrderCreateNestedManyWithoutCondominiumInput
 }
 
 export type CondominiumUncheckedCreateWithoutUsersInput = {
@@ -409,9 +555,13 @@ export type CondominiumUncheckedCreateWithoutUsersInput = {
   name: string
   address?: string | null
   active?: boolean
+  operatingHours?: string | null
+  maxActiveDeliveries?: number | null
   createdAt?: Date | string
   updatedAt?: Date | string
   deliveries?: Prisma.DeliveryUncheckedCreateNestedManyWithoutCondominiumInput
+  vendors?: Prisma.VendorUncheckedCreateNestedManyWithoutCondominiumInput
+  orders?: Prisma.OrderUncheckedCreateNestedManyWithoutCondominiumInput
 }
 
 export type CondominiumCreateOrConnectWithoutUsersInput = {
@@ -435,9 +585,13 @@ export type CondominiumUpdateWithoutUsersInput = {
   name?: Prisma.StringFieldUpdateOperationsInput | string
   address?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   active?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  operatingHours?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  maxActiveDeliveries?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   deliveries?: Prisma.DeliveryUpdateManyWithoutCondominiumNestedInput
+  vendors?: Prisma.VendorUpdateManyWithoutCondominiumNestedInput
+  orders?: Prisma.OrderUpdateManyWithoutCondominiumNestedInput
 }
 
 export type CondominiumUncheckedUpdateWithoutUsersInput = {
@@ -445,9 +599,13 @@ export type CondominiumUncheckedUpdateWithoutUsersInput = {
   name?: Prisma.StringFieldUpdateOperationsInput | string
   address?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   active?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  operatingHours?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  maxActiveDeliveries?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   deliveries?: Prisma.DeliveryUncheckedUpdateManyWithoutCondominiumNestedInput
+  vendors?: Prisma.VendorUncheckedUpdateManyWithoutCondominiumNestedInput
+  orders?: Prisma.OrderUncheckedUpdateManyWithoutCondominiumNestedInput
 }
 
 export type CondominiumCreateWithoutDeliveriesInput = {
@@ -455,9 +613,13 @@ export type CondominiumCreateWithoutDeliveriesInput = {
   name: string
   address?: string | null
   active?: boolean
+  operatingHours?: string | null
+  maxActiveDeliveries?: number | null
   createdAt?: Date | string
   updatedAt?: Date | string
   users?: Prisma.UserCreateNestedManyWithoutCondominiumInput
+  vendors?: Prisma.VendorCreateNestedManyWithoutCondominiumInput
+  orders?: Prisma.OrderCreateNestedManyWithoutCondominiumInput
 }
 
 export type CondominiumUncheckedCreateWithoutDeliveriesInput = {
@@ -465,9 +627,13 @@ export type CondominiumUncheckedCreateWithoutDeliveriesInput = {
   name: string
   address?: string | null
   active?: boolean
+  operatingHours?: string | null
+  maxActiveDeliveries?: number | null
   createdAt?: Date | string
   updatedAt?: Date | string
   users?: Prisma.UserUncheckedCreateNestedManyWithoutCondominiumInput
+  vendors?: Prisma.VendorUncheckedCreateNestedManyWithoutCondominiumInput
+  orders?: Prisma.OrderUncheckedCreateNestedManyWithoutCondominiumInput
 }
 
 export type CondominiumCreateOrConnectWithoutDeliveriesInput = {
@@ -491,9 +657,13 @@ export type CondominiumUpdateWithoutDeliveriesInput = {
   name?: Prisma.StringFieldUpdateOperationsInput | string
   address?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   active?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  operatingHours?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  maxActiveDeliveries?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   users?: Prisma.UserUpdateManyWithoutCondominiumNestedInput
+  vendors?: Prisma.VendorUpdateManyWithoutCondominiumNestedInput
+  orders?: Prisma.OrderUpdateManyWithoutCondominiumNestedInput
 }
 
 export type CondominiumUncheckedUpdateWithoutDeliveriesInput = {
@@ -501,9 +671,157 @@ export type CondominiumUncheckedUpdateWithoutDeliveriesInput = {
   name?: Prisma.StringFieldUpdateOperationsInput | string
   address?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   active?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  operatingHours?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  maxActiveDeliveries?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   users?: Prisma.UserUncheckedUpdateManyWithoutCondominiumNestedInput
+  vendors?: Prisma.VendorUncheckedUpdateManyWithoutCondominiumNestedInput
+  orders?: Prisma.OrderUncheckedUpdateManyWithoutCondominiumNestedInput
+}
+
+export type CondominiumCreateWithoutVendorsInput = {
+  id?: string
+  name: string
+  address?: string | null
+  active?: boolean
+  operatingHours?: string | null
+  maxActiveDeliveries?: number | null
+  createdAt?: Date | string
+  updatedAt?: Date | string
+  users?: Prisma.UserCreateNestedManyWithoutCondominiumInput
+  deliveries?: Prisma.DeliveryCreateNestedManyWithoutCondominiumInput
+  orders?: Prisma.OrderCreateNestedManyWithoutCondominiumInput
+}
+
+export type CondominiumUncheckedCreateWithoutVendorsInput = {
+  id?: string
+  name: string
+  address?: string | null
+  active?: boolean
+  operatingHours?: string | null
+  maxActiveDeliveries?: number | null
+  createdAt?: Date | string
+  updatedAt?: Date | string
+  users?: Prisma.UserUncheckedCreateNestedManyWithoutCondominiumInput
+  deliveries?: Prisma.DeliveryUncheckedCreateNestedManyWithoutCondominiumInput
+  orders?: Prisma.OrderUncheckedCreateNestedManyWithoutCondominiumInput
+}
+
+export type CondominiumCreateOrConnectWithoutVendorsInput = {
+  where: Prisma.CondominiumWhereUniqueInput
+  create: Prisma.XOR<Prisma.CondominiumCreateWithoutVendorsInput, Prisma.CondominiumUncheckedCreateWithoutVendorsInput>
+}
+
+export type CondominiumUpsertWithoutVendorsInput = {
+  update: Prisma.XOR<Prisma.CondominiumUpdateWithoutVendorsInput, Prisma.CondominiumUncheckedUpdateWithoutVendorsInput>
+  create: Prisma.XOR<Prisma.CondominiumCreateWithoutVendorsInput, Prisma.CondominiumUncheckedCreateWithoutVendorsInput>
+  where?: Prisma.CondominiumWhereInput
+}
+
+export type CondominiumUpdateToOneWithWhereWithoutVendorsInput = {
+  where?: Prisma.CondominiumWhereInput
+  data: Prisma.XOR<Prisma.CondominiumUpdateWithoutVendorsInput, Prisma.CondominiumUncheckedUpdateWithoutVendorsInput>
+}
+
+export type CondominiumUpdateWithoutVendorsInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  name?: Prisma.StringFieldUpdateOperationsInput | string
+  address?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  active?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  operatingHours?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  maxActiveDeliveries?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  users?: Prisma.UserUpdateManyWithoutCondominiumNestedInput
+  deliveries?: Prisma.DeliveryUpdateManyWithoutCondominiumNestedInput
+  orders?: Prisma.OrderUpdateManyWithoutCondominiumNestedInput
+}
+
+export type CondominiumUncheckedUpdateWithoutVendorsInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  name?: Prisma.StringFieldUpdateOperationsInput | string
+  address?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  active?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  operatingHours?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  maxActiveDeliveries?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  users?: Prisma.UserUncheckedUpdateManyWithoutCondominiumNestedInput
+  deliveries?: Prisma.DeliveryUncheckedUpdateManyWithoutCondominiumNestedInput
+  orders?: Prisma.OrderUncheckedUpdateManyWithoutCondominiumNestedInput
+}
+
+export type CondominiumCreateWithoutOrdersInput = {
+  id?: string
+  name: string
+  address?: string | null
+  active?: boolean
+  operatingHours?: string | null
+  maxActiveDeliveries?: number | null
+  createdAt?: Date | string
+  updatedAt?: Date | string
+  users?: Prisma.UserCreateNestedManyWithoutCondominiumInput
+  deliveries?: Prisma.DeliveryCreateNestedManyWithoutCondominiumInput
+  vendors?: Prisma.VendorCreateNestedManyWithoutCondominiumInput
+}
+
+export type CondominiumUncheckedCreateWithoutOrdersInput = {
+  id?: string
+  name: string
+  address?: string | null
+  active?: boolean
+  operatingHours?: string | null
+  maxActiveDeliveries?: number | null
+  createdAt?: Date | string
+  updatedAt?: Date | string
+  users?: Prisma.UserUncheckedCreateNestedManyWithoutCondominiumInput
+  deliveries?: Prisma.DeliveryUncheckedCreateNestedManyWithoutCondominiumInput
+  vendors?: Prisma.VendorUncheckedCreateNestedManyWithoutCondominiumInput
+}
+
+export type CondominiumCreateOrConnectWithoutOrdersInput = {
+  where: Prisma.CondominiumWhereUniqueInput
+  create: Prisma.XOR<Prisma.CondominiumCreateWithoutOrdersInput, Prisma.CondominiumUncheckedCreateWithoutOrdersInput>
+}
+
+export type CondominiumUpsertWithoutOrdersInput = {
+  update: Prisma.XOR<Prisma.CondominiumUpdateWithoutOrdersInput, Prisma.CondominiumUncheckedUpdateWithoutOrdersInput>
+  create: Prisma.XOR<Prisma.CondominiumCreateWithoutOrdersInput, Prisma.CondominiumUncheckedCreateWithoutOrdersInput>
+  where?: Prisma.CondominiumWhereInput
+}
+
+export type CondominiumUpdateToOneWithWhereWithoutOrdersInput = {
+  where?: Prisma.CondominiumWhereInput
+  data: Prisma.XOR<Prisma.CondominiumUpdateWithoutOrdersInput, Prisma.CondominiumUncheckedUpdateWithoutOrdersInput>
+}
+
+export type CondominiumUpdateWithoutOrdersInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  name?: Prisma.StringFieldUpdateOperationsInput | string
+  address?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  active?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  operatingHours?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  maxActiveDeliveries?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  users?: Prisma.UserUpdateManyWithoutCondominiumNestedInput
+  deliveries?: Prisma.DeliveryUpdateManyWithoutCondominiumNestedInput
+  vendors?: Prisma.VendorUpdateManyWithoutCondominiumNestedInput
+}
+
+export type CondominiumUncheckedUpdateWithoutOrdersInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  name?: Prisma.StringFieldUpdateOperationsInput | string
+  address?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  active?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  operatingHours?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  maxActiveDeliveries?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  users?: Prisma.UserUncheckedUpdateManyWithoutCondominiumNestedInput
+  deliveries?: Prisma.DeliveryUncheckedUpdateManyWithoutCondominiumNestedInput
+  vendors?: Prisma.VendorUncheckedUpdateManyWithoutCondominiumNestedInput
 }
 
 
@@ -514,11 +832,15 @@ export type CondominiumUncheckedUpdateWithoutDeliveriesInput = {
 export type CondominiumCountOutputType = {
   users: number
   deliveries: number
+  vendors: number
+  orders: number
 }
 
 export type CondominiumCountOutputTypeSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   users?: boolean | CondominiumCountOutputTypeCountUsersArgs
   deliveries?: boolean | CondominiumCountOutputTypeCountDeliveriesArgs
+  vendors?: boolean | CondominiumCountOutputTypeCountVendorsArgs
+  orders?: boolean | CondominiumCountOutputTypeCountOrdersArgs
 }
 
 /**
@@ -545,16 +867,34 @@ export type CondominiumCountOutputTypeCountDeliveriesArgs<ExtArgs extends runtim
   where?: Prisma.DeliveryWhereInput
 }
 
+/**
+ * CondominiumCountOutputType without action
+ */
+export type CondominiumCountOutputTypeCountVendorsArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  where?: Prisma.VendorWhereInput
+}
+
+/**
+ * CondominiumCountOutputType without action
+ */
+export type CondominiumCountOutputTypeCountOrdersArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  where?: Prisma.OrderWhereInput
+}
+
 
 export type CondominiumSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetSelect<{
   id?: boolean
   name?: boolean
   address?: boolean
   active?: boolean
+  operatingHours?: boolean
+  maxActiveDeliveries?: boolean
   createdAt?: boolean
   updatedAt?: boolean
   users?: boolean | Prisma.Condominium$usersArgs<ExtArgs>
   deliveries?: boolean | Prisma.Condominium$deliveriesArgs<ExtArgs>
+  vendors?: boolean | Prisma.Condominium$vendorsArgs<ExtArgs>
+  orders?: boolean | Prisma.Condominium$ordersArgs<ExtArgs>
   _count?: boolean | Prisma.CondominiumCountOutputTypeDefaultArgs<ExtArgs>
 }, ExtArgs["result"]["condominium"]>
 
@@ -563,6 +903,8 @@ export type CondominiumSelectCreateManyAndReturn<ExtArgs extends runtime.Types.E
   name?: boolean
   address?: boolean
   active?: boolean
+  operatingHours?: boolean
+  maxActiveDeliveries?: boolean
   createdAt?: boolean
   updatedAt?: boolean
 }, ExtArgs["result"]["condominium"]>
@@ -572,6 +914,8 @@ export type CondominiumSelectUpdateManyAndReturn<ExtArgs extends runtime.Types.E
   name?: boolean
   address?: boolean
   active?: boolean
+  operatingHours?: boolean
+  maxActiveDeliveries?: boolean
   createdAt?: boolean
   updatedAt?: boolean
 }, ExtArgs["result"]["condominium"]>
@@ -581,14 +925,18 @@ export type CondominiumSelectScalar = {
   name?: boolean
   address?: boolean
   active?: boolean
+  operatingHours?: boolean
+  maxActiveDeliveries?: boolean
   createdAt?: boolean
   updatedAt?: boolean
 }
 
-export type CondominiumOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "name" | "address" | "active" | "createdAt" | "updatedAt", ExtArgs["result"]["condominium"]>
+export type CondominiumOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "name" | "address" | "active" | "operatingHours" | "maxActiveDeliveries" | "createdAt" | "updatedAt", ExtArgs["result"]["condominium"]>
 export type CondominiumInclude<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   users?: boolean | Prisma.Condominium$usersArgs<ExtArgs>
   deliveries?: boolean | Prisma.Condominium$deliveriesArgs<ExtArgs>
+  vendors?: boolean | Prisma.Condominium$vendorsArgs<ExtArgs>
+  orders?: boolean | Prisma.Condominium$ordersArgs<ExtArgs>
   _count?: boolean | Prisma.CondominiumCountOutputTypeDefaultArgs<ExtArgs>
 }
 export type CondominiumIncludeCreateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {}
@@ -599,12 +947,16 @@ export type $CondominiumPayload<ExtArgs extends runtime.Types.Extensions.Interna
   objects: {
     users: Prisma.$UserPayload<ExtArgs>[]
     deliveries: Prisma.$DeliveryPayload<ExtArgs>[]
+    vendors: Prisma.$VendorPayload<ExtArgs>[]
+    orders: Prisma.$OrderPayload<ExtArgs>[]
   }
   scalars: runtime.Types.Extensions.GetPayloadResult<{
     id: string
     name: string
     address: string | null
     active: boolean
+    operatingHours: string | null
+    maxActiveDeliveries: number | null
     createdAt: Date
     updatedAt: Date
   }, ExtArgs["result"]["condominium"]>
@@ -1003,6 +1355,8 @@ export interface Prisma__CondominiumClient<T, Null = never, ExtArgs extends runt
   readonly [Symbol.toStringTag]: "PrismaPromise"
   users<T extends Prisma.Condominium$usersArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Condominium$usersArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$UserPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   deliveries<T extends Prisma.Condominium$deliveriesArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Condominium$deliveriesArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$DeliveryPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
+  vendors<T extends Prisma.Condominium$vendorsArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Condominium$vendorsArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$VendorPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
+  orders<T extends Prisma.Condominium$ordersArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Condominium$ordersArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$OrderPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   /**
    * Attaches callbacks for the resolution and/or rejection of the Promise.
    * @param onfulfilled The callback to execute when the Promise is resolved.
@@ -1036,6 +1390,8 @@ export interface CondominiumFieldRefs {
   readonly name: Prisma.FieldRef<"Condominium", 'String'>
   readonly address: Prisma.FieldRef<"Condominium", 'String'>
   readonly active: Prisma.FieldRef<"Condominium", 'Boolean'>
+  readonly operatingHours: Prisma.FieldRef<"Condominium", 'String'>
+  readonly maxActiveDeliveries: Prisma.FieldRef<"Condominium", 'Int'>
   readonly createdAt: Prisma.FieldRef<"Condominium", 'DateTime'>
   readonly updatedAt: Prisma.FieldRef<"Condominium", 'DateTime'>
 }
@@ -1476,6 +1832,54 @@ export type Condominium$deliveriesArgs<ExtArgs extends runtime.Types.Extensions.
   take?: number
   skip?: number
   distinct?: Prisma.DeliveryScalarFieldEnum | Prisma.DeliveryScalarFieldEnum[]
+}
+
+/**
+ * Condominium.vendors
+ */
+export type Condominium$vendorsArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  /**
+   * Select specific fields to fetch from the Vendor
+   */
+  select?: Prisma.VendorSelect<ExtArgs> | null
+  /**
+   * Omit specific fields from the Vendor
+   */
+  omit?: Prisma.VendorOmit<ExtArgs> | null
+  /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.VendorInclude<ExtArgs> | null
+  where?: Prisma.VendorWhereInput
+  orderBy?: Prisma.VendorOrderByWithRelationInput | Prisma.VendorOrderByWithRelationInput[]
+  cursor?: Prisma.VendorWhereUniqueInput
+  take?: number
+  skip?: number
+  distinct?: Prisma.VendorScalarFieldEnum | Prisma.VendorScalarFieldEnum[]
+}
+
+/**
+ * Condominium.orders
+ */
+export type Condominium$ordersArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  /**
+   * Select specific fields to fetch from the Order
+   */
+  select?: Prisma.OrderSelect<ExtArgs> | null
+  /**
+   * Omit specific fields from the Order
+   */
+  omit?: Prisma.OrderOmit<ExtArgs> | null
+  /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.OrderInclude<ExtArgs> | null
+  where?: Prisma.OrderWhereInput
+  orderBy?: Prisma.OrderOrderByWithRelationInput | Prisma.OrderOrderByWithRelationInput[]
+  cursor?: Prisma.OrderWhereUniqueInput
+  take?: number
+  skip?: number
+  distinct?: Prisma.OrderScalarFieldEnum | Prisma.OrderScalarFieldEnum[]
 }
 
 /**
