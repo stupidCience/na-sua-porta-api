@@ -93,3 +93,16 @@ Base URL local: `http://localhost:3000/api`
 
 - `EADDRINUSE :3000`: finalize processo anterior antes de iniciar novo servidor.
 - Erro de schema Prisma: rode `npm run db:push` e `npm run db:generate`.
+
+## Deploy no Render
+
+- Root Directory: `NSP - Backend`
+- Build Command: `npm install && npm run db:generate && npm run db:push && npm run build`
+- Start Command: `npm run start:prod`
+
+Variaveis obrigatorias:
+
+- `DATABASE_URL`
+- `JWT_SECRET`
+- `JWT_EXPIRES_IN`
+- `CORS_ORIGIN`
