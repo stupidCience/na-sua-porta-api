@@ -7,13 +7,26 @@ async function bootstrap() {
   const app = await NestFactory.create(AppModule);
   app.useGlobalFilters(new HttpExceptionFilter());
 
-  const corsOrigins = process.env.CORS_ORIGINS
-    ? process.env.CORS_ORIGINS.split(',').map((origin) => origin.trim())
-    : ['http://localhost:3001'];
+  const normalizeOrigin = (origin: string) => origin.trim().replace(/\/+$/, '');
+  const defaultCorsOrigins = [
+    'http://localhost:3001',
+    'https://na-sua-porta-front.vercel.app',
+  ];
+  const corsOrigins = (
+    process.env.CORS_ORIGINS
+      ? process.env.CORS_ORIGINS.split(',').map(normalizeOrigin)
+      : defaultCorsOrigins
+  ).filter(Boolean);
 
   // Enable CORS
   app.enableCors({
-    origin: corsOrigins,
+    origin: (origin, callback) => {
+      if (!origin || corsOrigins.includes(normalizeOrigin(origin))) {
+        return callback(null, true);
+      }
+
+      return callback(new Error('Not allowed by CORS'));
+    },
     credentials: true,
   });
 
