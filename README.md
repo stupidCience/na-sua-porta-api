@@ -105,4 +105,4 @@ Variaveis obrigatorias:
 - `DATABASE_URL`
 - `JWT_SECRET`
 - `JWT_EXPIRES_IN`
-- `CORS_ORIGINS` (lista separada por vírgula, ex: `http://localhost:3001,https://app.nasuaporta.com.br`) ou `CORS_ORIGIN` para compatibilidade
+- `CORS_ORIGINS` (lista separada por vírgula, ex: `http://localhost:3001,https://app.na-sua-porta.com.br`) ou `CORS_ORIGIN` para compatibilidade
