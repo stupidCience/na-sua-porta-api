@@ -1049,7 +1049,8 @@ export class DeliveriesService {
       orderBy: { createdAt: 'desc' },
     });
 
-    const escape = (v: unknown) => `"${String(v ?? '').replace(/"/g, '""')}"`;
+    const escape = (v: unknown) =>
+      `"${String(v !== null && v !== undefined ? v : '').replace(/"/g, '""')}"`;
 
     const header =
       'ID,Status,Morador,Email do Morador,Apartamento,Bloco,Entregador,Criado em,Entregue em,Avaliação,Comentário';

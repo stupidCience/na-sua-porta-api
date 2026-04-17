@@ -21,7 +21,7 @@ export class UsersController {
   async getMe(@Request() req: any) {
     const user = await this.usersService.findById(req.user.id);
     if (!user) throw new NotFoundException('Usuário não encontrado');
-    const { password, ...safe } = user as any;
+    const { password: _password, ...safe } = user as any;
     return safe;
   }
 
@@ -38,7 +38,7 @@ export class UsersController {
       vehicleInfo,
       personalDocument,
     });
-    const { password, ...safe } = updated as any;
+    const { password: _password, ...safe } = updated as any;
     return safe;
   }
 
@@ -53,7 +53,7 @@ export class UsersController {
       vendorCnae,
       vendorLegalDocument,
     });
-    const { password, ...safe } = updated as any;
+    const { password: _password, ...safe } = updated as any;
     return safe;
   }
 
@@ -69,7 +69,7 @@ export class UsersController {
       req.user.id,
       condominiumId,
     );
-    const { password, ...safe } = updated as any;
+    const { password: _password, ...safe } = updated as any;
     return safe;
   }
 
