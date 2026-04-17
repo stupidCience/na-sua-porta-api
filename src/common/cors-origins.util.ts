@@ -1,4 +1,5 @@
-const normalizeOrigin = (origin: string) => origin.trim().replace(/\/+$/, '');
+export const normalizeOrigin = (origin: string) =>
+  origin.trim().replace(/\/+$/, '');
 
 export const getCorsOrigins = (): string[] => {
   const corsOriginsEnv =
@@ -14,5 +15,3 @@ export const getCorsOrigins = (): string[] => {
       : defaultCorsOrigins
   ).filter((origin) => origin.length > 0);
 };
-
-export { normalizeOrigin };
