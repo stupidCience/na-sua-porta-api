@@ -11,10 +11,12 @@ import { getCorsOrigins, normalizeOrigin } from '../common/cors-origins.util';
 
 @Injectable()
 @WebSocketGateway({
+  path: '/socket.io',
+  transports: ['polling', 'websocket'],
   cors: {
     origin: (origin, callback) => {
       const corsOrigins = getCorsOrigins();
-      if (origin && corsOrigins.includes(normalizeOrigin(origin))) {
+      if (!origin || corsOrigins.includes(normalizeOrigin(origin))) {
         return callback(null, true);
       }
 
