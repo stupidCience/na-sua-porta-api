@@ -7,14 +7,23 @@ import {
 } from '@nestjs/websockets';
 import { Server, Socket } from 'socket.io';
 import { Injectable } from '@nestjs/common';
-import { getCorsOrigins } from '../common/cors-origins.util';
-
-const socketCorsOrigins = getCorsOrigins();
+import { getCorsOrigins, normalizeOrigin } from '../common/cors-origins.util';
 
 @Injectable()
 @WebSocketGateway({
   cors: {
-    origin: socketCorsOrigins,
+    origin: (origin, callback) => {
+      const corsOrigins = getCorsOrigins();
+      if (!origin || corsOrigins.includes(normalizeOrigin(origin))) {
+        return callback(null, true);
+      }
+
+      return callback(
+        new Error(
+          `Not allowed by CORS. Origin '${origin}' is not in the allowed list: ${corsOrigins.join(', ')}`,
+        ),
+      );
+    },
     credentials: true,
   },
 })
