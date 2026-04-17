@@ -33,9 +33,15 @@ export class DeliveriesGateway
   @WebSocketServer()
   server: Server;
 
-  private userSocketMap = new Map<string, string>();
+  private userSocketMap = new Map<string, Set<string>>();
+  private socketUserMap = new Map<string, string>();
   private userRoleMap = new Map<string, string>();
+  private userCondominiumMap = new Map<string, string>();
   private unavailableUsers = new Set<string>(); // DELIVERY_PERSONs who set themselves offline
+
+  private getCondominiumRoom(condominiumId: string): string {
+    return `condominium:${condominiumId}`;
+  }
 
   handleConnection(client: Socket) {
     console.log(`Client connected: ${client.id}`);
@@ -43,35 +49,68 @@ export class DeliveriesGateway
 
   handleDisconnect(client: Socket) {
     console.log(`Client disconnected: ${client.id}`);
-    const userId = Array.from(this.userSocketMap.entries()).find(
-      ([_, socketId]) => socketId === client.id,
-    )?.[0];
+    const userId = this.socketUserMap.get(client.id);
 
     if (userId) {
-      this.userSocketMap.delete(userId);
-      this.userRoleMap.delete(userId);
-      this.unavailableUsers.delete(userId);
-      this.broadcastOnlineDeliveryPeople();
+      const condominiumId = this.userCondominiumMap.get(userId);
+      this.socketUserMap.delete(client.id);
+      const sockets = this.userSocketMap.get(userId);
+      if (sockets) {
+        sockets.delete(client.id);
+        if (sockets.size === 0) {
+          this.userSocketMap.delete(userId);
+          this.userRoleMap.delete(userId);
+          this.unavailableUsers.delete(userId);
+          this.userCondominiumMap.delete(userId);
+        }
+        this.broadcastOnlineDeliveryPeople(condominiumId);
+      }
     }
   }
 
   @SubscribeMessage('register-user')
   handleRegisterUser(
     client: Socket,
-    payload: string | { userId: string; role?: string },
+    payload:
+      | string
+      | { userId: string; role?: string; condominiumId?: string | null },
   ) {
-    const userId = typeof payload === 'string' ? payload : payload?.userId;
-    const role = typeof payload === 'string' ? undefined : payload?.role;
+    let userId: string | undefined;
+    let role: string | undefined;
+    let condominiumId: string | null | undefined;
+
+    if (typeof payload === 'string') {
+      userId = payload;
+    } else {
+      userId = payload?.userId;
+      role = payload?.role;
+      condominiumId = payload?.condominiumId;
+    }
 
     if (!userId) {
       return;
     }
+    const resolvedCondominiumId =
+      condominiumId === null
+        ? undefined
+        : condominiumId ?? this.userCondominiumMap.get(userId);
 
-    this.userSocketMap.set(userId, client.id);
+    const sockets = this.userSocketMap.get(userId) ?? new Set<string>();
+    sockets.add(client.id);
+    this.userSocketMap.set(userId, sockets);
+    this.socketUserMap.set(client.id, userId);
+
+    if (resolvedCondominiumId) {
+      this.userCondominiumMap.set(userId, resolvedCondominiumId);
+      client.join(this.getCondominiumRoom(resolvedCondominiumId));
+    }
+
     if (role) {
       this.userRoleMap.set(userId, role);
     }
-    this.broadcastOnlineDeliveryPeople();
+    this.broadcastOnlineDeliveryPeople(
+      resolvedCondominiumId,
+    );
     console.log(`User ${userId} registered with socket ${client.id}`);
   }
 
@@ -86,16 +125,20 @@ export class DeliveriesGateway
     } else {
       this.unavailableUsers.add(payload.userId);
     }
-    this.broadcastOnlineDeliveryPeople();
+    this.broadcastOnlineDeliveryPeople(
+      this.userCondominiumMap.get(payload.userId),
+    );
   }
 
-  getOnlineDeliveryPeopleCount(): number {
+  getOnlineDeliveryPeopleCount(condominiumId?: string): number {
     let count = 0;
     for (const [userId, role] of this.userRoleMap.entries()) {
       if (
         role === 'DELIVERY_PERSON' &&
         this.userSocketMap.has(userId) &&
-        !this.unavailableUsers.has(userId)
+        !this.unavailableUsers.has(userId) &&
+        (!condominiumId ||
+          this.userCondominiumMap.get(userId) === condominiumId)
       ) {
         count += 1;
       }
@@ -103,47 +146,76 @@ export class DeliveriesGateway
     return count;
   }
 
-  private broadcastOnlineDeliveryPeople() {
+  private broadcastOnlineDeliveryPeople(condominiumId?: string) {
+    if (condominiumId) {
+      this.server
+        .to(this.getCondominiumRoom(condominiumId))
+        .emit('delivery_people_online', {
+          count: this.getOnlineDeliveryPeopleCount(condominiumId),
+        });
+      return;
+    }
+
     this.server.emit('delivery_people_online', {
       count: this.getOnlineDeliveryPeopleCount(),
     });
   }
 
+  private emitToCondominium(
+    condominiumId: string | undefined,
+    event: string,
+    data: any,
+  ) {
+    if (condominiumId) {
+      this.server.to(this.getCondominiumRoom(condominiumId)).emit(event, data);
+      return;
+    }
+
+    this.server.emit(event, data);
+  }
+
   // Event: Delivery created
   deliveryCreated(delivery: any) {
-    this.server.emit('delivery_created', delivery);
+    const condominiumId = delivery?.condominiumId ?? delivery?.condominium?.id;
+    this.emitToCondominium(condominiumId, 'delivery_created', delivery);
   }
 
   // Event: Delivery accepted
   deliveryAccepted(delivery: any) {
-    this.server.emit('delivery_accepted', delivery);
+    const condominiumId = delivery?.condominiumId ?? delivery?.condominium?.id;
+    this.emitToCondominium(condominiumId, 'delivery_accepted', delivery);
   }
 
   // Event: Delivery status updated
   deliveryStatusUpdated(delivery: any) {
-    this.server.emit('delivery_updated', delivery);
+    const condominiumId = delivery?.condominiumId ?? delivery?.condominium?.id;
+    this.emitToCondominium(condominiumId, 'delivery_updated', delivery);
   }
 
   // Event: Order created
   orderCreated(order: any) {
-    this.server.emit('order_created', order);
+    const condominiumId = order?.condominiumId ?? order?.condominium?.id;
+    this.emitToCondominium(condominiumId, 'order_created', order);
   }
 
   // Event: Order updated
   orderUpdated(order: any) {
-    this.server.emit('order_updated', order);
+    const condominiumId = order?.condominiumId ?? order?.condominium?.id;
+    this.emitToCondominium(condominiumId, 'order_updated', order);
   }
 
   // Send notification to specific user
   sendToUser(userId: string, event: string, data: any) {
-    const socketId = this.userSocketMap.get(userId);
-    if (socketId) {
-      this.server.to(socketId).emit(event, data);
+    const socketIds = this.userSocketMap.get(userId);
+    if (socketIds && socketIds.size > 0) {
+      for (const socketId of socketIds) {
+        this.server.to(socketId).emit(event, data);
+      }
     }
   }
 
   // Send to all users
-  sendToAll(event: string, data: any) {
-    this.server.emit(event, data);
+  sendToAll(event: string, data: any, condominiumId?: string) {
+    this.emitToCondominium(condominiumId, event, data);
   }
 }
