@@ -13,7 +13,7 @@ import {
 } from '@nestjs/common';
 import { Response } from 'express';
 import { DeliveriesService } from './deliveries.service';
-import { DeliveryStatus } from '../generated';
+import { DeliveryStatus } from '../generated/client';
 import { JwtAuth } from 'src/auth/jwt-auth.guard';
 
 @Controller('deliveries')

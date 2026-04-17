@@ -1,7 +1,7 @@
 import { Injectable, UnauthorizedException } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
 import { UsersService } from 'src/users/users.service';
-import { UserRole } from 'src/generated';
+import { UserRole } from '../generated/client';
 
 export interface JwtPayload {
   sub: string;
