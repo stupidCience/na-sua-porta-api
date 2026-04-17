@@ -158,7 +158,11 @@ export class DeliveriesGateway
     });
   }
 
-  private emitToCondominium(condominiumId: string | undefined, event: string, data: any) {
+  private emitToCondominium(
+    condominiumId: string | undefined,
+    event: string,
+    data: any,
+  ) {
     if (condominiumId) {
       this.server.to(this.getCondominiumRoom(condominiumId)).emit(event, data);
       return;
