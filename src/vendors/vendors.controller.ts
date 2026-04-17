@@ -9,7 +9,7 @@ import {
   Request,
 } from '@nestjs/common';
 import { VendorsService } from './vendors.service';
-import { JwtAuth } from 'src/auth/jwt-auth.guard';
+import { JwtAuth } from '../auth/jwt-auth.guard';
 import { OrderStatus } from '../generated/client';
 
 @Controller('vendors')

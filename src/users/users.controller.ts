@@ -9,7 +9,7 @@ import {
   BadRequestException,
   NotFoundException,
 } from '@nestjs/common';
-import { JwtAuth } from 'src/auth/jwt-auth.guard';
+import { JwtAuth } from '../auth/jwt-auth.guard';
 import { UsersService } from './users.service';
 
 @Controller('users')

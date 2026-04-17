@@ -14,7 +14,7 @@ import {
 import { Response } from 'express';
 import { DeliveriesService } from './deliveries.service';
 import { DeliveryStatus } from '../generated/client';
-import { JwtAuth } from 'src/auth/jwt-auth.guard';
+import { JwtAuth } from '../auth/jwt-auth.guard';
 
 @Controller('deliveries')
 export class DeliveriesController {

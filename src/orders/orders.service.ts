@@ -5,9 +5,9 @@ import {
   Logger,
   NotFoundException,
 } from '@nestjs/common';
-import { PrismaService } from 'src/prisma/prisma.service';
-import { DeliveriesGateway } from 'src/deliveries/deliveries.gateway';
-import { DeliveriesService } from 'src/deliveries/deliveries.service';
+import { PrismaService } from '../prisma/prisma.service';
+import { DeliveriesGateway } from '../deliveries/deliveries.gateway';
+import { DeliveriesService } from '../deliveries/deliveries.service';
 import {
   DeliveryStatus,
   DeliveryType,

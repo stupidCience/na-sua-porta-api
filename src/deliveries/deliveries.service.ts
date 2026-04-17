@@ -3,7 +3,7 @@ import {
   BadRequestException,
   NotFoundException,
 } from '@nestjs/common';
-import { PrismaService } from 'src/prisma/prisma.service';
+import { PrismaService } from '../prisma/prisma.service';
 import { DeliveriesGateway } from './deliveries.gateway';
 import {
   Delivery,
@@ -11,7 +11,7 @@ import {
   DeliveryType,
   OrderStatus,
 } from '../generated/client';
-import { tenantScope } from 'src/common/tenant-scope.util';
+import { tenantScope } from '../common/tenant-scope.util';
 
 @Injectable()
 export class DeliveriesService {

@@ -7,7 +7,7 @@ import {
   ForbiddenException,
   BadRequestException,
 } from '@nestjs/common';
-import { JwtAuth } from 'src/auth/jwt-auth.guard';
+import { JwtAuth } from '../auth/jwt-auth.guard';
 import { CondominiumsService } from './condominiums.service';
 
 @Controller('condominiums')
