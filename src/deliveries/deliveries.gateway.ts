@@ -16,6 +16,7 @@ import { getCorsOrigins, normalizeOrigin } from '../common/cors-origins.util';
   cors: {
     origin: (origin, callback) => {
       const corsOrigins = getCorsOrigins();
+      // Keep polling handshake compatible with non-browser probes (no Origin header).
       if (!origin || corsOrigins.includes(normalizeOrigin(origin))) {
         return callback(null, true);
       }
