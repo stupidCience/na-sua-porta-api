@@ -93,7 +93,7 @@ export class DeliveriesGateway
     const resolvedCondominiumId =
       condominiumId === null
         ? undefined
-        : condominiumId ?? this.userCondominiumMap.get(userId);
+        : (condominiumId ?? this.userCondominiumMap.get(userId));
 
     const sockets = this.userSocketMap.get(userId) ?? new Set<string>();
     sockets.add(client.id);
@@ -108,9 +108,7 @@ export class DeliveriesGateway
     if (role) {
       this.userRoleMap.set(userId, role);
     }
-    this.broadcastOnlineDeliveryPeople(
-      resolvedCondominiumId,
-    );
+    this.broadcastOnlineDeliveryPeople(resolvedCondominiumId);
     console.log(`User ${userId} registered with socket ${client.id}`);
   }
 
