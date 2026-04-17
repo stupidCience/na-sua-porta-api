@@ -16,7 +16,9 @@ const defaultCorsOrigins = [
   'https://na-sua-porta-front.vercel.app',
 ];
 const socketCorsOrigins = (
-  corsOriginsEnv ? corsOriginsEnv.split(',').map(normalizeOrigin) : defaultCorsOrigins
+  corsOriginsEnv
+    ? corsOriginsEnv.split(',').map(normalizeOrigin)
+    : defaultCorsOrigins
 ).filter((origin) => origin.length > 0);
 
 @Injectable()
