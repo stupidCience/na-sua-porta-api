@@ -2,23 +2,13 @@ import 'dotenv/config';
 import { NestFactory } from '@nestjs/core';
 import { AppModule } from './app.module';
 import { HttpExceptionFilter } from './common/http-exception.filter';
+import { getCorsOrigins, normalizeOrigin } from './common/cors-origins.util';
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
   app.useGlobalFilters(new HttpExceptionFilter());
 
-  const normalizeOrigin = (origin: string) => origin.trim().replace(/\/+$/, '');
-  const corsOriginsEnv =
-    process.env.CORS_ORIGINS?.trim() || process.env.CORS_ORIGIN?.trim();
-  const defaultCorsOrigins = [
-    'http://localhost:3001',
-    'https://na-sua-porta-front.vercel.app',
-  ];
-  const corsOrigins = (
-    corsOriginsEnv
-      ? corsOriginsEnv.split(',').map(normalizeOrigin)
-      : defaultCorsOrigins
-  ).filter((origin) => origin.length > 0);
+  const corsOrigins = getCorsOrigins();
 
   // Enable CORS
   app.enableCors({
