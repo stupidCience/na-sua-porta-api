@@ -105,4 +105,4 @@ Variaveis obrigatorias:
 - `DATABASE_URL`
 - `JWT_SECRET`
 - `JWT_EXPIRES_IN`
-- `CORS_ORIGIN`
+- `CORS_ORIGINS` (ou `CORS_ORIGIN` para compatibilidade)

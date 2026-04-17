@@ -8,13 +8,15 @@ async function bootstrap() {
   app.useGlobalFilters(new HttpExceptionFilter());
 
   const normalizeOrigin = (origin: string) => origin.trim().replace(/\/+$/, '');
+  const corsOriginsEnv =
+    process.env.CORS_ORIGINS?.trim() || process.env.CORS_ORIGIN?.trim();
   const defaultCorsOrigins = [
     'http://localhost:3001',
     'https://na-sua-porta-front.vercel.app',
   ];
   const corsOrigins = (
-    process.env.CORS_ORIGINS
-      ? process.env.CORS_ORIGINS.split(',').map(normalizeOrigin)
+    corsOriginsEnv
+      ? corsOriginsEnv.split(',').map(normalizeOrigin)
       : defaultCorsOrigins
   ).filter((origin) => origin.length > 0);
 

@@ -8,10 +8,22 @@ import {
 import { Server, Socket } from 'socket.io';
 import { Injectable } from '@nestjs/common';
 
+const normalizeOrigin = (origin: string) => origin.trim().replace(/\/+$/, '');
+const corsOriginsEnv =
+  process.env.CORS_ORIGINS?.trim() || process.env.CORS_ORIGIN?.trim();
+const defaultCorsOrigins = [
+  'http://localhost:3001',
+  'https://na-sua-porta-front.vercel.app',
+];
+const socketCorsOrigins = (
+  corsOriginsEnv ? corsOriginsEnv.split(',').map(normalizeOrigin) : defaultCorsOrigins
+).filter((origin) => origin.length > 0);
+
 @Injectable()
 @WebSocketGateway({
   cors: {
-    origin: '*',
+    origin: socketCorsOrigins,
+    credentials: true,
   },
 })
 export class DeliveriesGateway
