@@ -7,6 +7,7 @@ export const getCorsOrigins = (): string[] => {
   const defaultCorsOrigins = [
     'http://localhost:3001',
     'https://na-sua-porta-front.vercel.app',
+    'https://na-sua-porta.vercel.app',
   ];
 
   return (

@@ -1,5 +1,6 @@
 import 'dotenv/config';
 import { NestFactory } from '@nestjs/core';
+import { IoAdapter } from '@nestjs/platform-socket.io';
 import { AppModule } from './app.module';
 import { HttpExceptionFilter } from './common/http-exception.filter';
 import { getCorsOrigins, normalizeOrigin } from './common/cors-origins.util';
@@ -28,6 +29,7 @@ async function bootstrap() {
 
   // Use global prefix for API routes
   app.setGlobalPrefix('api');
+  app.useWebSocketAdapter(new IoAdapter(app));
 
   const port = process.env.PORT || 3000;
   await app.listen(port);

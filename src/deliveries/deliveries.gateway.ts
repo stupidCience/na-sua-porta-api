@@ -11,10 +11,13 @@ import { getCorsOrigins, normalizeOrigin } from '../common/cors-origins.util';
 
 @Injectable()
 @WebSocketGateway({
+  path: '/socket.io',
+  transports: ['polling', 'websocket'],
   cors: {
     origin: (origin, callback) => {
       const corsOrigins = getCorsOrigins();
-      if (origin && corsOrigins.includes(normalizeOrigin(origin))) {
+      // Keep polling handshake compatible with non-browser probes (no Origin header).
+      if (!origin || corsOrigins.includes(normalizeOrigin(origin))) {
         return callback(null, true);
       }
 
@@ -93,7 +96,7 @@ export class DeliveriesGateway
     const resolvedCondominiumId =
       condominiumId === null
         ? undefined
-        : condominiumId ?? this.userCondominiumMap.get(userId);
+        : (condominiumId ?? this.userCondominiumMap.get(userId));
 
     const sockets = this.userSocketMap.get(userId) ?? new Set<string>();
     sockets.add(client.id);
@@ -108,9 +111,7 @@ export class DeliveriesGateway
     if (role) {
       this.userRoleMap.set(userId, role);
     }
-    this.broadcastOnlineDeliveryPeople(
-      resolvedCondominiumId,
-    );
+    this.broadcastOnlineDeliveryPeople(resolvedCondominiumId);
     console.log(`User ${userId} registered with socket ${client.id}`);
   }
 

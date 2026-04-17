@@ -80,6 +80,8 @@ Base URL local: `http://localhost:3000/api`
 
 ## Eventos Socket.IO
 
+- URL de conexão: mesmo host da API (sem `/api`)
+- Path: `/socket.io`
 - `delivery_created`
 - `delivery_accepted`
 - `delivery_updated`
@@ -105,4 +107,4 @@ Variaveis obrigatorias:
 - `DATABASE_URL`
 - `JWT_SECRET`
 - `JWT_EXPIRES_IN`
-- `CORS_ORIGINS` (lista separada por vírgula, ex: `http://localhost:3001,https://app.na-sua-porta.com.br`) ou `CORS_ORIGIN` para compatibilidade
+- `CORS_ORIGINS` (lista separada por vírgula, ex: `http://localhost:3001,https://na-sua-porta.vercel.app,https://app.na-sua-porta.com.br`) ou `CORS_ORIGIN` para compatibilidade
