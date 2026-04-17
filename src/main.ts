@@ -7,13 +7,30 @@ async function bootstrap() {
   const app = await NestFactory.create(AppModule);
   app.useGlobalFilters(new HttpExceptionFilter());
 
-  const corsOrigins = process.env.CORS_ORIGINS
-    ? process.env.CORS_ORIGINS.split(',').map((origin) => origin.trim())
-    : ['http://localhost:3001'];
+  const normalizeOrigin = (origin: string) => origin.trim().replace(/\/+$/, '');
+  const defaultCorsOrigins = [
+    'http://localhost:3001',
+    'https://na-sua-porta-front.vercel.app',
+  ];
+  const corsOrigins = (
+    process.env.CORS_ORIGINS
+      ? process.env.CORS_ORIGINS.split(',').map(normalizeOrigin)
+      : defaultCorsOrigins
+  ).filter((origin) => origin.length > 0);
 
   // Enable CORS
   app.enableCors({
-    origin: corsOrigins,
+    origin: (origin, callback) => {
+      if (!origin || corsOrigins.includes(normalizeOrigin(origin))) {
+        return callback(null, true);
+      }
+
+      return callback(
+        new Error(
+          `Not allowed by CORS. Origin '${origin}' is not in the allowed list: ${corsOrigins.join(', ')}`,
+        ),
+      );
+    },
     credentials: true,
   });
 
