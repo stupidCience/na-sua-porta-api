@@ -533,7 +533,7 @@ export class DeliveriesService {
       this.gateway.sendToAll('delivery_cancelled', {
         id: deliveryId,
         by: 'RESIDENT',
-      });
+      }, delivery.condominiumId ?? undefined);
       return { id: deliveryId, cancelled: true };
     }
 

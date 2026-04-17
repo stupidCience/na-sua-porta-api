@@ -13,9 +13,7 @@ import { UsersModule } from '../users/users.module';
     JwtModule.register({
       secret: process.env.JWT_SECRET || 'your-secret-key',
       signOptions: {
-        expiresIn: process.env.JWT_EXPIRES_IN
-          ? parseInt(process.env.JWT_EXPIRES_IN)
-          : '1d',
+        expiresIn: process.env.JWT_EXPIRES_IN || '1d',
       },
     }),
   ],

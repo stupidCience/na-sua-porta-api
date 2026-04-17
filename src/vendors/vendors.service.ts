@@ -730,7 +730,7 @@ export class VendorsService {
       this.gateway.sendToAll('delivery_cancelled', {
         id: order.delivery.id,
         by: 'VENDOR',
-      });
+      }, order.delivery.condominiumId ?? vendor.condominiumId ?? undefined);
     }
 
     const updated = await this.prisma.order.update({
