@@ -14,7 +14,7 @@ import {
 import { Response } from 'express';
 import { DeliveriesService } from './deliveries.service';
 import { DeliveryStatus } from '../generated/client';
-import { JwtAuth } from 'src/auth/jwt-auth.guard';
+import { JwtAuth } from '../auth/jwt-auth.guard';
 
 @Controller('deliveries')
 export class DeliveriesController {
@@ -41,7 +41,9 @@ export class DeliveriesController {
     const { description, notes, externalPlatform, externalCode } = body;
 
     if (!apartment || !block) {
-      throw new BadRequestException('Apartamento e bloco são obrigatórios para criar pedido');
+      throw new BadRequestException(
+        'Apartamento e bloco são obrigatórios para criar pedido',
+      );
     }
 
     return this.deliveriesService.create(
@@ -80,18 +82,24 @@ export class DeliveriesController {
   @JwtAuth()
   async getAvailableDeliveries(@Request() req: any) {
     if (req.user.role !== 'DELIVERY_PERSON') {
-      throw new ForbiddenException('Apenas entregadores podem ver pedidos disponíveis');
+      throw new ForbiddenException(
+        'Apenas entregadores podem ver pedidos disponíveis',
+      );
     }
     this.ensureCondominiumLinked(req);
 
-    return this.deliveriesService.getAvailableDeliveries(req.user.condominiumId);
+    return this.deliveriesService.getAvailableDeliveries(
+      req.user.condominiumId,
+    );
   }
 
   @Get('my-deliveries')
   @JwtAuth()
   async getMyDeliveries(@Request() req: any) {
     if (req.user.role !== 'DELIVERY_PERSON') {
-      throw new ForbiddenException('Apenas entregadores podem acessar suas entregas');
+      throw new ForbiddenException(
+        'Apenas entregadores podem acessar suas entregas',
+      );
     }
     this.ensureCondominiumLinked(req);
 
@@ -125,7 +133,9 @@ export class DeliveriesController {
   @JwtAuth()
   async getAdminOverview(@Request() req: any) {
     if (req.user.role !== 'CONDOMINIUM_ADMIN') {
-      throw new ForbiddenException('Apenas administradores do condomínio podem acessar este painel');
+      throw new ForbiddenException(
+        'Apenas administradores do condomínio podem acessar este painel',
+      );
     }
 
     return this.deliveriesService.getAdminOverview(req.user.condominiumId);
@@ -143,7 +153,10 @@ export class DeliveriesController {
     const csv = await this.deliveriesService.exportCsv(req.user.condominiumId);
     const date = new Date().toISOString().slice(0, 10);
     res.setHeader('Content-Type', 'text/csv; charset=utf-8');
-    res.setHeader('Content-Disposition', `attachment; filename="entregas-${date}.csv"`);
+    res.setHeader(
+      'Content-Disposition',
+      `attachment; filename="entregas-${date}.csv"`,
+    );
     res.send('\uFEFF' + csv); // BOM prefix for Excel compatibility
   }
 
@@ -170,7 +183,11 @@ export class DeliveriesController {
 
   @Patch(':id/status')
   @JwtAuth()
-  async updateStatus(@Param('id') id: string, @Body() body: any, @Request() req: any) {
+  async updateStatus(
+    @Param('id') id: string,
+    @Body() body: any,
+    @Request() req: any,
+  ) {
     const { status, deliveryCode } = body;
 
     if (!status || !Object.values(DeliveryStatus).includes(status)) {
@@ -223,7 +240,11 @@ export class DeliveriesController {
 
   @Patch(':id/rate')
   @JwtAuth()
-  async rateDelivery(@Param('id') id: string, @Request() req: any, @Body() body: any) {
+  async rateDelivery(
+    @Param('id') id: string,
+    @Request() req: any,
+    @Body() body: any,
+  ) {
     const { rating, comment } = body;
 
     if (typeof rating !== 'number') {
@@ -239,4 +260,3 @@ export class DeliveriesController {
     );
   }
 }
-

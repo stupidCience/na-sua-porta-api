@@ -28,23 +28,38 @@ export class AuthController {
     } = body;
 
     if (!email || !password || !name) {
-      throw new BadRequestException('Preencha email, senha e nome para continuar');
+      throw new BadRequestException(
+        'Preencha email, senha e nome para continuar',
+      );
     }
 
-    if ((role === UserRole.DELIVERY_PERSON || role === UserRole.VENDOR) && !condominiumId?.trim()) {
-      throw new BadRequestException('Código do condomínio é obrigatório para esta conta');
+    if (
+      (role === UserRole.DELIVERY_PERSON || role === UserRole.VENDOR) &&
+      !condominiumId?.trim()
+    ) {
+      throw new BadRequestException(
+        'Código do condomínio é obrigatório para esta conta',
+      );
     }
 
     if (role === UserRole.DELIVERY_PERSON && !personalDocument?.trim()) {
-      throw new BadRequestException('Documento pessoal (RG/CPF) é obrigatório para entregadores');
+      throw new BadRequestException(
+        'Documento pessoal (RG/CPF) é obrigatório para entregadores',
+      );
     }
 
     if (role === UserRole.VENDOR) {
       if (!vendorName?.trim()) {
         throw new BadRequestException('Nome do comércio é obrigatório');
       }
-      if (!vendorCnpj?.trim() || !vendorCnae?.trim() || !vendorLegalDocument?.trim()) {
-        throw new BadRequestException('CNPJ, CNAE e documento do responsável são obrigatórios para comerciantes');
+      if (
+        !vendorCnpj?.trim() ||
+        !vendorCnae?.trim() ||
+        !vendorLegalDocument?.trim()
+      ) {
+        throw new BadRequestException(
+          'CNPJ, CNAE e documento do responsável são obrigatórios para comerciantes',
+        );
       }
     }
 
@@ -79,4 +94,3 @@ export class AuthController {
     return this.authService.login(email, password);
   }
 }
-

@@ -1,5 +1,9 @@
-import { Injectable, BadRequestException, NotFoundException } from '@nestjs/common';
-import { PrismaService } from 'src/prisma/prisma.service';
+import {
+  Injectable,
+  BadRequestException,
+  NotFoundException,
+} from '@nestjs/common';
+import { PrismaService } from '../prisma/prisma.service';
 import { User, UserRole, VendorType } from '../generated/client';
 import * as bcrypt from 'bcrypt';
 
@@ -56,20 +60,33 @@ export class UsersService {
       resolvedCondominiumId = firstActiveCondominium?.id;
     }
 
-    if ((role === UserRole.DELIVERY_PERSON || role === UserRole.VENDOR) && !resolvedCondominiumId?.trim()) {
-      throw new BadRequestException('Código do condomínio é obrigatório para este tipo de conta');
+    if (
+      (role === UserRole.DELIVERY_PERSON || role === UserRole.VENDOR) &&
+      !resolvedCondominiumId?.trim()
+    ) {
+      throw new BadRequestException(
+        'Código do condomínio é obrigatório para este tipo de conta',
+      );
     }
 
     if (role === UserRole.DELIVERY_PERSON && !personalDocument?.trim()) {
-      throw new BadRequestException('Documento pessoal (RG/CPF) é obrigatório para entregadores');
+      throw new BadRequestException(
+        'Documento pessoal (RG/CPF) é obrigatório para entregadores',
+      );
     }
 
     if (role === UserRole.VENDOR) {
       if (!vendorName?.trim()) {
         throw new BadRequestException('Nome do comércio é obrigatório');
       }
-      if (!vendorCnpj?.trim() || !vendorCnae?.trim() || !vendorLegalDocument?.trim()) {
-        throw new BadRequestException('CNPJ, CNAE e documento do responsável são obrigatórios para comerciantes');
+      if (
+        !vendorCnpj?.trim() ||
+        !vendorCnae?.trim() ||
+        !vendorLegalDocument?.trim()
+      ) {
+        throw new BadRequestException(
+          'CNPJ, CNAE e documento do responsável são obrigatórios para comerciantes',
+        );
       }
     }
 
@@ -80,7 +97,9 @@ export class UsersService {
       });
 
       if (!condominium || !condominium.active) {
-        throw new BadRequestException('Condomínio informado não está disponível');
+        throw new BadRequestException(
+          'Condomínio informado não está disponível',
+        );
       }
     }
 
@@ -182,10 +201,16 @@ export class UsersService {
       data: {
         ...(data.name !== undefined && { name: data.name.trim() }),
         ...(data.phone !== undefined && { phone: data.phone.trim() || null }),
-        ...(data.apartment !== undefined && { apartment: data.apartment.trim() || null }),
+        ...(data.apartment !== undefined && {
+          apartment: data.apartment.trim() || null,
+        }),
         ...(data.block !== undefined && { block: data.block.trim() || null }),
-        ...(data.vehicleInfo !== undefined && { vehicleInfo: data.vehicleInfo.trim() || null }),
-        ...(data.personalDocument !== undefined && { personalDocument: data.personalDocument.trim() || null }),
+        ...(data.vehicleInfo !== undefined && {
+          vehicleInfo: data.vehicleInfo.trim() || null,
+        }),
+        ...(data.personalDocument !== undefined && {
+          personalDocument: data.personalDocument.trim() || null,
+        }),
       },
       include: {
         condominium: { select: { id: true, name: true } },
@@ -211,26 +236,40 @@ export class UsersService {
       throw new NotFoundException('Usuário não encontrado');
     }
 
-    if (user.role === UserRole.DELIVERY_PERSON && !data.personalDocument?.trim()) {
-      throw new BadRequestException('Documento pessoal (RG/CPF) é obrigatório para entregadores');
+    if (
+      user.role === UserRole.DELIVERY_PERSON &&
+      !data.personalDocument?.trim()
+    ) {
+      throw new BadRequestException(
+        'Documento pessoal (RG/CPF) é obrigatório para entregadores',
+      );
     }
 
     if (user.role === UserRole.VENDOR) {
       const cnpj = data.vendorCnpj?.trim() || user.vendorProfile?.cnpj;
       const cnae = data.vendorCnae?.trim() || user.vendorProfile?.cnae;
-      const legalDoc = data.vendorLegalDocument?.trim() || user.vendorProfile?.legalRepresentativeDocument;
+      const legalDoc =
+        data.vendorLegalDocument?.trim() ||
+        user.vendorProfile?.legalRepresentativeDocument;
       if (!cnpj || !cnae || !legalDoc) {
-        throw new BadRequestException('CNPJ, CNAE e documento do responsável são obrigatórios para comerciantes');
+        throw new BadRequestException(
+          'CNPJ, CNAE e documento do responsável são obrigatórios para comerciantes',
+        );
       }
 
       if (user.vendorProfile) {
         await this.prisma.vendor.update({
           where: { id: user.vendorProfile.id },
           data: {
-            ...(data.vendorCnpj !== undefined && { cnpj: data.vendorCnpj.trim() || null }),
-            ...(data.vendorCnae !== undefined && { cnae: data.vendorCnae.trim() || null }),
+            ...(data.vendorCnpj !== undefined && {
+              cnpj: data.vendorCnpj.trim() || null,
+            }),
+            ...(data.vendorCnae !== undefined && {
+              cnae: data.vendorCnae.trim() || null,
+            }),
             ...(data.vendorLegalDocument !== undefined && {
-              legalRepresentativeDocument: data.vendorLegalDocument.trim() || null,
+              legalRepresentativeDocument:
+                data.vendorLegalDocument.trim() || null,
             }),
           },
         });
@@ -269,7 +308,10 @@ export class UsersService {
     });
   }
 
-  async linkToCondominium(userId: string, condominiumId: string): Promise<User> {
+  async linkToCondominium(
+    userId: string,
+    condominiumId: string,
+  ): Promise<User> {
     const normalizedCondominiumId = condominiumId?.trim();
     if (!normalizedCondominiumId) {
       throw new BadRequestException('Código do condomínio é obrigatório');
@@ -320,4 +362,3 @@ export class UsersService {
     });
   }
 }
-

@@ -7,7 +7,7 @@ import {
   ForbiddenException,
   BadRequestException,
 } from '@nestjs/common';
-import { JwtAuth } from 'src/auth/jwt-auth.guard';
+import { JwtAuth } from '../auth/jwt-auth.guard';
 import { CondominiumsService } from './condominiums.service';
 
 @Controller('condominiums')
@@ -36,12 +36,17 @@ export class CondominiumsController {
       throw new BadRequestException('Nenhum condomínio vinculado a esta conta');
     }
     const { name, address, operatingHours, maxActiveDeliveries } = body;
-    return this.condominiumsService.updateMyCondominium(req.user.condominiumId, {
-      name,
-      address,
-      operatingHours,
-      maxActiveDeliveries:
-        maxActiveDeliveries !== undefined ? Number(maxActiveDeliveries) : undefined,
-    });
+    return this.condominiumsService.updateMyCondominium(
+      req.user.condominiumId,
+      {
+        name,
+        address,
+        operatingHours,
+        maxActiveDeliveries:
+          maxActiveDeliveries !== undefined
+            ? Number(maxActiveDeliveries)
+            : undefined,
+      },
+    );
   }
 }

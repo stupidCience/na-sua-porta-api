@@ -9,7 +9,7 @@ import {
   Request,
 } from '@nestjs/common';
 import { VendorsService } from './vendors.service';
-import { JwtAuth } from 'src/auth/jwt-auth.guard';
+import { JwtAuth } from '../auth/jwt-auth.guard';
 import { OrderStatus } from '../generated/client';
 
 @Controller('vendors')
@@ -19,68 +19,105 @@ export class VendorsController {
   @Get('me')
   @JwtAuth()
   async getMyVendor(@Request() req: any) {
-    return this.vendorsService.getMyVendor(req.user.id, req.user?.condominiumId);
+    return this.vendorsService.getMyVendor(
+      req.user.id,
+      req.user?.condominiumId,
+    );
   }
 
   @Patch('me')
   @JwtAuth()
   async updateMyVendor(@Request() req: any, @Body() body: any) {
-    return this.vendorsService.updateMyVendor(req.user.id, req.user?.condominiumId, {
-      name: body.name,
-      description: body.description,
-      category: body.category,
-      imageUrl: body.imageUrl,
-      bannerUrl: body.bannerUrl,
-      aboutText: body.aboutText,
-      contactPhone: body.contactPhone,
-      estimatedTimeMinutes:
-        body.estimatedTimeMinutes !== undefined ? Number(body.estimatedTimeMinutes) : undefined,
-      minOrderValue: body.minOrderValue !== undefined ? Number(body.minOrderValue) : undefined,
-    });
+    return this.vendorsService.updateMyVendor(
+      req.user.id,
+      req.user?.condominiumId,
+      {
+        name: body.name,
+        description: body.description,
+        category: body.category,
+        imageUrl: body.imageUrl,
+        bannerUrl: body.bannerUrl,
+        aboutText: body.aboutText,
+        contactPhone: body.contactPhone,
+        estimatedTimeMinutes:
+          body.estimatedTimeMinutes !== undefined
+            ? Number(body.estimatedTimeMinutes)
+            : undefined,
+        minOrderValue:
+          body.minOrderValue !== undefined
+            ? Number(body.minOrderValue)
+            : undefined,
+      },
+    );
   }
 
   @Post('me/menu-items')
   @JwtAuth()
   async addMenuItem(@Request() req: any, @Body() body: any) {
-    return this.vendorsService.addMenuItem(req.user.id, req.user?.condominiumId, {
-      name: body.name,
-      description: body.description,
-      price: Number(body.price),
-      category: body.category,
-      imageUrl: body.imageUrl,
-      available: body.available,
-    });
+    return this.vendorsService.addMenuItem(
+      req.user.id,
+      req.user?.condominiumId,
+      {
+        name: body.name,
+        description: body.description,
+        price: Number(body.price),
+        category: body.category,
+        imageUrl: body.imageUrl,
+        available: body.available,
+      },
+    );
   }
 
   @Patch('me/menu-items/:itemId')
   @JwtAuth()
-  async updateMenuItem(@Request() req: any, @Param('itemId') itemId: string, @Body() body: any) {
-    return this.vendorsService.updateMenuItem(req.user.id, req.user?.condominiumId, itemId, {
-      name: body.name,
-      description: body.description,
-      price: body.price !== undefined ? Number(body.price) : undefined,
-      category: body.category,
-      imageUrl: body.imageUrl,
-      available: body.available,
-    });
+  async updateMenuItem(
+    @Request() req: any,
+    @Param('itemId') itemId: string,
+    @Body() body: any,
+  ) {
+    return this.vendorsService.updateMenuItem(
+      req.user.id,
+      req.user?.condominiumId,
+      itemId,
+      {
+        name: body.name,
+        description: body.description,
+        price: body.price !== undefined ? Number(body.price) : undefined,
+        category: body.category,
+        imageUrl: body.imageUrl,
+        available: body.available,
+      },
+    );
   }
 
   @Delete('me/menu-items/:itemId')
   @JwtAuth()
   async deleteMenuItem(@Request() req: any, @Param('itemId') itemId: string) {
-    return this.vendorsService.deleteMenuItem(req.user.id, req.user?.condominiumId, itemId);
+    return this.vendorsService.deleteMenuItem(
+      req.user.id,
+      req.user?.condominiumId,
+      itemId,
+    );
   }
 
   @Get('me/orders')
   @JwtAuth()
   async getMyOrders(@Request() req: any) {
-    return this.vendorsService.getMyOrders(req.user.id, req.user?.condominiumId, false);
+    return this.vendorsService.getMyOrders(
+      req.user.id,
+      req.user?.condominiumId,
+      false,
+    );
   }
 
   @Get('me/orders/history')
   @JwtAuth()
   async getMyOrdersHistory(@Request() req: any) {
-    return this.vendorsService.getMyOrders(req.user.id, req.user?.condominiumId, true);
+    return this.vendorsService.getMyOrders(
+      req.user.id,
+      req.user?.condominiumId,
+      true,
+    );
   }
 
   @Patch('me/orders/:orderId/status')
@@ -116,8 +153,15 @@ export class VendorsController {
 
   @Get('me/orders/:orderId/messages')
   @JwtAuth()
-  async getOrderMessages(@Request() req: any, @Param('orderId') orderId: string) {
-    return this.vendorsService.getOrderMessages(req.user.id, req.user?.condominiumId, orderId);
+  async getOrderMessages(
+    @Request() req: any,
+    @Param('orderId') orderId: string,
+  ) {
+    return this.vendorsService.getOrderMessages(
+      req.user.id,
+      req.user?.condominiumId,
+      orderId,
+    );
   }
 
   @Post('me/orders/:orderId/messages')
@@ -138,7 +182,10 @@ export class VendorsController {
   @Get('me/dashboard')
   @JwtAuth()
   async getDashboard(@Request() req: any) {
-    return this.vendorsService.getDashboard(req.user.id, req.user?.condominiumId);
+    return this.vendorsService.getDashboard(
+      req.user.id,
+      req.user?.condominiumId,
+    );
   }
 
   @Get()
@@ -149,7 +196,11 @@ export class VendorsController {
 
   @Post(':id/orders')
   @JwtAuth()
-  async createOrderFromVendor(@Request() req: any, @Param('id') id: string, @Body() body: any) {
+  async createOrderFromVendor(
+    @Request() req: any,
+    @Param('id') id: string,
+    @Body() body: any,
+  ) {
     return this.vendorsService.createOrderFromMenu(id, req.user, {
       items: body.items,
       notes: body.notes,

@@ -27,4 +27,3 @@ import { VendorsModule } from './vendors/vendors.module';
   providers: [AppService],
 })
 export class AppModule {}
-

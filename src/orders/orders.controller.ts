@@ -1,5 +1,13 @@
-import { Body, Controller, Get, Param, Post, Query, Request } from '@nestjs/common';
-import { JwtAuth } from 'src/auth/jwt-auth.guard';
+import {
+  Body,
+  Controller,
+  Get,
+  Param,
+  Post,
+  Query,
+  Request,
+} from '@nestjs/common';
+import { JwtAuth } from '../auth/jwt-auth.guard';
 import { OrdersService } from './orders.service';
 
 @Controller()
@@ -24,25 +32,48 @@ export class OrdersController {
   @Get('orders')
   @JwtAuth()
   async listOrders(@Request() req: any) {
-    return this.ordersService.findAll(req.user.id, req.user.role, req.user.condominiumId);
+    return this.ordersService.findAll(
+      req.user.id,
+      req.user.role,
+      req.user.condominiumId,
+    );
   }
 
   @Get('orders/chats')
   @JwtAuth()
   async listChats(@Request() req: any) {
-    return this.ordersService.getChats(req.user.id, req.user.role, req.user.condominiumId);
+    return this.ordersService.getChats(
+      req.user.id,
+      req.user.role,
+      req.user.condominiumId,
+    );
   }
 
   @Get('orders/:id')
   @JwtAuth()
   async getOrderById(@Request() req: any, @Param('id') id: string) {
-    return this.ordersService.findById(id, req.user.id, req.user.role, req.user.condominiumId);
+    return this.ordersService.findById(
+      id,
+      req.user.id,
+      req.user.role,
+      req.user.condominiumId,
+    );
   }
 
   @Get('orders/:id/messages')
   @JwtAuth()
-  async getOrderMessages(@Request() req: any, @Param('id') id: string, @Query('kind') kind?: string) {
-    return this.ordersService.getMessages(id, req.user.id, req.user.role, req.user.condominiumId, kind);
+  async getOrderMessages(
+    @Request() req: any,
+    @Param('id') id: string,
+    @Query('kind') kind?: string,
+  ) {
+    return this.ordersService.getMessages(
+      id,
+      req.user.id,
+      req.user.role,
+      req.user.condominiumId,
+      kind,
+    );
   }
 
   @Post('orders/:id/messages')

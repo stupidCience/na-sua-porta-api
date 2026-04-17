@@ -1,7 +1,13 @@
-import { BadRequestException, ForbiddenException, Injectable, Logger, NotFoundException } from '@nestjs/common';
-import { PrismaService } from 'src/prisma/prisma.service';
-import { DeliveriesGateway } from 'src/deliveries/deliveries.gateway';
-import { DeliveriesService } from 'src/deliveries/deliveries.service';
+import {
+  BadRequestException,
+  ForbiddenException,
+  Injectable,
+  Logger,
+  NotFoundException,
+} from '@nestjs/common';
+import { PrismaService } from '../prisma/prisma.service';
+import { DeliveriesGateway } from '../deliveries/deliveries.gateway';
+import { DeliveriesService } from '../deliveries/deliveries.service';
 import {
   DeliveryStatus,
   DeliveryType,
@@ -75,7 +81,10 @@ export class OrdersService {
     });
   }
 
-  private isOrderChatEnabled(status: OrderStatus, chatEnabledAt?: Date | null): boolean {
+  private isOrderChatEnabled(
+    status: OrderStatus,
+    chatEnabledAt?: Date | null,
+  ): boolean {
     if (!chatEnabledAt) {
       return false;
     }
@@ -125,7 +134,9 @@ export class OrdersService {
   }
 
   private resolveChatKind(kind?: string): ChatKind {
-    return String(kind || 'ORDER').toUpperCase() === 'DELIVERY' ? 'DELIVERY' : 'ORDER';
+    return String(kind || 'ORDER').toUpperCase() === 'DELIVERY'
+      ? 'DELIVERY'
+      : 'ORDER';
   }
 
   private extractDeliveryMessageContent(metadata?: string | null): string {
@@ -172,7 +183,13 @@ export class OrdersService {
   }
 
   private mapDeliveryEventToMessage(
-    event: { id: string; deliveryId: string; userId: string | null; metadata: string | null; createdAt: Date },
+    event: {
+      id: string;
+      deliveryId: string;
+      userId: string | null;
+      metadata: string | null;
+      createdAt: Date;
+    },
     sendersById: Map<string, { id: string; name: string; role: string }>,
   ): ChatMessagePayload | null {
     const content = this.extractDeliveryMessageContent(event.metadata);
@@ -190,13 +207,19 @@ export class OrdersService {
     };
   }
 
-  private async resolveVendor(condominiumId: string, vendorId?: string, vendorName?: string) {
+  private async resolveVendor(
+    condominiumId: string,
+    vendorId?: string,
+    vendorName?: string,
+  ) {
     if (vendorId) {
       const vendor = await this.prisma.vendor.findFirst({
         where: { id: vendorId, condominiumId, active: true },
       });
       if (!vendor) {
-        throw new BadRequestException('Fornecedor não encontrado para este condomínio');
+        throw new BadRequestException(
+          'Fornecedor não encontrado para este condomínio',
+        );
       }
       return vendor;
     }
@@ -235,7 +258,9 @@ export class OrdersService {
   ) {
     const externalEmail = `externo.${condominiumId}@nasuaporta.local`;
 
-    const existing = await this.prisma.user.findUnique({ where: { email: externalEmail } });
+    const existing = await this.prisma.user.findUnique({
+      where: { email: externalEmail },
+    });
     if (existing) {
       return this.prisma.user.update({
         where: { id: existing.id },
@@ -248,7 +273,10 @@ export class OrdersService {
       });
     }
 
-    const password = await bcrypt.hash(`ext-${condominiumId}-${Date.now()}`, 10);
+    const password = await bcrypt.hash(
+      `ext-${condominiumId}-${Date.now()}`,
+      10,
+    );
     return this.prisma.user.create({
       data: {
         email: externalEmail,
@@ -271,7 +299,9 @@ export class OrdersService {
     });
 
     if (!condominium) {
-      throw new BadRequestException('Nenhum condomínio ativo disponível para pedidos externos');
+      throw new BadRequestException(
+        'Nenhum condomínio ativo disponível para pedidos externos',
+      );
     }
 
     return condominium;
@@ -295,7 +325,11 @@ export class OrdersService {
       throw new BadRequestException('Apartamento e descrição são obrigatórios');
     }
 
-    const vendor = await this.resolveVendor(user.condominiumId, input.vendorId, input.vendorName);
+    const vendor = await this.resolveVendor(
+      user.condominiumId,
+      input.vendorId,
+      input.vendorName,
+    );
 
     const order = await this.prisma.order.create({
       data: {
@@ -338,9 +372,20 @@ export class OrdersService {
     return this.findById(order.id, user.id, user.role, user.condominiumId);
   }
 
-  async createExternalOrder(input: { name: string; apartment: string; description: string; block?: string }) {
-    if (!input?.name?.trim() || !input?.apartment?.trim() || !input?.description?.trim()) {
-      throw new BadRequestException('nome, apartamento e descrição são obrigatórios');
+  async createExternalOrder(input: {
+    name: string;
+    apartment: string;
+    description: string;
+    block?: string;
+  }) {
+    if (
+      !input?.name?.trim() ||
+      !input?.apartment?.trim() ||
+      !input?.description?.trim()
+    ) {
+      throw new BadRequestException(
+        'nome, apartamento e descrição são obrigatórios',
+      );
     }
 
     this.logger.log(
@@ -434,7 +479,9 @@ export class OrdersService {
       });
 
       if (!vendor) {
-        throw new ForbiddenException('Comerciante sem comércio ativo vinculado');
+        throw new ForbiddenException(
+          'Comerciante sem comércio ativo vinculado',
+        );
       }
 
       where.vendorId = vendor.id;
@@ -462,7 +509,12 @@ export class OrdersService {
     });
   }
 
-  async findById(id: string, userId: string, role: string, condominiumId?: string): Promise<any> {
+  async findById(
+    id: string,
+    userId: string,
+    role: string,
+    condominiumId?: string,
+  ): Promise<any> {
     if (!condominiumId) {
       throw new BadRequestException('Usuário sem condomínio vinculado');
     }
@@ -516,17 +568,29 @@ export class OrdersService {
       throw new BadRequestException('Usuário sem condomínio vinculado');
     }
 
-    await Promise.all([this.cleanupExpiredMessages(), this.cleanupExpiredDeliveryMessages()]);
+    await Promise.all([
+      this.cleanupExpiredMessages(),
+      this.cleanupExpiredDeliveryMessages(),
+    ]);
 
     const orderChats = await this.getOrderChats(userId, role, condominiumId);
-    const deliveryChats = await this.getDeliveryChats(userId, role, condominiumId);
+    const deliveryChats = await this.getDeliveryChats(
+      userId,
+      role,
+      condominiumId,
+    );
 
     return [...orderChats, ...deliveryChats].sort(
-      (a, b) => new Date(b.updatedAt).getTime() - new Date(a.updatedAt).getTime(),
+      (a, b) =>
+        new Date(b.updatedAt).getTime() - new Date(a.updatedAt).getTime(),
     );
   }
 
-  private async getOrderChats(userId: string, role: string, condominiumId: string) {
+  private async getOrderChats(
+    userId: string,
+    role: string,
+    condominiumId: string,
+  ) {
     const where: any = {
       condominiumId,
       chatEnabledAt: {
@@ -547,7 +611,9 @@ export class OrdersService {
       });
 
       if (!vendor) {
-        throw new ForbiddenException('Comerciante sem comércio ativo vinculado');
+        throw new ForbiddenException(
+          'Comerciante sem comércio ativo vinculado',
+        );
       }
 
       where.vendorId = vendor.id;
@@ -643,7 +709,9 @@ export class OrdersService {
     }
 
     if (!['RESIDENT', 'DELIVERY_PERSON'].includes(role)) {
-      throw new ForbiddenException('Somente morador e entregador podem acessar chat de portaria');
+      throw new ForbiddenException(
+        'Somente morador e entregador podem acessar chat de portaria',
+      );
     }
 
     const delivery = await this.prisma.delivery.findFirst({
@@ -690,7 +758,11 @@ export class OrdersService {
     return delivery;
   }
 
-  private async getDeliveryChats(userId: string, role: string, condominiumId: string) {
+  private async getDeliveryChats(
+    userId: string,
+    role: string,
+    condominiumId: string,
+  ) {
     if (role === 'VENDOR' || role === 'CONDOMINIUM_ADMIN') {
       return [];
     }
@@ -698,7 +770,11 @@ export class OrdersService {
     const where: any = {
       condominiumId,
       status: {
-        in: [DeliveryStatus.ACCEPTED, DeliveryStatus.PICKED_UP, DeliveryStatus.DELIVERED],
+        in: [
+          DeliveryStatus.ACCEPTED,
+          DeliveryStatus.PICKED_UP,
+          DeliveryStatus.DELIVERED,
+        ],
       },
     };
 
@@ -767,7 +843,11 @@ export class OrdersService {
     });
 
     const senderIds = Array.from(
-      new Set(chatEvents.map((event) => event.userId).filter((id): id is string => !!id)),
+      new Set(
+        chatEvents
+          .map((event) => event.userId)
+          .filter((id): id is string => !!id),
+      ),
     );
     const sendersById = await this.loadSendersById(senderIds);
 
@@ -809,7 +889,12 @@ export class OrdersService {
     });
   }
 
-  private async getOrderMessages(orderId: string, userId: string, role: string, condominiumId?: string) {
+  private async getOrderMessages(
+    orderId: string,
+    userId: string,
+    role: string,
+    condominiumId?: string,
+  ) {
     await this.cleanupExpiredMessages();
 
     const order = await this.findById(orderId, userId, role, condominiumId);
@@ -846,7 +931,12 @@ export class OrdersService {
   ) {
     await this.cleanupExpiredDeliveryMessages();
 
-    const delivery = await this.findDeliveryForChat(deliveryId, userId, role, condominiumId);
+    const delivery = await this.findDeliveryForChat(
+      deliveryId,
+      userId,
+      role,
+      condominiumId,
+    );
     if (!this.isDeliveryChatEnabled(delivery.status)) {
       return [];
     }
@@ -872,7 +962,9 @@ export class OrdersService {
     });
 
     const senderIds = Array.from(
-      new Set(events.map((event) => event.userId).filter((id): id is string => !!id)),
+      new Set(
+        events.map((event) => event.userId).filter((id): id is string => !!id),
+      ),
     );
     const sendersById = await this.loadSendersById(senderIds);
 
@@ -908,11 +1000,15 @@ export class OrdersService {
     const order = await this.findById(orderId, userId, role, condominiumId);
 
     if (!this.isOrderChatEnabled(order.status, order.chatEnabledAt)) {
-      throw new BadRequestException('Chat disponível apenas após o pedido ser aceito');
+      throw new BadRequestException(
+        'Chat disponível apenas após o pedido ser aceito',
+      );
     }
 
     if (!this.canSendOrderMessage(order.status)) {
-      throw new BadRequestException('Este pedido foi finalizado e não aceita novas mensagens');
+      throw new BadRequestException(
+        'Este pedido foi finalizado e não aceita novas mensagens',
+      );
     }
 
     const message = await this.prisma.orderMessage.create({
@@ -934,15 +1030,30 @@ export class OrdersService {
     });
 
     if (order?.vendor?.userId && order.vendor.userId !== userId) {
-      this.deliveriesGateway.sendToUser(order.vendor.userId, 'order_message', message);
+      this.deliveriesGateway.sendToUser(
+        order.vendor.userId,
+        'order_message',
+        message,
+      );
     }
 
     if (order?.createdByUserId && order.createdByUserId !== userId) {
-      this.deliveriesGateway.sendToUser(order.createdByUserId, 'order_message', message);
+      this.deliveriesGateway.sendToUser(
+        order.createdByUserId,
+        'order_message',
+        message,
+      );
     }
 
-    if (order?.delivery?.deliveryPersonId && order.delivery.deliveryPersonId !== userId) {
-      this.deliveriesGateway.sendToUser(order.delivery.deliveryPersonId, 'order_message', message);
+    if (
+      order?.delivery?.deliveryPersonId &&
+      order.delivery.deliveryPersonId !== userId
+    ) {
+      this.deliveriesGateway.sendToUser(
+        order.delivery.deliveryPersonId,
+        'order_message',
+        message,
+      );
     }
 
     return message;
@@ -957,14 +1068,23 @@ export class OrdersService {
   ) {
     await this.cleanupExpiredDeliveryMessages();
 
-    const delivery = await this.findDeliveryForChat(deliveryId, userId, role, condominiumId);
+    const delivery = await this.findDeliveryForChat(
+      deliveryId,
+      userId,
+      role,
+      condominiumId,
+    );
 
     if (!this.isDeliveryChatEnabled(delivery.status)) {
-      throw new BadRequestException('Chat disponível apenas após aceite da entrega');
+      throw new BadRequestException(
+        'Chat disponível apenas após aceite da entrega',
+      );
     }
 
     if (!this.canSendDeliveryMessage(delivery.status)) {
-      throw new BadRequestException('Esta entrega foi finalizada e não aceita novas mensagens');
+      throw new BadRequestException(
+        'Esta entrega foi finalizada e não aceita novas mensagens',
+      );
     }
 
     const event = await this.prisma.deliveryEvent.create({
@@ -1005,11 +1125,19 @@ export class OrdersService {
     };
 
     if (delivery.residentId && delivery.residentId !== userId) {
-      this.deliveriesGateway.sendToUser(delivery.residentId, 'delivery_message', message);
+      this.deliveriesGateway.sendToUser(
+        delivery.residentId,
+        'delivery_message',
+        message,
+      );
     }
 
     if (delivery.deliveryPersonId && delivery.deliveryPersonId !== userId) {
-      this.deliveriesGateway.sendToUser(delivery.deliveryPersonId, 'delivery_message', message);
+      this.deliveriesGateway.sendToUser(
+        delivery.deliveryPersonId,
+        'delivery_message',
+        message,
+      );
     }
 
     return message;

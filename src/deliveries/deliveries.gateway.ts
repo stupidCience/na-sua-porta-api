@@ -14,7 +14,9 @@ import { Injectable } from '@nestjs/common';
     origin: '*',
   },
 })
-export class DeliveriesGateway implements OnGatewayConnection, OnGatewayDisconnect {
+export class DeliveriesGateway
+  implements OnGatewayConnection, OnGatewayDisconnect
+{
   @WebSocketServer()
   server: Server;
 
