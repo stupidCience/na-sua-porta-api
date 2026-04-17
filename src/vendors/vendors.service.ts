@@ -32,7 +32,9 @@ export class VendorsService {
     });
 
     if (!vendor) {
-      throw new ForbiddenException('Comércio vinculado não encontrado para esta conta');
+      throw new ForbiddenException(
+        'Comércio vinculado não encontrado para esta conta',
+      );
     }
 
     return vendor;
@@ -89,7 +91,9 @@ export class VendorsService {
     },
   ) {
     if (user.role !== 'RESIDENT') {
-      throw new ForbiddenException('Somente moradores podem fazer pedidos no comércio');
+      throw new ForbiddenException(
+        'Somente moradores podem fazer pedidos no comércio',
+      );
     }
 
     const resident = await this.prisma.user.findUnique({
@@ -116,7 +120,9 @@ export class VendorsService {
     }
 
     if (!Array.isArray(data.items) || data.items.length === 0) {
-      throw new BadRequestException('Selecione ao menos um item para concluir o pedido');
+      throw new BadRequestException(
+        'Selecione ao menos um item para concluir o pedido',
+      );
     }
 
     const vendor = await this.prisma.vendor.findFirst({
@@ -128,7 +134,9 @@ export class VendorsService {
     });
 
     if (!vendor) {
-      throw new NotFoundException('Comércio não encontrado para este condomínio');
+      throw new NotFoundException(
+        'Comércio não encontrado para este condomínio',
+      );
     }
 
     const itemIds = Array.from(new Set(data.items.map((i) => i.menuItemId)));
@@ -141,7 +149,9 @@ export class VendorsService {
     });
 
     if (menuItems.length !== itemIds.length) {
-      throw new BadRequestException('Alguns itens do cardápio não estão mais disponíveis');
+      throw new BadRequestException(
+        'Alguns itens do cardápio não estão mais disponíveis',
+      );
     }
 
     const menuMap = new Map(menuItems.map((m) => [m.id, m]));
@@ -271,12 +281,24 @@ export class VendorsService {
       where: { id: vendor.id },
       data: {
         ...(data.name !== undefined && { name: data.name.trim() }),
-        ...(data.description !== undefined && { description: data.description.trim() || null }),
-        ...(data.category !== undefined && { category: data.category.trim() || null }),
-        ...(data.imageUrl !== undefined && { imageUrl: data.imageUrl.trim() || null }),
-        ...(data.bannerUrl !== undefined && { bannerUrl: data.bannerUrl.trim() || null }),
-        ...(data.aboutText !== undefined && { aboutText: data.aboutText.trim() || null }),
-        ...(data.contactPhone !== undefined && { contactPhone: data.contactPhone.trim() || null }),
+        ...(data.description !== undefined && {
+          description: data.description.trim() || null,
+        }),
+        ...(data.category !== undefined && {
+          category: data.category.trim() || null,
+        }),
+        ...(data.imageUrl !== undefined && {
+          imageUrl: data.imageUrl.trim() || null,
+        }),
+        ...(data.bannerUrl !== undefined && {
+          bannerUrl: data.bannerUrl.trim() || null,
+        }),
+        ...(data.aboutText !== undefined && {
+          aboutText: data.aboutText.trim() || null,
+        }),
+        ...(data.contactPhone !== undefined && {
+          contactPhone: data.contactPhone.trim() || null,
+        }),
         ...(data.estimatedTimeMinutes !== undefined && {
           estimatedTimeMinutes:
             data.estimatedTimeMinutes && data.estimatedTimeMinutes > 0
@@ -285,7 +307,9 @@ export class VendorsService {
         }),
         ...(data.minOrderValue !== undefined && {
           minOrderValue:
-            data.minOrderValue && data.minOrderValue > 0 ? Number(data.minOrderValue) : 0,
+            data.minOrderValue && data.minOrderValue > 0
+              ? Number(data.minOrderValue)
+              : 0,
         }),
       },
     });
@@ -358,16 +382,26 @@ export class VendorsService {
       where: { id: itemId },
       data: {
         ...(data.name !== undefined && { name: data.name.trim() }),
-        ...(data.description !== undefined && { description: data.description.trim() || null }),
+        ...(data.description !== undefined && {
+          description: data.description.trim() || null,
+        }),
         ...(data.price !== undefined && { price: Number(data.price) }),
-        ...(data.category !== undefined && { category: data.category.trim() || null }),
-        ...(data.imageUrl !== undefined && { imageUrl: data.imageUrl.trim() || null }),
+        ...(data.category !== undefined && {
+          category: data.category.trim() || null,
+        }),
+        ...(data.imageUrl !== undefined && {
+          imageUrl: data.imageUrl.trim() || null,
+        }),
         ...(data.available !== undefined && { available: !!data.available }),
       },
     });
   }
 
-  async deleteMenuItem(userId: string, condominiumId: string | undefined, itemId: string) {
+  async deleteMenuItem(
+    userId: string,
+    condominiumId: string | undefined,
+    itemId: string,
+  ) {
     const vendor = await this.getVendorByUser(userId, condominiumId);
     const item = await this.prisma.menuItem.findFirst({
       where: {
@@ -384,7 +418,11 @@ export class VendorsService {
     return { deleted: true };
   }
 
-  async getMyOrders(userId: string, condominiumId: string | undefined, history = false) {
+  async getMyOrders(
+    userId: string,
+    condominiumId: string | undefined,
+    history = false,
+  ) {
     const vendor = await this.getVendorByUser(userId, condominiumId);
 
     return this.prisma.order.findMany({
@@ -393,7 +431,9 @@ export class VendorsService {
         condominiumId: vendor.condominiumId,
         ...(history
           ? { status: { in: [OrderStatus.COMPLETED, OrderStatus.CANCELLED] } }
-          : { status: { notIn: [OrderStatus.COMPLETED, OrderStatus.CANCELLED] } }),
+          : {
+              status: { notIn: [OrderStatus.COMPLETED, OrderStatus.CANCELLED] },
+            }),
       },
       include: {
         createdByUser: {
@@ -453,7 +493,9 @@ export class VendorsService {
       OrderStatus.SENT,
     ];
     if (!allowedTargetStatuses.includes(status)) {
-      throw new BadRequestException('Status permitido para o comércio: ACEITO, PRONTO ou ENVIADO');
+      throw new BadRequestException(
+        'Status permitido para o comércio: ACEITO, PRONTO ou ENVIADO',
+      );
     }
 
     const validTransitions: Record<OrderStatus, OrderStatus[]> = {
@@ -466,20 +508,28 @@ export class VendorsService {
     };
 
     if (!validTransitions[order.status].includes(status)) {
-      throw new BadRequestException(`Transição inválida: ${order.status} -> ${status}`);
+      throw new BadRequestException(
+        `Transição inválida: ${order.status} -> ${status}`,
+      );
     }
 
     if (status === OrderStatus.SENT) {
       if (!order.delivery || !order.delivery.deliveryPersonId) {
-        throw new BadRequestException('Aguardando entregador aceitar a coleta para marcar como enviado');
+        throw new BadRequestException(
+          'Aguardando entregador aceitar a coleta para marcar como enviado',
+        );
       }
 
       if (order.delivery.status !== DeliveryStatus.ACCEPTED) {
-        throw new BadRequestException('A coleta precisa estar aceita para marcar como enviado');
+        throw new BadRequestException(
+          'A coleta precisa estar aceita para marcar como enviado',
+        );
       }
 
       if (!order.pickupCode) {
-        throw new BadRequestException('Código de coleta não foi gerado para este pedido');
+        throw new BadRequestException(
+          'Código de coleta não foi gerado para este pedido',
+        );
       }
 
       if (!pickupCode?.trim() || pickupCode.trim() !== order.pickupCode) {
@@ -496,7 +546,11 @@ export class VendorsService {
           : {}),
         ...(status === OrderStatus.READY ? { readyAt: new Date() } : {}),
         ...(status === OrderStatus.SENT
-          ? { sentAt: new Date(), pickupCode: null, pickupCodeGeneratedAt: null }
+          ? {
+              sentAt: new Date(),
+              pickupCode: null,
+              pickupCodeGeneratedAt: null,
+            }
           : {}),
       },
       include: {
@@ -511,18 +565,34 @@ export class VendorsService {
       },
     });
 
-    if (status === OrderStatus.READY && updated.delivery && updated.delivery.status === DeliveryStatus.REQUESTED) {
+    if (
+      status === OrderStatus.READY &&
+      updated.delivery &&
+      updated.delivery.status === DeliveryStatus.REQUESTED
+    ) {
       const deliveryForPool = await this.prisma.delivery.findUnique({
         where: { id: updated.delivery.id },
         include: {
           resident: {
-            select: { id: true, name: true, email: true, apartment: true, block: true },
+            select: {
+              id: true,
+              name: true,
+              email: true,
+              apartment: true,
+              block: true,
+            },
           },
           condominium: {
             select: { id: true, name: true },
           },
           order: {
-            select: { id: true, source: true, paymentStatus: true, status: true, pickupCode: true },
+            select: {
+              id: true,
+              source: true,
+              paymentStatus: true,
+              status: true,
+              pickupCode: true,
+            },
           },
         },
       });
@@ -550,27 +620,49 @@ export class VendorsService {
             select: { id: true, name: true },
           },
           order: {
-            select: { id: true, source: true, paymentStatus: true, status: true, pickupCode: true },
+            select: {
+              id: true,
+              source: true,
+              paymentStatus: true,
+              status: true,
+              pickupCode: true,
+            },
           },
         },
       });
 
       this.gateway.deliveryStatusUpdated(updatedDelivery);
       if (updatedDelivery.residentId) {
-        this.gateway.sendToUser(updatedDelivery.residentId, 'delivery_updated', updatedDelivery);
+        this.gateway.sendToUser(
+          updatedDelivery.residentId,
+          'delivery_updated',
+          updatedDelivery,
+        );
       }
       if (updatedDelivery.deliveryPersonId) {
-        this.gateway.sendToUser(updatedDelivery.deliveryPersonId, 'delivery_updated', updatedDelivery);
+        this.gateway.sendToUser(
+          updatedDelivery.deliveryPersonId,
+          'delivery_updated',
+          updatedDelivery,
+        );
       }
     }
 
     this.gateway.orderUpdated(updated);
     if (updated.createdByUserId) {
-      this.gateway.sendToUser(updated.createdByUserId, 'order_updated', updated);
+      this.gateway.sendToUser(
+        updated.createdByUserId,
+        'order_updated',
+        updated,
+      );
     }
 
     if (updated.delivery?.deliveryPersonId) {
-      this.gateway.sendToUser(updated.delivery.deliveryPersonId, 'order_updated', updated);
+      this.gateway.sendToUser(
+        updated.delivery.deliveryPersonId,
+        'order_updated',
+        updated,
+      );
     }
 
     return updated;
@@ -598,25 +690,47 @@ export class VendorsService {
       throw new NotFoundException('Pedido não encontrado');
     }
 
-    if (!([OrderStatus.PENDING, OrderStatus.ACCEPTED, OrderStatus.READY] as OrderStatus[]).includes(order.status)) {
-      throw new BadRequestException('Somente pedidos pendentes, aceitos ou prontos podem ser cancelados pelo comércio');
+    if (
+      !(
+        [
+          OrderStatus.PENDING,
+          OrderStatus.ACCEPTED,
+          OrderStatus.READY,
+        ] as OrderStatus[]
+      ).includes(order.status)
+    ) {
+      throw new BadRequestException(
+        'Somente pedidos pendentes, aceitos ou prontos podem ser cancelados pelo comércio',
+      );
     }
 
     const cancelWindowStartAt =
-      order.status === OrderStatus.PENDING ? order.createdAt : order.acceptedAt ?? order.createdAt;
+      order.status === OrderStatus.PENDING
+        ? order.createdAt
+        : (order.acceptedAt ?? order.createdAt);
 
     const elapsedMs = Date.now() - new Date(cancelWindowStartAt).getTime();
     if (elapsedMs > 2 * 60 * 1000) {
-      throw new BadRequestException('A janela de cancelamento do comércio expirou (2 minutos após aceite)');
+      throw new BadRequestException(
+        'A janela de cancelamento do comércio expirou (2 minutos após aceite)',
+      );
     }
 
-    if (order.delivery?.status === DeliveryStatus.ACCEPTED || order.delivery?.status === DeliveryStatus.PICKED_UP) {
-      throw new BadRequestException('Não é possível cancelar após o entregador assumir a coleta');
+    if (
+      order.delivery?.status === DeliveryStatus.ACCEPTED ||
+      order.delivery?.status === DeliveryStatus.PICKED_UP
+    ) {
+      throw new BadRequestException(
+        'Não é possível cancelar após o entregador assumir a coleta',
+      );
     }
 
     if (order.delivery?.status === DeliveryStatus.REQUESTED) {
       await this.prisma.delivery.delete({ where: { id: order.delivery.id } });
-      this.gateway.sendToAll('delivery_cancelled', { id: order.delivery.id, by: 'VENDOR' });
+      this.gateway.sendToAll('delivery_cancelled', {
+        id: order.delivery.id,
+        by: 'VENDOR',
+      });
     }
 
     const updated = await this.prisma.order.update({
@@ -635,13 +749,21 @@ export class VendorsService {
 
     this.gateway.orderUpdated(updated);
     if (updated.createdByUserId) {
-      this.gateway.sendToUser(updated.createdByUserId, 'order_updated', updated);
+      this.gateway.sendToUser(
+        updated.createdByUserId,
+        'order_updated',
+        updated,
+      );
     }
 
     return updated;
   }
 
-  async getOrderMessages(userId: string, condominiumId: string | undefined, orderId: string) {
+  async getOrderMessages(
+    userId: string,
+    condominiumId: string | undefined,
+    orderId: string,
+  ) {
     await this.prisma.orderMessage.deleteMany({
       where: {
         expiresAt: {
@@ -733,7 +855,9 @@ export class VendorsService {
     }
 
     if (!order.chatEnabledAt) {
-      throw new BadRequestException('O chat só fica disponível após aceite do pedido');
+      throw new BadRequestException(
+        'O chat só fica disponível após aceite do pedido',
+      );
     }
 
     const canSendMessage =
@@ -742,7 +866,9 @@ export class VendorsService {
       order.status === OrderStatus.SENT;
 
     if (!canSendMessage) {
-      throw new BadRequestException('O chat só fica disponível após aceite do pedido e enquanto estiver em andamento');
+      throw new BadRequestException(
+        'O chat só fica disponível após aceite do pedido e enquanto estiver em andamento',
+      );
     }
 
     const message = await this.prisma.orderMessage.create({
@@ -768,7 +894,11 @@ export class VendorsService {
     }
 
     if (order.delivery?.deliveryPersonId) {
-      this.gateway.sendToUser(order.delivery.deliveryPersonId, 'order_message', message);
+      this.gateway.sendToUser(
+        order.delivery.deliveryPersonId,
+        'order_message',
+        message,
+      );
     }
 
     return message;
@@ -782,48 +912,54 @@ export class VendorsService {
     const yesterdayStart = new Date(todayStart);
     yesterdayStart.setDate(yesterdayStart.getDate() - 1);
 
-    const [todayOrders, yesterdayOrders, byStatus, todaySalesAgg, yesterdaySalesAgg, recent] =
-      await Promise.all([
-        this.prisma.order.count({
-          where: {
-            vendorId: vendor.id,
-            createdAt: { gte: todayStart },
-          },
-        }),
-        this.prisma.order.count({
-          where: {
-            vendorId: vendor.id,
-            createdAt: { gte: yesterdayStart, lt: todayStart },
-          },
-        }),
-        this.prisma.order.groupBy({
-          by: ['status'],
-          where: { vendorId: vendor.id },
-          _count: { _all: true },
-        }),
-        this.prisma.order.aggregate({
-          where: {
-            vendorId: vendor.id,
-            status: OrderStatus.COMPLETED,
-            completedAt: { gte: todayStart },
-          },
-          _sum: { totalAmount: true },
-        }),
-        this.prisma.order.aggregate({
-          where: {
-            vendorId: vendor.id,
-            status: OrderStatus.COMPLETED,
-            completedAt: { gte: yesterdayStart, lt: todayStart },
-          },
-          _sum: { totalAmount: true },
-        }),
-        this.prisma.order.findMany({
-          where: { vendorId: vendor.id },
-          select: { createdAt: true, status: true },
-          orderBy: { createdAt: 'desc' },
-          take: 200,
-        }),
-      ]);
+    const [
+      todayOrders,
+      yesterdayOrders,
+      byStatus,
+      todaySalesAgg,
+      yesterdaySalesAgg,
+      recent,
+    ] = await Promise.all([
+      this.prisma.order.count({
+        where: {
+          vendorId: vendor.id,
+          createdAt: { gte: todayStart },
+        },
+      }),
+      this.prisma.order.count({
+        where: {
+          vendorId: vendor.id,
+          createdAt: { gte: yesterdayStart, lt: todayStart },
+        },
+      }),
+      this.prisma.order.groupBy({
+        by: ['status'],
+        where: { vendorId: vendor.id },
+        _count: { _all: true },
+      }),
+      this.prisma.order.aggregate({
+        where: {
+          vendorId: vendor.id,
+          status: OrderStatus.COMPLETED,
+          completedAt: { gte: todayStart },
+        },
+        _sum: { totalAmount: true },
+      }),
+      this.prisma.order.aggregate({
+        where: {
+          vendorId: vendor.id,
+          status: OrderStatus.COMPLETED,
+          completedAt: { gte: yesterdayStart, lt: todayStart },
+        },
+        _sum: { totalAmount: true },
+      }),
+      this.prisma.order.findMany({
+        where: { vendorId: vendor.id },
+        select: { createdAt: true, status: true },
+        orderBy: { createdAt: 'desc' },
+        take: 200,
+      }),
+    ]);
 
     const toPercent = (current: number, previous: number) => {
       if (previous === 0) return current > 0 ? 100 : 0;

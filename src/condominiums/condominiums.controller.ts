@@ -36,12 +36,17 @@ export class CondominiumsController {
       throw new BadRequestException('Nenhum condomínio vinculado a esta conta');
     }
     const { name, address, operatingHours, maxActiveDeliveries } = body;
-    return this.condominiumsService.updateMyCondominium(req.user.condominiumId, {
-      name,
-      address,
-      operatingHours,
-      maxActiveDeliveries:
-        maxActiveDeliveries !== undefined ? Number(maxActiveDeliveries) : undefined,
-    });
+    return this.condominiumsService.updateMyCondominium(
+      req.user.condominiumId,
+      {
+        name,
+        address,
+        operatingHours,
+        maxActiveDeliveries:
+          maxActiveDeliveries !== undefined
+            ? Number(maxActiveDeliveries)
+            : undefined,
+      },
+    );
   }
 }

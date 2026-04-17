@@ -1,7 +1,16 @@
-import { Injectable, BadRequestException, NotFoundException } from '@nestjs/common';
+import {
+  Injectable,
+  BadRequestException,
+  NotFoundException,
+} from '@nestjs/common';
 import { PrismaService } from 'src/prisma/prisma.service';
 import { DeliveriesGateway } from './deliveries.gateway';
-import { Delivery, DeliveryStatus, DeliveryType, OrderStatus } from '../generated/client';
+import {
+  Delivery,
+  DeliveryStatus,
+  DeliveryType,
+  OrderStatus,
+} from '../generated/client';
 import { tenantScope } from 'src/common/tenant-scope.util';
 
 @Injectable()
@@ -60,7 +69,8 @@ export class DeliveriesService {
     }
 
     const missing: string[] = [];
-    if (!deliveryPerson.personalDocument?.trim()) missing.push('documento pessoal');
+    if (!deliveryPerson.personalDocument?.trim())
+      missing.push('documento pessoal');
     if (!deliveryPerson.phone?.trim()) missing.push('telefone');
     if (!deliveryPerson.vehicleInfo?.trim()) missing.push('dados do veículo');
 
@@ -71,7 +81,12 @@ export class DeliveriesService {
     }
   }
 
-  private async logEvent(deliveryId: string, event: string, userId?: string, metadata?: Record<string, any>) {
+  private async logEvent(
+    deliveryId: string,
+    event: string,
+    userId?: string,
+    metadata?: Record<string, any>,
+  ) {
     await this.prisma.deliveryEvent.create({
       data: {
         deliveryId,
@@ -99,7 +114,9 @@ export class DeliveriesService {
     await this.assertResidentProfileComplete(residentId);
 
     // Get resident to inherit condominiumId
-    const resident = await this.prisma.user.findUnique({ where: { id: residentId } });
+    const resident = await this.prisma.user.findUnique({
+      where: { id: residentId },
+    });
 
     const delivery = await this.prisma.delivery.create({
       data: {
@@ -127,7 +144,13 @@ export class DeliveriesService {
           select: { id: true, name: true },
         },
         order: {
-          select: { id: true, source: true, paymentStatus: true, status: true, pickupCode: true },
+          select: {
+            id: true,
+            source: true,
+            paymentStatus: true,
+            status: true,
+            pickupCode: true,
+          },
         },
       },
     });
@@ -142,7 +165,8 @@ export class DeliveriesService {
     const canBroadcastToDeliveryPool =
       delivery.type === DeliveryType.PORTARIA ||
       (delivery.type === DeliveryType.MARKETPLACE &&
-        (delivery.order?.status === OrderStatus.READY || delivery.order?.status === OrderStatus.SENT));
+        (delivery.order?.status === OrderStatus.READY ||
+          delivery.order?.status === OrderStatus.SENT));
 
     if (canBroadcastToDeliveryPool) {
       this.gateway.deliveryCreated(delivery);
@@ -178,7 +202,13 @@ export class DeliveriesService {
       where,
       include: {
         resident: {
-          select: { id: true, name: true, email: true, apartment: true, block: true },
+          select: {
+            id: true,
+            name: true,
+            email: true,
+            apartment: true,
+            block: true,
+          },
         },
         deliveryPerson: {
           select: { id: true, name: true, email: true, phone: true },
@@ -187,7 +217,13 @@ export class DeliveriesService {
           select: { id: true, name: true },
         },
         order: {
-          select: { id: true, source: true, paymentStatus: true, status: true, pickupCode: true },
+          select: {
+            id: true,
+            source: true,
+            paymentStatus: true,
+            status: true,
+            pickupCode: true,
+          },
         },
       },
       orderBy: {
@@ -213,7 +249,13 @@ export class DeliveriesService {
           select: { id: true, name: true },
         },
         order: {
-          select: { id: true, source: true, paymentStatus: true, status: true, pickupCode: true },
+          select: {
+            id: true,
+            source: true,
+            paymentStatus: true,
+            status: true,
+            pickupCode: true,
+          },
         },
       },
     });
@@ -233,7 +275,9 @@ export class DeliveriesService {
     }
 
     if (delivery.status !== DeliveryStatus.REQUESTED) {
-      throw new BadRequestException('Este pedido não está mais disponível para aceite');
+      throw new BadRequestException(
+        'Este pedido não está mais disponível para aceite',
+      );
     }
 
     let generatedPickupCode: string | null = null;
@@ -249,7 +293,9 @@ export class DeliveriesService {
       }
 
       if (order.status !== OrderStatus.READY) {
-        throw new BadRequestException('Este pedido ainda não está pronto para coleta');
+        throw new BadRequestException(
+          'Este pedido ainda não está pronto para coleta',
+        );
       }
 
       generatedPickupCode = this.generatePickupCode();
@@ -284,7 +330,13 @@ export class DeliveriesService {
           select: { id: true, name: true },
         },
         order: {
-          select: { id: true, source: true, paymentStatus: true, status: true, pickupCode: true },
+          select: {
+            id: true,
+            source: true,
+            paymentStatus: true,
+            status: true,
+            pickupCode: true,
+          },
         },
       },
     });
@@ -302,10 +354,14 @@ export class DeliveriesService {
     }
 
     if (generatedPickupCode && updated.orderId && updated.deliveryPersonId) {
-      this.gateway.sendToUser(updated.deliveryPersonId, 'pickup_code_generated', {
-        orderId: updated.orderId,
-        pickupCode: generatedPickupCode,
-      });
+      this.gateway.sendToUser(
+        updated.deliveryPersonId,
+        'pickup_code_generated',
+        {
+          orderId: updated.orderId,
+          pickupCode: generatedPickupCode,
+        },
+      );
     }
 
     return updated;
@@ -340,14 +396,21 @@ export class DeliveriesService {
     }
 
     if (role !== 'DELIVERY_PERSON') {
-      throw new BadRequestException('Somente entregadores podem atualizar status da entrega');
+      throw new BadRequestException(
+        'Somente entregadores podem atualizar status da entrega',
+      );
     }
 
     if (!delivery.deliveryPersonId || delivery.deliveryPersonId !== userId) {
-      throw new BadRequestException('Apenas o entregador responsável pode atualizar esta entrega');
+      throw new BadRequestException(
+        'Apenas o entregador responsável pode atualizar esta entrega',
+      );
     }
 
-    if (delivery.type === DeliveryType.MARKETPLACE && newStatus === DeliveryStatus.PICKED_UP) {
+    if (
+      delivery.type === DeliveryType.MARKETPLACE &&
+      newStatus === DeliveryStatus.PICKED_UP
+    ) {
       const order = delivery.orderId
         ? await this.prisma.order.findUnique({
             where: { id: delivery.orderId },
@@ -370,7 +433,9 @@ export class DeliveriesService {
       updateData.pickedUpAt = new Date();
     } else if (newStatus === DeliveryStatus.DELIVERED) {
       if (!delivery.deliveryCode) {
-        throw new BadRequestException('Código de recebimento não disponível para esta entrega');
+        throw new BadRequestException(
+          'Código de recebimento não disponível para esta entrega',
+        );
       }
 
       if (!deliveryCode || deliveryCode.trim() !== delivery.deliveryCode) {
@@ -396,14 +461,26 @@ export class DeliveriesService {
           select: { id: true, name: true },
         },
         order: {
-          select: { id: true, source: true, paymentStatus: true, status: true, pickupCode: true },
+          select: {
+            id: true,
+            source: true,
+            paymentStatus: true,
+            status: true,
+            pickupCode: true,
+          },
         },
       },
     });
 
     const eventName =
-      newStatus === DeliveryStatus.DELIVERED ? 'delivery_completed' : `delivery_${newStatus.toLowerCase()}`;
-    await this.logEvent(deliveryId, eventName, delivery.deliveryPersonId ?? undefined);
+      newStatus === DeliveryStatus.DELIVERED
+        ? 'delivery_completed'
+        : `delivery_${newStatus.toLowerCase()}`;
+    await this.logEvent(
+      deliveryId,
+      eventName,
+      delivery.deliveryPersonId ?? undefined,
+    );
 
     if (updated.orderId && newStatus === DeliveryStatus.DELIVERED) {
       const order = await this.prisma.order.update({
@@ -437,7 +514,9 @@ export class DeliveriesService {
 
     if (role === 'RESIDENT') {
       if (delivery.residentId !== userId) {
-        throw new BadRequestException('Apenas o morador dono pode cancelar este pedido');
+        throw new BadRequestException(
+          'Apenas o morador dono pode cancelar este pedido',
+        );
       }
 
       if (
@@ -447,19 +526,28 @@ export class DeliveriesService {
         throw new BadRequestException('Não é possível cancelar após a coleta');
       }
 
-      await this.logEvent(deliveryId, 'delivery_cancelled', userId, { by: 'RESIDENT' });
+      await this.logEvent(deliveryId, 'delivery_cancelled', userId, {
+        by: 'RESIDENT',
+      });
       await this.prisma.delivery.delete({ where: { id: deliveryId } });
-      this.gateway.sendToAll('delivery_cancelled', { id: deliveryId, by: 'RESIDENT' });
+      this.gateway.sendToAll('delivery_cancelled', {
+        id: deliveryId,
+        by: 'RESIDENT',
+      });
       return { id: deliveryId, cancelled: true };
     }
 
     if (role === 'DELIVERY_PERSON') {
       if (delivery.status !== DeliveryStatus.ACCEPTED) {
-        throw new BadRequestException('Só é possível cancelar o aceite antes da coleta');
+        throw new BadRequestException(
+          'Só é possível cancelar o aceite antes da coleta',
+        );
       }
 
       if (!delivery.deliveryPersonId || delivery.deliveryPersonId !== userId) {
-        throw new BadRequestException('Apenas o entregador responsável pode cancelar o aceite');
+        throw new BadRequestException(
+          'Apenas o entregador responsável pode cancelar o aceite',
+        );
       }
 
       await this.prisma.delivery.update({
@@ -482,7 +570,9 @@ export class DeliveriesService {
         },
       });
 
-      await this.logEvent(deliveryId, 'delivery_reopened', userId, { by: 'DELIVERY_PERSON' });
+      await this.logEvent(deliveryId, 'delivery_reopened', userId, {
+        by: 'DELIVERY_PERSON',
+      });
 
       if (delivery.orderId) {
         await this.prisma.order.update({
@@ -496,12 +586,18 @@ export class DeliveriesService {
 
       const refreshed = await this.findById(deliveryId, condominiumId);
       if (!refreshed) {
-        throw new NotFoundException('Entrega não encontrada após reabrir aceite');
+        throw new NotFoundException(
+          'Entrega não encontrada após reabrir aceite',
+        );
       }
 
       this.gateway.deliveryStatusUpdated(refreshed);
       if (refreshed.residentId) {
-        this.gateway.sendToUser(refreshed.residentId, 'delivery_updated', refreshed);
+        this.gateway.sendToUser(
+          refreshed.residentId,
+          'delivery_updated',
+          refreshed,
+        );
       }
       return refreshed;
     }
@@ -530,13 +626,25 @@ export class DeliveriesService {
       where,
       include: {
         resident: {
-          select: { id: true, name: true, email: true, apartment: true, block: true },
+          select: {
+            id: true,
+            name: true,
+            email: true,
+            apartment: true,
+            block: true,
+          },
         },
         condominium: {
           select: { id: true, name: true },
         },
         order: {
-          select: { id: true, source: true, paymentStatus: true, status: true, pickupCode: true },
+          select: {
+            id: true,
+            source: true,
+            paymentStatus: true,
+            status: true,
+            pickupCode: true,
+          },
         },
       },
       orderBy: {
@@ -554,18 +662,34 @@ export class DeliveriesService {
         deliveryPersonId,
         ...tenantScope(condominiumId),
         status: {
-          in: [DeliveryStatus.ACCEPTED, DeliveryStatus.PICKED_UP, DeliveryStatus.DELIVERED],
+          in: [
+            DeliveryStatus.ACCEPTED,
+            DeliveryStatus.PICKED_UP,
+            DeliveryStatus.DELIVERED,
+          ],
         },
       },
       include: {
         resident: {
-          select: { id: true, name: true, email: true, apartment: true, block: true },
+          select: {
+            id: true,
+            name: true,
+            email: true,
+            apartment: true,
+            block: true,
+          },
         },
         condominium: {
           select: { id: true, name: true },
         },
         order: {
-          select: { id: true, source: true, paymentStatus: true, status: true, pickupCode: true },
+          select: {
+            id: true,
+            source: true,
+            paymentStatus: true,
+            status: true,
+            pickupCode: true,
+          },
         },
       },
       orderBy: {
@@ -574,7 +698,11 @@ export class DeliveriesService {
     });
   }
 
-  async getHistory(userId: string, role: string, condominiumId?: string): Promise<Delivery[]> {
+  async getHistory(
+    userId: string,
+    role: string,
+    condominiumId?: string,
+  ): Promise<Delivery[]> {
     const where: any = {
       status: DeliveryStatus.DELIVERED,
       ...tenantScope(condominiumId),
@@ -585,14 +713,22 @@ export class DeliveriesService {
     } else if (role === 'DELIVERY_PERSON') {
       where.deliveryPersonId = userId;
     } else {
-      throw new BadRequestException('Perfil de usuário inválido para consultar histórico');
+      throw new BadRequestException(
+        'Perfil de usuário inválido para consultar histórico',
+      );
     }
 
     return this.prisma.delivery.findMany({
       where,
       include: {
         resident: {
-          select: { id: true, name: true, email: true, apartment: true, block: true },
+          select: {
+            id: true,
+            name: true,
+            email: true,
+            apartment: true,
+            block: true,
+          },
         },
         deliveryPerson: {
           select: { id: true, name: true, email: true, phone: true },
@@ -601,7 +737,13 @@ export class DeliveriesService {
           select: { id: true, name: true },
         },
         order: {
-          select: { id: true, source: true, paymentStatus: true, status: true, pickupCode: true },
+          select: {
+            id: true,
+            source: true,
+            paymentStatus: true,
+            status: true,
+            pickupCode: true,
+          },
         },
       },
       orderBy: {
@@ -657,10 +799,13 @@ export class DeliveriesService {
     let avgDeliveryTimeMinutes = 0;
     if (completedDeliveries.length > 0) {
       const totalMinutes = completedDeliveries.reduce((sum, d) => {
-        const diff = new Date(d.deliveredAt!).getTime() - new Date(d.createdAt).getTime();
+        const diff =
+          new Date(d.deliveredAt!).getTime() - new Date(d.createdAt).getTime();
         return sum + diff / 60000;
       }, 0);
-      avgDeliveryTimeMinutes = Math.round(totalMinutes / completedDeliveries.length);
+      avgDeliveryTimeMinutes = Math.round(
+        totalMinutes / completedDeliveries.length,
+      );
     }
 
     // Today's deliveries
@@ -707,11 +852,15 @@ export class DeliveriesService {
     }
 
     if (delivery.residentId !== residentId) {
-      throw new BadRequestException('Apenas o morador pode avaliar esta entrega');
+      throw new BadRequestException(
+        'Apenas o morador pode avaliar esta entrega',
+      );
     }
 
     if (delivery.status !== DeliveryStatus.DELIVERED) {
-      throw new BadRequestException('Só é possível avaliar entregas concluídas');
+      throw new BadRequestException(
+        'Só é possível avaliar entregas concluídas',
+      );
     }
 
     if (delivery.rating) {
@@ -736,7 +885,13 @@ export class DeliveriesService {
           select: { id: true, name: true },
         },
         order: {
-          select: { id: true, source: true, paymentStatus: true, status: true, pickupCode: true },
+          select: {
+            id: true,
+            source: true,
+            paymentStatus: true,
+            status: true,
+            pickupCode: true,
+          },
         },
       },
     });
@@ -752,44 +907,66 @@ export class DeliveriesService {
 
     const scope = tenantScope(condominiumId);
 
-    const [total, requested, accepted, pickedUp, delivered, deliveries] = await Promise.all([
-      this.prisma.delivery.count({ where: scope }),
-      this.prisma.delivery.count({ where: { ...scope, status: DeliveryStatus.REQUESTED } }),
-      this.prisma.delivery.count({ where: { ...scope, status: DeliveryStatus.ACCEPTED } }),
-      this.prisma.delivery.count({ where: { ...scope, status: DeliveryStatus.PICKED_UP } }),
-      this.prisma.delivery.count({ where: { ...scope, status: DeliveryStatus.DELIVERED } }),
-      this.prisma.delivery.findMany({
-        where: scope,
-        select: {
-          id: true,
-          block: true,
-          createdAt: true,
-          deliveredAt: true,
-          status: true,
-          deliveryPersonId: true,
-          deliveryPerson: {
-            select: { id: true, name: true },
+    const [total, requested, accepted, pickedUp, delivered, deliveries] =
+      await Promise.all([
+        this.prisma.delivery.count({ where: scope }),
+        this.prisma.delivery.count({
+          where: { ...scope, status: DeliveryStatus.REQUESTED },
+        }),
+        this.prisma.delivery.count({
+          where: { ...scope, status: DeliveryStatus.ACCEPTED },
+        }),
+        this.prisma.delivery.count({
+          where: { ...scope, status: DeliveryStatus.PICKED_UP },
+        }),
+        this.prisma.delivery.count({
+          where: { ...scope, status: DeliveryStatus.DELIVERED },
+        }),
+        this.prisma.delivery.findMany({
+          where: scope,
+          select: {
+            id: true,
+            block: true,
+            createdAt: true,
+            deliveredAt: true,
+            status: true,
+            deliveryPersonId: true,
+            deliveryPerson: {
+              select: { id: true, name: true },
+            },
           },
-        },
-      }),
-    ]);
+        }),
+      ]);
 
     const now = new Date();
     const startOfDay = new Date(now);
     startOfDay.setHours(0, 0, 0, 0);
 
-    const todayDemand = deliveries.filter((d) => new Date(d.createdAt) >= startOfDay).length;
+    const todayDemand = deliveries.filter(
+      (d) => new Date(d.createdAt) >= startOfDay,
+    ).length;
 
     const avgMinutes = (() => {
-      const completed = deliveries.filter((d) => d.status === DeliveryStatus.DELIVERED && d.deliveredAt);
+      const completed = deliveries.filter(
+        (d) => d.status === DeliveryStatus.DELIVERED && d.deliveredAt,
+      );
       if (completed.length === 0) return 0;
-      const totalMs = completed.reduce((sum, d) => sum + (new Date(d.deliveredAt!).getTime() - new Date(d.createdAt).getTime()), 0);
+      const totalMs = completed.reduce(
+        (sum, d) =>
+          sum +
+          (new Date(d.deliveredAt!).getTime() -
+            new Date(d.createdAt).getTime()),
+        0,
+      );
       return Math.round(totalMs / completed.length / 60000);
     })();
 
     const demandByHourMap = new Map<string, number>();
     for (const delivery of deliveries) {
-      const hour = new Date(delivery.createdAt).getHours().toString().padStart(2, '0');
+      const hour = new Date(delivery.createdAt)
+        .getHours()
+        .toString()
+        .padStart(2, '0');
       const key = `${hour}:00`;
       demandByHourMap.set(key, (demandByHourMap.get(key) ?? 0) + 1);
     }
@@ -806,9 +983,16 @@ export class DeliveriesService {
       .map(([block, count]) => ({ block, count }))
       .sort((a, b) => b.count - a.count);
 
-    const deliveredByCourierMap = new Map<string, { id: string; name: string; delivered: number }>();
+    const deliveredByCourierMap = new Map<
+      string,
+      { id: string; name: string; delivered: number }
+    >();
     for (const delivery of deliveries) {
-      if (delivery.status !== DeliveryStatus.DELIVERED || !delivery.deliveryPersonId || !delivery.deliveryPerson) {
+      if (
+        delivery.status !== DeliveryStatus.DELIVERED ||
+        !delivery.deliveryPersonId ||
+        !delivery.deliveryPerson
+      ) {
         continue;
       }
 
@@ -887,4 +1071,3 @@ export class DeliveriesService {
     return [header, ...rows].join('\r\n');
   }
 }
-

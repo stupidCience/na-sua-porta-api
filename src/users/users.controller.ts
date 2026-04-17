@@ -28,7 +28,8 @@ export class UsersController {
   @Patch('me')
   @JwtAuth()
   async updateMe(@Request() req: any, @Body() body: any) {
-    const { name, phone, apartment, block, vehicleInfo, personalDocument } = body;
+    const { name, phone, apartment, block, vehicleInfo, personalDocument } =
+      body;
     const updated = await this.usersService.updateProfile(req.user.id, {
       name,
       phone,
@@ -44,7 +45,8 @@ export class UsersController {
   @Patch('me/documents')
   @JwtAuth()
   async updateDocuments(@Request() req: any, @Body() body: any) {
-    const { personalDocument, vendorCnpj, vendorCnae, vendorLegalDocument } = body;
+    const { personalDocument, vendorCnpj, vendorCnae, vendorLegalDocument } =
+      body;
     const updated = await this.usersService.updateDocuments(req.user.id, {
       personalDocument,
       vendorCnpj,
@@ -63,7 +65,10 @@ export class UsersController {
       throw new BadRequestException('Informe o código do condomínio');
     }
 
-    const updated = await this.usersService.linkToCondominium(req.user.id, condominiumId);
+    const updated = await this.usersService.linkToCondominium(
+      req.user.id,
+      condominiumId,
+    );
     const { password, ...safe } = updated as any;
     return safe;
   }
@@ -73,12 +78,20 @@ export class UsersController {
   async changePassword(@Request() req: any, @Body() body: any) {
     const { currentPassword, newPassword } = body;
     if (!currentPassword || !newPassword) {
-      throw new BadRequestException('Senha atual e nova senha são obrigatórias');
+      throw new BadRequestException(
+        'Senha atual e nova senha são obrigatórias',
+      );
     }
     if (newPassword.length < 6) {
-      throw new BadRequestException('A nova senha deve ter pelo menos 6 caracteres');
+      throw new BadRequestException(
+        'A nova senha deve ter pelo menos 6 caracteres',
+      );
     }
-    await this.usersService.changePassword(req.user.id, currentPassword, newPassword);
+    await this.usersService.changePassword(
+      req.user.id,
+      currentPassword,
+      newPassword,
+    );
     return { message: 'Senha alterada com sucesso' };
   }
 
@@ -105,7 +118,9 @@ export class UsersController {
       throw new ForbiddenException('Acesso restrito a administradores');
     }
     if (typeof body.active !== 'boolean') {
-      throw new BadRequestException('Campo "active" deve ser verdadeiro ou falso');
+      throw new BadRequestException(
+        'Campo "active" deve ser verdadeiro ou falso',
+      );
     }
     return this.usersService.toggleUserStatus(id, body.active);
   }

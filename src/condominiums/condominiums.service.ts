@@ -1,4 +1,9 @@
-import { Injectable, BadRequestException, NotFoundException, ForbiddenException } from '@nestjs/common';
+import {
+  Injectable,
+  BadRequestException,
+  NotFoundException,
+  ForbiddenException,
+} from '@nestjs/common';
 import { PrismaService } from 'src/prisma/prisma.service';
 
 @Injectable()
@@ -28,7 +33,9 @@ export class CondominiumsService {
     if (!condo) throw new NotFoundException('Condomínio não encontrado');
 
     if (data.name !== undefined && data.name.trim().length < 3) {
-      throw new BadRequestException('Nome do condomínio deve ter pelo menos 3 caracteres');
+      throw new BadRequestException(
+        'Nome do condomínio deve ter pelo menos 3 caracteres',
+      );
     }
 
     if (
@@ -42,7 +49,9 @@ export class CondominiumsService {
       where: { id: condominiumId },
       data: {
         ...(data.name !== undefined && { name: data.name.trim() }),
-        ...(data.address !== undefined && { address: data.address.trim() || null }),
+        ...(data.address !== undefined && {
+          address: data.address.trim() || null,
+        }),
         ...(data.operatingHours !== undefined && {
           operatingHours: data.operatingHours.trim() || null,
         }),

@@ -11,5 +11,3 @@ import { DeliveriesGateway } from './deliveries.gateway';
   exports: [DeliveriesService, DeliveriesGateway],
 })
 export class DeliveriesModule {}
-
-
