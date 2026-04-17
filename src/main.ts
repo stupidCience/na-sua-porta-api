@@ -16,7 +16,7 @@ async function bootstrap() {
     process.env.CORS_ORIGINS
       ? process.env.CORS_ORIGINS.split(',').map(normalizeOrigin)
       : defaultCorsOrigins
-  ).filter(Boolean);
+  ).filter((origin) => origin.length > 0);
 
   // Enable CORS
   app.enableCors({
@@ -25,7 +25,11 @@ async function bootstrap() {
         return callback(null, true);
       }
 
-      return callback(new Error('Not allowed by CORS'));
+      return callback(
+        new Error(
+          `Not allowed by CORS. Origin '${origin}' is not in the allowed list: ${corsOrigins.join(', ')}`,
+        ),
+      );
     },
     credentials: true,
   });
