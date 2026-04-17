@@ -7,7 +7,8 @@ import { AuthService } from './auth.service';
 import { JwtStrategy } from './jwt.strategy';
 import { UsersModule } from '../users/users.module';
 
-const jwtExpiresIn = process.env.JWT_EXPIRES_IN ?? '1d';
+const jwtExpiresInRaw = process.env.JWT_EXPIRES_IN ?? '1d';
+const jwtExpiresIn = jwtExpiresInRaw.trim();
 const jwtExpirationConfig = /^\d+$/.test(jwtExpiresIn)
   ? Number(jwtExpiresIn)
   : (jwtExpiresIn as StringValue);

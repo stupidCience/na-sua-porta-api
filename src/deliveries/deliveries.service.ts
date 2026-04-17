@@ -536,7 +536,7 @@ export class DeliveriesService {
           id: deliveryId,
           by: 'RESIDENT',
         },
-        delivery.condominiumId ?? undefined,
+        delivery.condominiumId || undefined,
       );
       return { id: deliveryId, cancelled: true };
     }

@@ -52,6 +52,7 @@ export class DeliveriesGateway
     const userId = this.socketUserMap.get(client.id);
 
     if (userId) {
+      const condominiumId = this.userCondominiumMap.get(userId);
       this.socketUserMap.delete(client.id);
       const sockets = this.userSocketMap.get(userId);
       if (sockets) {
@@ -60,13 +61,9 @@ export class DeliveriesGateway
           this.userSocketMap.delete(userId);
           this.userRoleMap.delete(userId);
           this.unavailableUsers.delete(userId);
-          const condominiumId = this.userCondominiumMap.get(userId);
           this.userCondominiumMap.delete(userId);
-          this.broadcastOnlineDeliveryPeople(condominiumId);
-        } else {
-          const condominiumId = this.userCondominiumMap.get(userId);
-          this.broadcastOnlineDeliveryPeople(condominiumId);
         }
+        this.broadcastOnlineDeliveryPeople(condominiumId);
       }
     }
   }
@@ -78,35 +75,41 @@ export class DeliveriesGateway
       | string
       | { userId: string; role?: string; condominiumId?: string | null },
   ) {
-    const userId = typeof payload === 'string' ? payload : payload?.userId;
-    const role = typeof payload === 'string' ? undefined : payload?.role;
-    const condominiumId =
-      typeof payload === 'string' ? undefined : payload?.condominiumId;
+    let userId: string | undefined;
+    let role: string | undefined;
+    let condominiumId: string | null | undefined;
+
+    if (typeof payload === 'string') {
+      userId = payload;
+    } else {
+      userId = payload?.userId;
+      role = payload?.role;
+      condominiumId = payload?.condominiumId;
+    }
 
     if (!userId) {
       return;
     }
+    const resolvedCondominiumId =
+      condominiumId === null
+        ? undefined
+        : condominiumId ?? this.userCondominiumMap.get(userId);
 
     const sockets = this.userSocketMap.get(userId) ?? new Set<string>();
     sockets.add(client.id);
     this.userSocketMap.set(userId, sockets);
     this.socketUserMap.set(client.id, userId);
 
-    if (condominiumId) {
-      this.userCondominiumMap.set(userId, condominiumId);
-      client.join(this.getCondominiumRoom(condominiumId));
-    } else {
-      const knownCondominiumId = this.userCondominiumMap.get(userId);
-      if (knownCondominiumId) {
-        client.join(this.getCondominiumRoom(knownCondominiumId));
-      }
+    if (resolvedCondominiumId) {
+      this.userCondominiumMap.set(userId, resolvedCondominiumId);
+      client.join(this.getCondominiumRoom(resolvedCondominiumId));
     }
 
     if (role) {
       this.userRoleMap.set(userId, role);
     }
     this.broadcastOnlineDeliveryPeople(
-      condominiumId ?? this.userCondominiumMap.get(userId),
+      resolvedCondominiumId,
     );
     console.log(`User ${userId} registered with socket ${client.id}`);
   }

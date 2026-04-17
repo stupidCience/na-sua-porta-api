@@ -733,7 +733,7 @@ export class VendorsService {
           id: order.delivery.id,
           by: 'VENDOR',
         },
-        order.delivery.condominiumId ?? vendor.condominiumId ?? undefined,
+        order.delivery.condominiumId || vendor.condominiumId || undefined,
       );
     }
 
