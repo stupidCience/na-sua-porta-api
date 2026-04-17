@@ -1,7 +1,7 @@
 import { Injectable, BadRequestException, NotFoundException } from '@nestjs/common';
 import { PrismaService } from 'src/prisma/prisma.service';
 import { DeliveriesGateway } from './deliveries.gateway';
-import { Delivery, DeliveryStatus, DeliveryType, OrderStatus } from '../generated';
+import { Delivery, DeliveryStatus, DeliveryType, OrderStatus } from '../generated/client';
 import { tenantScope } from 'src/common/tenant-scope.util';
 
 @Injectable()

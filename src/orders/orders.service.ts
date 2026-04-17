@@ -9,7 +9,7 @@ import {
   PaymentStatus,
   UserRole,
   VendorType,
-} from 'src/generated';
+} from '../generated/client';
 import * as bcrypt from 'bcrypt';
 
 type ChatKind = 'ORDER' | 'DELIVERY';

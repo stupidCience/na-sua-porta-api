@@ -11,7 +11,7 @@ import {
   OrderStatus,
   PaymentStatus,
   UserRole,
-} from 'src/generated';
+} from '../generated/client';
 import { DeliveriesService } from 'src/deliveries/deliveries.service';
 import { DeliveriesGateway } from 'src/deliveries/deliveries.gateway';
 

@@ -10,7 +10,7 @@ import {
 } from '@nestjs/common';
 import { VendorsService } from './vendors.service';
 import { JwtAuth } from 'src/auth/jwt-auth.guard';
-import { OrderStatus } from 'src/generated';
+import { OrderStatus } from '../generated/client';
 
 @Controller('vendors')
 export class VendorsController {
