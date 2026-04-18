@@ -34,7 +34,9 @@ export class NotificationsService {
     }
 
     const metadata =
-      input.metadata == null || typeof input.metadata === 'string'
+      input.metadata === null ||
+      input.metadata === undefined ||
+      typeof input.metadata === 'string'
         ? input.metadata
         : JSON.stringify(input.metadata);
 
