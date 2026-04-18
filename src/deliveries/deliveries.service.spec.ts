@@ -2,6 +2,7 @@ import { Test, TestingModule } from '@nestjs/testing';
 import { DeliveriesService } from './deliveries.service';
 import { PrismaService } from '../prisma/prisma.service';
 import { DeliveriesGateway } from './deliveries.gateway';
+import { NotificationsService } from '../notifications/notifications.service';
 
 const mockPrismaService = {
   delivery: {
@@ -38,6 +39,10 @@ const mockDeliveriesGateway = {
   getOnlineDeliveryPeopleCount: jest.fn().mockReturnValue(0),
 };
 
+const mockNotificationsService = {
+  createForUsers: jest.fn().mockResolvedValue([]),
+};
+
 describe('DeliveriesService', () => {
   let service: DeliveriesService;
 
@@ -47,6 +52,10 @@ describe('DeliveriesService', () => {
         DeliveriesService,
         { provide: PrismaService, useValue: mockPrismaService },
         { provide: DeliveriesGateway, useValue: mockDeliveriesGateway },
+        {
+          provide: NotificationsService,
+          useValue: mockNotificationsService,
+        },
       ],
     }).compile();
 
