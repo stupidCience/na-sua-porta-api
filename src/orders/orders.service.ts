@@ -11,12 +11,15 @@ import { DeliveriesService } from '../deliveries/deliveries.service';
 import {
   DeliveryStatus,
   DeliveryType,
+  NotificationCategory,
   OrderStatus,
   PaymentStatus,
+  ResidentVerificationStatus,
   UserRole,
   VendorType,
 } from '../generated/client';
 import * as bcrypt from 'bcrypt';
+import { NotificationsService } from '../notifications/notifications.service';
 
 type ChatKind = 'ORDER' | 'DELIVERY';
 
@@ -54,7 +57,45 @@ export class OrdersService {
     private prisma: PrismaService,
     private deliveriesService: DeliveriesService,
     private deliveriesGateway: DeliveriesGateway,
+    private notificationsService: NotificationsService,
   ) {}
+
+  private async dispatchNotifications(
+    userIds: Array<string | null | undefined>,
+    input: {
+      category: NotificationCategory;
+      title: string;
+      body: string;
+      link?: string | null;
+      orderId?: string | null;
+      deliveryId?: string | null;
+      metadata?: Record<string, unknown> | string | null;
+    },
+  ) {
+    const notifications = await this.notificationsService.createForUsers(
+      userIds,
+      input,
+    );
+
+    for (const notification of notifications) {
+      this.deliveriesGateway.sendToUser(
+        notification.userId,
+        'notification_created',
+        notification,
+      );
+    }
+
+    return notifications;
+  }
+
+  private getMessagePreview(content: string) {
+    const normalized = content.trim().replace(/\s+/g, ' ');
+    if (normalized.length <= 110) {
+      return normalized;
+    }
+
+    return `${normalized.slice(0, 107)}...`;
+  }
 
   private async cleanupExpiredMessages() {
     await this.prisma.orderMessage.deleteMany({
@@ -79,6 +120,68 @@ export class OrdersService {
         },
       },
     });
+  }
+
+  private async assertResidentOperationalAccess(userId: string) {
+    const resident = await this.prisma.user.findUnique({
+      where: { id: userId },
+      select: {
+        apartment: true,
+        block: true,
+        phone: true,
+        communicationsConsent: true,
+        personalDocument: true,
+        residenceDocument: true,
+        residentVerificationStatus: true,
+      },
+    });
+
+    if (!resident) {
+      throw new NotFoundException('Morador não encontrado');
+    }
+
+    const missing: string[] = [];
+    if (!resident.apartment?.trim()) missing.push('apartamento');
+    if (!resident.block?.trim()) missing.push('bloco');
+    if (!resident.phone?.trim()) missing.push('telefone');
+    if (!resident.communicationsConsent)
+      missing.push('autorizacao de comunicacoes');
+    if (!resident.personalDocument?.trim()) missing.push('documento pessoal');
+    if (!resident.residenceDocument?.trim())
+      missing.push('comprovante de residencia');
+
+    if (missing.length > 0) {
+      throw new BadRequestException(
+        `Seu cadastro está incompleto (${missing.join(', ')}). Atualize em /profile para continuar.`,
+      );
+    }
+
+    if (
+      resident.residentVerificationStatus ===
+      ResidentVerificationStatus.PENDING_REVIEW
+    ) {
+      throw new BadRequestException(
+        'Seu cadastro está em análise pelo condomínio. Aguarde a aprovação para criar pedidos.',
+      );
+    }
+
+    if (
+      resident.residentVerificationStatus ===
+      ResidentVerificationStatus.REJECTED
+    ) {
+      throw new BadRequestException(
+        'Seu cadastro foi rejeitado pelo condomínio. Atualize seus documentos em /profile para solicitar nova análise.',
+      );
+    }
+
+    if (
+      resident.residentVerificationStatus !==
+      ResidentVerificationStatus.VERIFIED
+    ) {
+      throw new BadRequestException(
+        'Envie seus documentos e aguarde a aprovação do condomínio para continuar.',
+      );
+    }
   }
 
   private isOrderChatEnabled(
@@ -316,6 +419,8 @@ export class OrdersService {
       throw new ForbiddenException('Somente moradores podem criar pedidos');
     }
 
+    await this.assertResidentOperationalAccess(user.id);
+
     const customerName = input.customerName?.trim() || user.name;
     if (!customerName) {
       throw new BadRequestException('Nome do cliente é obrigatório');
@@ -368,6 +473,17 @@ export class OrdersService {
       customerName: order.customerName,
       vendorName: vendor?.name || null,
     });
+
+    if (vendor?.userId && vendor.userId !== user.id) {
+      await this.dispatchNotifications([vendor.userId], {
+        category: NotificationCategory.ORDER_UPDATE,
+        title: 'Novo pedido recebido',
+        body: `${order.customerName} abriu um novo pedido para a sua operação.`,
+        link: '/vendor/orders',
+        orderId: order.id,
+        metadata: { status: order.status },
+      });
+    }
 
     return this.findById(order.id, user.id, user.role, user.condominiumId);
   }
@@ -580,10 +696,58 @@ export class OrdersService {
       condominiumId,
     );
 
-    return [...orderChats, ...deliveryChats].sort(
+    const chats = [...orderChats, ...deliveryChats].sort(
       (a, b) =>
         new Date(b.updatedAt).getTime() - new Date(a.updatedAt).getTime(),
     );
+
+    if (chats.length === 0) {
+      return chats;
+    }
+
+    const orderIds = orderChats.map((chat) => chat.id);
+    const deliveryIds = deliveryChats.map((chat) => chat.id);
+    const chatFilters = [
+      ...(orderIds.length > 0 ? [{ orderId: { in: orderIds } }] : []),
+      ...(deliveryIds.length > 0 ? [{ deliveryId: { in: deliveryIds } }] : []),
+    ];
+
+    if (chatFilters.length === 0) {
+      return chats.map((chat) => ({ ...chat, unreadCount: 0 }));
+    }
+
+    const unreadNotifications = await this.prisma.notification.findMany({
+      where: {
+        userId,
+        isRead: false,
+        category: NotificationCategory.CHAT_MESSAGE,
+        OR: chatFilters,
+      },
+      select: {
+        orderId: true,
+        deliveryId: true,
+      },
+    });
+
+    const unreadByKey = new Map<string, number>();
+    for (const notification of unreadNotifications) {
+      const key = notification.orderId
+        ? `ORDER:${notification.orderId}`
+        : notification.deliveryId
+          ? `DELIVERY:${notification.deliveryId}`
+          : null;
+
+      if (!key) {
+        continue;
+      }
+
+      unreadByKey.set(key, (unreadByKey.get(key) ?? 0) + 1);
+    }
+
+    return chats.map((chat) => ({
+      ...chat,
+      unreadCount: unreadByKey.get(`${chat.kind}:${chat.id}`) ?? 0,
+    }));
   }
 
   private async getOrderChats(
@@ -1029,31 +1193,33 @@ export class OrdersService {
       },
     });
 
-    if (order?.vendor?.userId && order.vendor.userId !== userId) {
-      this.deliveriesGateway.sendToUser(
-        order.vendor.userId,
-        'order_message',
-        message,
-      );
-    }
+    const recipientIds = Array.from(
+      new Set(
+        [
+          order?.vendor?.userId,
+          order?.createdByUserId,
+          order?.delivery?.deliveryPersonId,
+        ].filter(
+          (recipientId): recipientId is string =>
+            !!recipientId && recipientId !== userId,
+        ),
+      ),
+    );
 
-    if (order?.createdByUserId && order.createdByUserId !== userId) {
-      this.deliveriesGateway.sendToUser(
-        order.createdByUserId,
-        'order_message',
-        message,
-      );
-    }
+    await this.dispatchNotifications(recipientIds, {
+      category: NotificationCategory.CHAT_MESSAGE,
+      title: 'Nova mensagem no chat do pedido',
+      body: `${message.sender?.name || 'Participante'}: ${this.getMessagePreview(content)}`,
+      link: `/chats?orderId=${orderId}`,
+      orderId,
+      metadata: {
+        kind: 'ORDER',
+        senderId: userId,
+      },
+    });
 
-    if (
-      order?.delivery?.deliveryPersonId &&
-      order.delivery.deliveryPersonId !== userId
-    ) {
-      this.deliveriesGateway.sendToUser(
-        order.delivery.deliveryPersonId,
-        'order_message',
-        message,
-      );
+    for (const recipientId of recipientIds) {
+      this.deliveriesGateway.sendToUser(recipientId, 'order_message', message);
     }
 
     return message;
@@ -1124,17 +1290,30 @@ export class OrdersService {
         : undefined,
     };
 
-    if (delivery.residentId && delivery.residentId !== userId) {
-      this.deliveriesGateway.sendToUser(
-        delivery.residentId,
-        'delivery_message',
-        message,
-      );
-    }
+    const recipientIds = Array.from(
+      new Set(
+        [delivery.residentId, delivery.deliveryPersonId].filter(
+          (recipientId): recipientId is string =>
+            !!recipientId && recipientId !== userId,
+        ),
+      ),
+    );
 
-    if (delivery.deliveryPersonId && delivery.deliveryPersonId !== userId) {
+    await this.dispatchNotifications(recipientIds, {
+      category: NotificationCategory.CHAT_MESSAGE,
+      title: 'Nova mensagem no chat da entrega',
+      body: `${message.sender?.name || 'Participante'}: ${this.getMessagePreview(content)}`,
+      link: `/chats?deliveryId=${deliveryId}`,
+      deliveryId,
+      metadata: {
+        kind: 'DELIVERY',
+        senderId: userId,
+      },
+    });
+
+    for (const recipientId of recipientIds) {
       this.deliveriesGateway.sendToUser(
-        delivery.deliveryPersonId,
+        recipientId,
         'delivery_message',
         message,
       );

@@ -7,6 +7,7 @@ import { UsersModule } from './users/users.module';
 import { DeliveriesModule } from './deliveries/deliveries.module';
 import { PrismaModule } from './prisma/prisma.module';
 import { CondominiumsModule } from './condominiums/condominiums.module';
+import { NotificationsModule } from './notifications/notifications.module';
 import { OrdersModule } from './orders/orders.module';
 import { VendorsModule } from './vendors/vendors.module';
 
@@ -20,6 +21,7 @@ import { VendorsModule } from './vendors/vendors.module';
     UsersModule,
     DeliveriesModule,
     CondominiumsModule,
+    NotificationsModule,
     OrdersModule,
     VendorsModule,
   ],

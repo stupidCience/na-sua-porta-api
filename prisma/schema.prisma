@@ -17,6 +17,7 @@ model Condominium {
   name      String
   address   String?
   active    Boolean  @default(true)
+  accessCode String? @unique
 
   // Service configuration
   operatingHours      String?  // e.g. "08:00–22:00"
@@ -38,6 +39,7 @@ model User {
   password  String
   name      String
   phone     String?
+  communicationsConsent Boolean @default(false)
   role      UserRole @default(RESIDENT)
   apartment String?  // Only for RESIDENT role (format: "101", "201", etc)
   block     String?  // Only for RESIDENT role (format: "A", "B", etc)
@@ -45,6 +47,9 @@ model User {
 
   vehicleInfo String? // Only for DELIVERY_PERSON (e.g. "Moto - ABC-1234")
   personalDocument String? // Required for DELIVERY_PERSON (RG/CPF)
+  residenceDocument String?
+  residentVerificationStatus ResidentVerificationStatus @default(NOT_SUBMITTED)
+  registrationSource RegistrationSource @default(DIRECT)
 
   // Multi-condominium
   condominiumId String?
@@ -55,6 +60,7 @@ model User {
   acceptedDeliveries  Delivery[] @relation("AcceptedBy")
   createdOrders       Order[]    @relation("OrderCreatedBy")
   orderMessages       OrderMessage[]
+  notifications       Notification[]
   vendorProfile       Vendor?
 
   createdAt DateTime @default(now())
@@ -68,6 +74,18 @@ enum UserRole {
   DELIVERY_PERSON
   VENDOR
   CONDOMINIUM_ADMIN
+}
+
+enum ResidentVerificationStatus {
+  NOT_SUBMITTED
+  PENDING_REVIEW
+  VERIFIED
+  REJECTED
+}
+
+enum RegistrationSource {
+  DIRECT
+  CONDOMINIUM_ACCESS_CODE
 }
 
 // Delivery model
@@ -245,6 +263,13 @@ enum PaymentStatus {
   PAID
 }
 
+enum NotificationCategory {
+  CHAT_MESSAGE
+  ORDER_UPDATE
+  DELIVERY_UPDATE
+  SYSTEM
+}
+
 model OrderMessage {
   id          String   @id @default(cuid())
   orderId     String
@@ -258,6 +283,28 @@ model OrderMessage {
   @@index([orderId])
   @@index([senderId])
   @@index([expiresAt])
+}
+
+model Notification {
+  id         String               @id @default(cuid())
+  userId     String
+  user       User                 @relation(fields: [userId], references: [id], onDelete: Cascade)
+  category   NotificationCategory
+  title      String
+  body       String
+  link       String?
+  orderId    String?
+  deliveryId String?
+  metadata   String?
+  isRead     Boolean              @default(false)
+  readAt     DateTime?
+  createdAt  DateTime             @default(now())
+  updatedAt  DateTime             @updatedAt
+
+  @@index([userId, createdAt])
+  @@index([userId, isRead, createdAt])
+  @@index([orderId])
+  @@index([deliveryId])
 }
 
 // Event log for tracking delivery lifecycle

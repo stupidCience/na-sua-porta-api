@@ -1,6 +1,6 @@
 import { Injectable, UnauthorizedException } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
-import { UsersService } from '../users/users.service';
+import { CreateUserInput, UsersService } from '../users/users.service';
 import { UserRole } from '../generated/client';
 
 export interface JwtPayload {
@@ -16,44 +16,13 @@ export class AuthService {
     private jwtService: JwtService,
   ) {}
 
-  async register(
-    email: string,
-    password: string,
-    name: string,
-    role: UserRole = UserRole.RESIDENT,
-    apartment?: string,
-    block?: string,
-    condominiumId?: string,
-    condominiumName?: string,
-    personalDocument?: string,
-    vendorName?: string,
-    vendorCategory?: string,
-    vendorDescription?: string,
-    vendorCnpj?: string,
-    vendorCnae?: string,
-    vendorLegalDocument?: string,
-    vendorContactPhone?: string,
-  ) {
-    const user = await this.usersService.create(
-      email,
-      password,
-      name,
-      role,
-      apartment,
-      block,
-      condominiumId,
-      condominiumName,
-      personalDocument,
-      vendorName,
-      vendorCategory,
-      vendorDescription,
-      vendorCnpj,
-      vendorCnae,
-      vendorLegalDocument,
-      vendorContactPhone,
-    );
+  async register(data: CreateUserInput) {
+    const user = await this.usersService.create(data);
 
     const fullUser = await this.usersService.findById(user.id);
+    if (!fullUser) {
+      throw new UnauthorizedException('Usuário não encontrado');
+    }
 
     const payload: JwtPayload = {
       sub: user.id,
@@ -63,19 +32,7 @@ export class AuthService {
 
     return {
       access_token: this.jwtService.sign(payload),
-      user: {
-        id: user.id,
-        email: user.email,
-        name: user.name,
-        role: user.role,
-        condominiumId: user.condominiumId,
-        condominiumName: (fullUser as any)?.condominium?.name ?? null,
-        apartment: user.apartment,
-        block: user.block,
-        personalDocument: (fullUser as any)?.personalDocument ?? null,
-        isVendor: user.role === UserRole.VENDOR,
-        vendorId: (fullUser as any)?.vendorProfile?.id ?? null,
-      },
+      user: this.usersService.buildSafeUserResponse(fullUser),
     };
   }
 
@@ -103,19 +60,7 @@ export class AuthService {
 
     return {
       access_token: this.jwtService.sign(payload),
-      user: {
-        id: user.id,
-        email: user.email,
-        name: user.name,
-        role: user.role,
-        condominiumId: user.condominiumId,
-        condominiumName: (user as any)?.condominium?.name ?? null,
-        apartment: user.apartment,
-        block: user.block,
-        personalDocument: (user as any)?.personalDocument ?? null,
-        isVendor: user.role === UserRole.VENDOR,
-        vendorId: (user as any)?.vendorProfile?.id ?? null,
-      },
+      user: this.usersService.buildSafeUserResponse(user),
     };
   }
 

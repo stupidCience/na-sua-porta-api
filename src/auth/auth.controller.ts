@@ -13,11 +13,16 @@ export class AuthController {
       password,
       name,
       role = UserRole.RESIDENT,
+      phone,
       apartment,
       block,
       condominiumId,
+      condominiumCode,
+      condominiumAccessCode,
       condominiumName,
       personalDocument,
+      residenceDocument,
+      communicationsConsent,
       vendorName,
       vendorCategory,
       vendorDescription,
@@ -33,46 +38,39 @@ export class AuthController {
       );
     }
 
-    if (
-      (role === UserRole.DELIVERY_PERSON || role === UserRole.VENDOR) &&
-      !condominiumId?.trim()
-    ) {
+    if (role === UserRole.DELIVERY_PERSON || role === UserRole.VENDOR) {
       throw new BadRequestException(
-        'Código do condomínio é obrigatório para esta conta',
+        'Cadastros de entregador e comerciante agora sao habilitados dentro da conta do morador, na area de configuracoes.',
       );
     }
 
-    if (role === UserRole.DELIVERY_PERSON && !personalDocument?.trim()) {
+    if (role === UserRole.RESIDENT && !phone?.trim()) {
       throw new BadRequestException(
-        'Documento pessoal (RG/CPF) é obrigatório para entregadores',
+        'Telefone ou WhatsApp é obrigatório para moradores',
       );
     }
 
-    if (role === UserRole.VENDOR) {
-      if (!vendorName?.trim()) {
-        throw new BadRequestException('Nome do comércio é obrigatório');
-      }
-      if (
-        !vendorCnpj?.trim() ||
-        !vendorCnae?.trim() ||
-        !vendorLegalDocument?.trim()
-      ) {
-        throw new BadRequestException(
-          'CNPJ, CNAE e documento do responsável são obrigatórios para comerciantes',
-        );
-      }
+    if (role === UserRole.RESIDENT && communicationsConsent !== true) {
+      throw new BadRequestException(
+        'Você precisa autorizar comunicações para concluir o cadastro',
+      );
     }
 
-    return this.authService.register(
+    return this.authService.register({
       email,
       password,
       name,
       role,
+      phone,
       apartment,
       block,
       condominiumId,
+      condominiumAccessCode:
+        condominiumAccessCode || condominiumCode || condominiumId,
       condominiumName,
       personalDocument,
+      residenceDocument,
+      communicationsConsent,
       vendorName,
       vendorCategory,
       vendorDescription,
@@ -80,7 +78,7 @@ export class AuthController {
       vendorCnae,
       vendorLegalDocument,
       vendorContactPhone,
-    );
+    });
   }
 
   @Post('login')

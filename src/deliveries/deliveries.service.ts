@@ -9,16 +9,48 @@ import {
   Delivery,
   DeliveryStatus,
   DeliveryType,
+  NotificationCategory,
   OrderStatus,
+  ResidentVerificationStatus,
 } from '../generated/client';
 import { tenantScope } from '../common/tenant-scope.util';
+import { NotificationsService } from '../notifications/notifications.service';
 
 @Injectable()
 export class DeliveriesService {
   constructor(
     private prisma: PrismaService,
     private gateway: DeliveriesGateway,
+    private notificationsService: NotificationsService,
   ) {}
+
+  private async dispatchNotifications(
+    userIds: Array<string | null | undefined>,
+    input: {
+      category: NotificationCategory;
+      title: string;
+      body: string;
+      link?: string | null;
+      orderId?: string | null;
+      deliveryId?: string | null;
+      metadata?: Record<string, unknown> | string | null;
+    },
+  ) {
+    const notifications = await this.notificationsService.createForUsers(
+      userIds,
+      input,
+    );
+
+    for (const notification of notifications) {
+      this.gateway.sendToUser(
+        notification.userId,
+        'notification_created',
+        notification,
+      );
+    }
+
+    return notifications;
+  }
 
   private generateDeliveryCode(): string {
     return Math.floor(100000 + Math.random() * 900000).toString();
@@ -35,6 +67,10 @@ export class DeliveriesService {
         apartment: true,
         block: true,
         phone: true,
+        communicationsConsent: true,
+        personalDocument: true,
+        residenceDocument: true,
+        residentVerificationStatus: true,
       },
     });
 
@@ -46,10 +82,42 @@ export class DeliveriesService {
     if (!resident.apartment?.trim()) missing.push('apartamento');
     if (!resident.block?.trim()) missing.push('bloco');
     if (!resident.phone?.trim()) missing.push('telefone');
+    if (!resident.communicationsConsent)
+      missing.push('autorizacao de comunicacoes');
+    if (!resident.personalDocument?.trim()) missing.push('documento pessoal');
+    if (!resident.residenceDocument?.trim())
+      missing.push('comprovante de residencia');
 
     if (missing.length > 0) {
       throw new BadRequestException(
         `Seu cadastro está incompleto (${missing.join(', ')}). Atualize em /profile para continuar.`,
+      );
+    }
+
+    if (
+      resident.residentVerificationStatus ===
+      ResidentVerificationStatus.PENDING_REVIEW
+    ) {
+      throw new BadRequestException(
+        'Seu cadastro está em análise pelo condomínio. Aguarde a aprovação para solicitar entregas.',
+      );
+    }
+
+    if (
+      resident.residentVerificationStatus ===
+      ResidentVerificationStatus.REJECTED
+    ) {
+      throw new BadRequestException(
+        'Seu cadastro foi rejeitado pelo condomínio. Atualize seus documentos em /profile para solicitar nova análise.',
+      );
+    }
+
+    if (
+      resident.residentVerificationStatus !==
+      ResidentVerificationStatus.VERIFIED
+    ) {
+      throw new BadRequestException(
+        'Envie seus documentos e aguarde a aprovação do condomínio para continuar.',
       );
     }
   }
@@ -274,6 +342,12 @@ export class DeliveriesService {
       throw new NotFoundException('Entrega não encontrada');
     }
 
+    if (delivery.residentId === deliveryPersonId) {
+      throw new BadRequestException(
+        'A mesma conta não pode aceitar a própria solicitação em outro módulo',
+      );
+    }
+
     if (delivery.status !== DeliveryStatus.REQUESTED) {
       throw new BadRequestException(
         'Este pedido não está mais disponível para aceite',
@@ -351,6 +425,15 @@ export class DeliveriesService {
     // Notify the resident that their delivery was accepted
     if (updated.residentId) {
       this.gateway.sendToUser(updated.residentId, 'delivery_updated', updated);
+      await this.dispatchNotifications([updated.residentId], {
+        category: NotificationCategory.DELIVERY_UPDATE,
+        title: 'Entrega aceita',
+        body: `${updated.deliveryPerson?.name || 'Um entregador'} assumiu sua solicitação e já está no fluxo da coleta.`,
+        link: '/deliveries',
+        orderId: updated.orderId ?? null,
+        deliveryId: updated.id,
+        metadata: { status: updated.status },
+      });
     }
 
     if (generatedPickupCode && updated.orderId && updated.deliveryPersonId) {
@@ -486,8 +569,31 @@ export class DeliveriesService {
       const order = await this.prisma.order.update({
         where: { id: updated.orderId },
         data: { status: OrderStatus.COMPLETED, completedAt: new Date() },
+        include: {
+          vendor: {
+            select: {
+              userId: true,
+              name: true,
+            },
+          },
+        },
       });
       this.gateway.orderUpdated(order);
+      if (order.createdByUserId) {
+        this.gateway.sendToUser(order.createdByUserId, 'order_updated', order);
+      }
+      if (order.vendor?.userId) {
+        this.gateway.sendToUser(order.vendor.userId, 'order_updated', order);
+        await this.dispatchNotifications([order.vendor.userId], {
+          category: NotificationCategory.ORDER_UPDATE,
+          title: 'Pedido concluído',
+          body: `A entrega do pedido ${order.id.slice(-6).toUpperCase()} foi finalizada com sucesso.`,
+          link: '/vendor/orders',
+          orderId: order.id,
+          deliveryId: updated.id,
+          metadata: { status: order.status },
+        });
+      }
     }
 
     const sanitizedForBroadcast: any = { ...updated };
@@ -496,6 +602,21 @@ export class DeliveriesService {
     // Notify the resident about status change
     if (updated.residentId) {
       this.gateway.sendToUser(updated.residentId, 'delivery_updated', updated);
+      await this.dispatchNotifications([updated.residentId], {
+        category: NotificationCategory.DELIVERY_UPDATE,
+        title:
+          newStatus === DeliveryStatus.PICKED_UP
+            ? 'Entrega em rota'
+            : 'Entrega concluída',
+        body:
+          newStatus === DeliveryStatus.PICKED_UP
+            ? `${updated.deliveryPerson?.name || 'Seu entregador'} retirou o pedido e está a caminho.`
+            : 'Sua entrega foi finalizada. Se quiser, já pode avaliar o atendimento.',
+        link: '/deliveries',
+        orderId: updated.orderId ?? null,
+        deliveryId: updated.id,
+        metadata: { status: newStatus },
+      });
     }
     return updated;
   }
@@ -602,6 +723,15 @@ export class DeliveriesService {
           'delivery_updated',
           refreshed,
         );
+        await this.dispatchNotifications([refreshed.residentId], {
+          category: NotificationCategory.DELIVERY_UPDATE,
+          title: 'Coleta reaberta',
+          body: 'O entregador liberou a coleta e a solicitação voltou para a fila de disponíveis.',
+          link: '/deliveries',
+          orderId: refreshed.orderId ?? null,
+          deliveryId: refreshed.id,
+          metadata: { status: refreshed.status },
+        });
       }
       return refreshed;
     }

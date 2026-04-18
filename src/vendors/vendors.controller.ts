@@ -1,4 +1,5 @@
 import {
+  ForbiddenException,
   Body,
   Controller,
   Delete,
@@ -16,9 +17,18 @@ import { OrderStatus } from '../generated/client';
 export class VendorsController {
   constructor(private vendorsService: VendorsService) {}
 
+  private ensureVendorContext(req: any) {
+    if (req.user?.role !== 'VENDOR') {
+      throw new ForbiddenException(
+        'Troque para o modulo de comercio para acessar esta area.',
+      );
+    }
+  }
+
   @Get('me')
   @JwtAuth()
   async getMyVendor(@Request() req: any) {
+    this.ensureVendorContext(req);
     return this.vendorsService.getMyVendor(
       req.user.id,
       req.user?.condominiumId,
@@ -28,6 +38,7 @@ export class VendorsController {
   @Patch('me')
   @JwtAuth()
   async updateMyVendor(@Request() req: any, @Body() body: any) {
+    this.ensureVendorContext(req);
     return this.vendorsService.updateMyVendor(
       req.user.id,
       req.user?.condominiumId,
@@ -54,6 +65,7 @@ export class VendorsController {
   @Post('me/menu-items')
   @JwtAuth()
   async addMenuItem(@Request() req: any, @Body() body: any) {
+    this.ensureVendorContext(req);
     return this.vendorsService.addMenuItem(
       req.user.id,
       req.user?.condominiumId,
@@ -75,6 +87,7 @@ export class VendorsController {
     @Param('itemId') itemId: string,
     @Body() body: any,
   ) {
+    this.ensureVendorContext(req);
     return this.vendorsService.updateMenuItem(
       req.user.id,
       req.user?.condominiumId,
@@ -93,6 +106,7 @@ export class VendorsController {
   @Delete('me/menu-items/:itemId')
   @JwtAuth()
   async deleteMenuItem(@Request() req: any, @Param('itemId') itemId: string) {
+    this.ensureVendorContext(req);
     return this.vendorsService.deleteMenuItem(
       req.user.id,
       req.user?.condominiumId,
@@ -103,6 +117,7 @@ export class VendorsController {
   @Get('me/orders')
   @JwtAuth()
   async getMyOrders(@Request() req: any) {
+    this.ensureVendorContext(req);
     return this.vendorsService.getMyOrders(
       req.user.id,
       req.user?.condominiumId,
@@ -113,6 +128,7 @@ export class VendorsController {
   @Get('me/orders/history')
   @JwtAuth()
   async getMyOrdersHistory(@Request() req: any) {
+    this.ensureVendorContext(req);
     return this.vendorsService.getMyOrders(
       req.user.id,
       req.user?.condominiumId,
@@ -127,6 +143,7 @@ export class VendorsController {
     @Param('orderId') orderId: string,
     @Body() body: any,
   ) {
+    this.ensureVendorContext(req);
     return this.vendorsService.updateMyOrderStatus(
       req.user.id,
       req.user?.condominiumId,
@@ -143,6 +160,7 @@ export class VendorsController {
     @Param('orderId') orderId: string,
     @Body() body: any,
   ) {
+    this.ensureVendorContext(req);
     return this.vendorsService.cancelMyOrder(
       req.user.id,
       req.user?.condominiumId,
@@ -157,6 +175,7 @@ export class VendorsController {
     @Request() req: any,
     @Param('orderId') orderId: string,
   ) {
+    this.ensureVendorContext(req);
     return this.vendorsService.getOrderMessages(
       req.user.id,
       req.user?.condominiumId,
@@ -171,6 +190,7 @@ export class VendorsController {
     @Param('orderId') orderId: string,
     @Body() body: any,
   ) {
+    this.ensureVendorContext(req);
     return this.vendorsService.sendOrderMessage(
       req.user.id,
       req.user?.condominiumId,
@@ -182,6 +202,7 @@ export class VendorsController {
   @Get('me/dashboard')
   @JwtAuth()
   async getDashboard(@Request() req: any) {
+    this.ensureVendorContext(req);
     return this.vendorsService.getDashboard(
       req.user.id,
       req.user?.condominiumId,

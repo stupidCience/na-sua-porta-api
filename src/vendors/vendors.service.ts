@@ -8,12 +8,15 @@ import { PrismaService } from '../prisma/prisma.service';
 import {
   DeliveryStatus,
   DeliveryType,
+  NotificationCategory,
   OrderStatus,
   PaymentStatus,
+  ResidentVerificationStatus,
   UserRole,
 } from '../generated/client';
 import { DeliveriesService } from '../deliveries/deliveries.service';
 import { DeliveriesGateway } from '../deliveries/deliveries.gateway';
+import { NotificationsService } from '../notifications/notifications.service';
 
 @Injectable()
 export class VendorsService {
@@ -21,7 +24,45 @@ export class VendorsService {
     private prisma: PrismaService,
     private deliveriesService: DeliveriesService,
     private gateway: DeliveriesGateway,
+    private notificationsService: NotificationsService,
   ) {}
+
+  private async dispatchNotifications(
+    userIds: Array<string | null | undefined>,
+    input: {
+      category: NotificationCategory;
+      title: string;
+      body: string;
+      link?: string | null;
+      orderId?: string | null;
+      deliveryId?: string | null;
+      metadata?: Record<string, unknown> | string | null;
+    },
+  ) {
+    const notifications = await this.notificationsService.createForUsers(
+      userIds,
+      input,
+    );
+
+    for (const notification of notifications) {
+      this.gateway.sendToUser(
+        notification.userId,
+        'notification_created',
+        notification,
+      );
+    }
+
+    return notifications;
+  }
+
+  private getMessagePreview(content: string) {
+    const normalized = content.trim().replace(/\s+/g, ' ');
+    if (normalized.length <= 110) {
+      return normalized;
+    }
+
+    return `${normalized.slice(0, 107)}...`;
+  }
 
   private async getVendorByUser(userId: string, condominiumId?: string) {
     const vendor = await this.prisma.vendor.findFirst({
@@ -102,6 +143,10 @@ export class VendorsService {
         apartment: true,
         block: true,
         phone: true,
+        communicationsConsent: true,
+        personalDocument: true,
+        residenceDocument: true,
+        residentVerificationStatus: true,
       },
     });
 
@@ -109,9 +154,41 @@ export class VendorsService {
     if (!resident?.apartment?.trim()) missing.push('apartamento');
     if (!resident?.block?.trim()) missing.push('bloco');
     if (!resident?.phone?.trim()) missing.push('telefone');
+    if (!resident?.communicationsConsent)
+      missing.push('autorizacao de comunicacoes');
+    if (!resident?.personalDocument?.trim()) missing.push('documento pessoal');
+    if (!resident?.residenceDocument?.trim())
+      missing.push('comprovante de residencia');
     if (missing.length > 0) {
       throw new BadRequestException(
         `Seu cadastro está incompleto (${missing.join(', ')}). Atualize em /profile para continuar.`,
+      );
+    }
+
+    if (
+      resident?.residentVerificationStatus ===
+      ResidentVerificationStatus.PENDING_REVIEW
+    ) {
+      throw new BadRequestException(
+        'Seu cadastro está em análise pelo condomínio. Aguarde a aprovação para fazer pedidos no comércio.',
+      );
+    }
+
+    if (
+      resident?.residentVerificationStatus ===
+      ResidentVerificationStatus.REJECTED
+    ) {
+      throw new BadRequestException(
+        'Seu cadastro foi rejeitado pelo condomínio. Atualize seus documentos em /profile para solicitar nova análise.',
+      );
+    }
+
+    if (
+      resident?.residentVerificationStatus !==
+      ResidentVerificationStatus.VERIFIED
+    ) {
+      throw new BadRequestException(
+        'Envie seus documentos e aguarde a aprovação do condomínio para continuar.',
       );
     }
 
@@ -231,6 +308,17 @@ export class VendorsService {
         totalAmount: order.totalAmount,
         status: order.status,
       });
+
+      if (vendor.userId !== user.id) {
+        await this.dispatchNotifications([vendor.userId], {
+          category: NotificationCategory.ORDER_UPDATE,
+          title: 'Novo pedido recebido',
+          body: `${order.customerName} enviou um pedido para ${vendor.name}.`,
+          link: '/vendor/orders',
+          orderId: order.id,
+          metadata: { status: order.status },
+        });
+      }
     }
 
     return this.prisma.order.findUnique({
@@ -487,6 +575,12 @@ export class VendorsService {
       throw new NotFoundException('Pedido não encontrado');
     }
 
+    if (order.createdByUserId === userId) {
+      throw new BadRequestException(
+        'A mesma conta não pode operar um pedido criado por ela em outro módulo',
+      );
+    }
+
     const allowedTargetStatuses: OrderStatus[] = [
       OrderStatus.ACCEPTED,
       OrderStatus.READY,
@@ -646,6 +740,21 @@ export class VendorsService {
           updatedDelivery,
         );
       }
+
+      await this.dispatchNotifications(
+        [updatedDelivery.residentId, updatedDelivery.deliveryPersonId].filter(
+          (recipientId) => recipientId !== userId,
+        ),
+        {
+          category: NotificationCategory.DELIVERY_UPDATE,
+          title: 'Pedido saiu para entrega',
+          body: `${updated.vendor?.name || 'A loja'} validou a coleta e a entrega já está em andamento.`,
+          link: '/deliveries',
+          orderId: updated.id,
+          deliveryId: updatedDelivery.id,
+          metadata: { status: updatedDelivery.status },
+        },
+      );
     }
 
     this.gateway.orderUpdated(updated);
@@ -664,6 +773,34 @@ export class VendorsService {
         updated,
       );
     }
+
+    await this.dispatchNotifications(
+      [
+        updated.createdByUserId,
+        status === OrderStatus.SENT
+          ? (updated.delivery?.deliveryPersonId ?? null)
+          : null,
+      ].filter((recipientId) => recipientId !== userId),
+      {
+        category: NotificationCategory.ORDER_UPDATE,
+        title:
+          status === OrderStatus.ACCEPTED
+            ? 'Pedido aceito'
+            : status === OrderStatus.READY
+              ? 'Pedido pronto'
+              : 'Pedido enviado',
+        body:
+          status === OrderStatus.ACCEPTED
+            ? `${updated.vendor?.name || 'A loja'} confirmou o pedido e liberou o chat da operação.`
+            : status === OrderStatus.READY
+              ? `${updated.vendor?.name || 'A loja'} terminou o preparo e o pedido já pode seguir para coleta.`
+              : `${updated.vendor?.name || 'A loja'} validou o código de coleta e liberou a entrega.`,
+        link: status === OrderStatus.SENT ? '/deliveries' : '/chats',
+        orderId: updated.id,
+        deliveryId: updated.delivery?.id ?? null,
+        metadata: { status: updated.status },
+      },
+    );
 
     return updated;
   }
@@ -758,6 +895,16 @@ export class VendorsService {
         'order_updated',
         updated,
       );
+
+      await this.dispatchNotifications([updated.createdByUserId], {
+        category: NotificationCategory.ORDER_UPDATE,
+        title: 'Pedido cancelado pela loja',
+        body: `${updated.vendor?.name || 'A loja'} cancelou este pedido${updated.cancelReason ? `: ${updated.cancelReason}` : '.'}`,
+        link: '/deliveries',
+        orderId: updated.id,
+        deliveryId: updated.delivery?.id ?? null,
+        metadata: { status: updated.status },
+      });
     }
 
     return updated;
@@ -893,16 +1040,29 @@ export class VendorsService {
       },
     });
 
-    if (order.createdByUserId) {
-      this.gateway.sendToUser(order.createdByUserId, 'order_message', message);
-    }
+    const recipientIds = Array.from(
+      new Set(
+        [order.createdByUserId, order.delivery?.deliveryPersonId].filter(
+          (recipientId): recipientId is string =>
+            !!recipientId && recipientId !== userId,
+        ),
+      ),
+    );
 
-    if (order.delivery?.deliveryPersonId) {
-      this.gateway.sendToUser(
-        order.delivery.deliveryPersonId,
-        'order_message',
-        message,
-      );
+    await this.dispatchNotifications(recipientIds, {
+      category: NotificationCategory.CHAT_MESSAGE,
+      title: 'Nova mensagem no chat do pedido',
+      body: `${message.sender?.name || 'Loja'}: ${this.getMessagePreview(content)}`,
+      link: `/chats?orderId=${order.id}`,
+      orderId: order.id,
+      metadata: {
+        kind: 'ORDER',
+        senderId: userId,
+      },
+    });
+
+    for (const recipientId of recipientIds) {
+      this.gateway.sendToUser(recipientId, 'order_message', message);
     }
 
     return message;

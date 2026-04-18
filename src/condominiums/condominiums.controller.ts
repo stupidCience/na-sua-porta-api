@@ -3,6 +3,7 @@ import {
   Get,
   Patch,
   Body,
+  Param,
   Request,
   ForbiddenException,
   BadRequestException,
@@ -14,6 +15,11 @@ import { CondominiumsService } from './condominiums.service';
 export class CondominiumsController {
   constructor(private condominiumsService: CondominiumsService) {}
 
+  @Get('access/:accessCode')
+  async resolveAccessCode(@Param('accessCode') accessCode: string) {
+    return this.condominiumsService.resolveAccessCode(accessCode);
+  }
+
   @Get('me')
   @JwtAuth()
   async getMe(@Request() req: any) {
@@ -24,6 +30,18 @@ export class CondominiumsController {
       throw new BadRequestException('Nenhum condomínio vinculado a esta conta');
     }
     return this.condominiumsService.getMyCondominium(req.user.condominiumId);
+  }
+
+  @Get('me/access-code')
+  @JwtAuth()
+  async getMyAccessCode(@Request() req: any) {
+    if (req.user.role !== 'CONDOMINIUM_ADMIN') {
+      throw new ForbiddenException('Acesso restrito a administradores');
+    }
+    if (!req.user.condominiumId) {
+      throw new BadRequestException('Nenhum condomínio vinculado a esta conta');
+    }
+    return this.condominiumsService.getMyAccessCode(req.user.condominiumId);
   }
 
   @Patch('me')

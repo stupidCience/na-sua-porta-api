@@ -7,29 +7,102 @@ import {
   Request,
   ForbiddenException,
   BadRequestException,
-  NotFoundException,
 } from '@nestjs/common';
 import { JwtAuth } from '../auth/jwt-auth.guard';
+import { ResidentVerificationStatus, UserRole } from '../generated/client';
 import { UsersService } from './users.service';
 
 @Controller('users')
 export class UsersController {
   constructor(private usersService: UsersService) {}
 
+  private parseRequestedModule(value: unknown): UserRole {
+    const normalized = String(value ?? '')
+      .trim()
+      .toUpperCase();
+
+    if (!Object.values(UserRole).includes(normalized as UserRole)) {
+      throw new BadRequestException('Modulo informado e invalido');
+    }
+
+    return normalized as UserRole;
+  }
+
+  private parseResidentVerificationStatus(
+    value: unknown,
+  ): ResidentVerificationStatus {
+    const normalized = String(value ?? '')
+      .trim()
+      .toUpperCase();
+
+    if (
+      !Object.values(ResidentVerificationStatus).includes(
+        normalized as ResidentVerificationStatus,
+      )
+    ) {
+      throw new BadRequestException('Status de revisão inválido');
+    }
+
+    return normalized as ResidentVerificationStatus;
+  }
+
   @Get('me')
   @JwtAuth()
   async getMe(@Request() req: any) {
-    const user = await this.usersService.findById(req.user.id);
-    if (!user) throw new NotFoundException('Usuário não encontrado');
-    const { password: _password, ...safe } = user as any;
-    return safe;
+    return this.usersService.getSafeUserById(req.user.id);
+  }
+
+  @Get('me/modules')
+  @JwtAuth()
+  async getMyModules(@Request() req: any) {
+    return this.usersService.getAccountModules(req.user.id);
+  }
+
+  @Patch('me/modules/active')
+  @JwtAuth()
+  async switchActiveModule(@Request() req: any, @Body() body: any) {
+    const module = this.parseRequestedModule(body.module ?? body.role);
+
+    return this.usersService.switchActiveModule(req.user.id, module);
+  }
+
+  @Patch('me/modules/activate')
+  @JwtAuth()
+  async activateModule(@Request() req: any, @Body() body: any) {
+    const module = this.parseRequestedModule(body.module ?? body.role);
+
+    return this.usersService.activateModule(req.user.id, module, {
+      phone: body.phone,
+      apartment: body.apartment,
+      block: body.block,
+      communicationsConsent: body.communicationsConsent,
+      personalDocument: body.personalDocument,
+      residenceDocument: body.residenceDocument,
+      vehicleInfo: body.vehicleInfo,
+      condominiumCode: body.condominiumCode ?? body.condominiumId,
+      vendorName: body.vendorName,
+      vendorCategory: body.vendorCategory,
+      vendorDescription: body.vendorDescription,
+      vendorCnpj: body.vendorCnpj,
+      vendorCnae: body.vendorCnae,
+      vendorLegalDocument: body.vendorLegalDocument,
+      vendorContactPhone: body.vendorContactPhone,
+    });
   }
 
   @Patch('me')
   @JwtAuth()
   async updateMe(@Request() req: any, @Body() body: any) {
-    const { name, phone, apartment, block, vehicleInfo, personalDocument } =
-      body;
+    const {
+      name,
+      phone,
+      apartment,
+      block,
+      vehicleInfo,
+      personalDocument,
+      residenceDocument,
+      communicationsConsent,
+    } = body;
     const updated = await this.usersService.updateProfile(req.user.id, {
       name,
       phone,
@@ -37,9 +110,10 @@ export class UsersController {
       block,
       vehicleInfo,
       personalDocument,
+      residenceDocument,
+      communicationsConsent,
     });
-    const { password: _password, ...safe } = updated as any;
-    return safe;
+    return this.usersService.buildSafeUserResponse(updated);
   }
 
   @Patch('me/documents')
@@ -53,24 +127,22 @@ export class UsersController {
       vendorCnae,
       vendorLegalDocument,
     });
-    const { password: _password, ...safe } = updated as any;
-    return safe;
+    return this.usersService.buildSafeUserResponse(updated);
   }
 
   @Patch('me/condominium')
   @JwtAuth()
   async linkCondominium(@Request() req: any, @Body() body: any) {
-    const { condominiumId } = body;
-    if (!condominiumId || typeof condominiumId !== 'string') {
-      throw new BadRequestException('Informe o código do condomínio');
+    const condominiumCode = body.condominiumCode || body.condominiumId;
+    if (!condominiumCode || typeof condominiumCode !== 'string') {
+      throw new BadRequestException('Informe o código de acesso do condomínio');
     }
 
     const updated = await this.usersService.linkToCondominium(
       req.user.id,
-      condominiumId,
+      condominiumCode,
     );
-    const { password: _password, ...safe } = updated as any;
-    return safe;
+    return this.usersService.buildSafeUserResponse(updated);
   }
 
   @Patch('me/password')
@@ -123,5 +195,29 @@ export class UsersController {
       );
     }
     return this.usersService.toggleUserStatus(id, body.active);
+  }
+
+  @Patch(':id/resident-verification')
+  @JwtAuth()
+  async reviewResidentVerification(
+    @Request() req: any,
+    @Param('id') id: string,
+    @Body() body: any,
+  ) {
+    if (req.user.role !== 'CONDOMINIUM_ADMIN') {
+      throw new ForbiddenException('Acesso restrito a administradores');
+    }
+
+    if (!req.user.condominiumId) {
+      throw new BadRequestException('Nenhum condomínio vinculado a esta conta');
+    }
+
+    const status = this.parseResidentVerificationStatus(body.status);
+
+    return this.usersService.reviewResidentVerification(
+      req.user.condominiumId,
+      id,
+      status,
+    );
   }
 }
