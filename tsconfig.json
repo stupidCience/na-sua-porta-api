@@ -1,28 +1,37 @@
 {
-  "compilerOptions": {
-    "module": "commonjs",
-    "moduleResolution": "node",
-    "esModuleInterop": true,
-    "isolatedModules": true,
-    "declaration": true,
-    "removeComments": true,
-    "emitDecoratorMetadata": true,
-    "experimentalDecorators": true,
-    "allowSyntheticDefaultImports": true,
-    "target": "ES2023",
-    "sourceMap": true,
-    "outDir": "./dist",
-    "rootDir": "./src",
-    "baseUrl": "./",
-    "incremental": true,
-    "ignoreDeprecations": "5.0",
-    "skipLibCheck": true,
-    "strictNullChecks": true,
-    "forceConsistentCasingInFileNames": true,
-    "noImplicitAny": false,
-    "strictBindCallApply": false,
-    "noFallthroughCasesInSwitch": false
-  },
-  "include": ["src/**/*.ts"],
-  "exclude": ["**/*.spec.ts", "**/*.e2e.ts", "node_modules", "dist"]
+    "compilerOptions":  {
+                            "module":  "commonjs",
+                            "moduleResolution":  "node",
+                            "esModuleInterop":  true,
+                            "isolatedModules":  true,
+                            "declaration":  true,
+                            "removeComments":  true,
+                            "emitDecoratorMetadata":  true,
+                            "experimentalDecorators":  true,
+                            "downlevelIteration":  true,
+                            "allowSyntheticDefaultImports":  true,
+                            "target":  "ES2024",
+                            "sourceMap":  true,
+                            "outDir":  "./dist",
+                            "rootDir":  "./src",
+                            "baseUrl":  "./",
+                            "incremental":  true,
+                            "ignoreDeprecations":  "5.0",
+                            "skipLibCheck":  true,
+                            "strictNullChecks":  true,
+                            "forceConsistentCasingInFileNames":  true,
+                            "noImplicitAny":  false,
+                            "strictBindCallApply":  false,
+                            "noFallthroughCasesInSwitch":  false,
+                            "noEmitOnError":  false
+                        },
+    "include":  [
+                    "src/**/*.ts"
+                ],
+    "exclude":  [
+                    "**/*.spec.ts",
+                    "**/*.e2e.ts",
+                    "node_modules",
+                    "dist"
+                ]
 }
