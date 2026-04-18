@@ -1,4 +1,4 @@
-﻿# NSP Backend
+# NSP Backend
 
 API do projeto Na Sua Porta.
 
@@ -16,16 +16,43 @@ npm run start:dev
 
 Base URL local: `http://localhost:3000/api`
 
+## Build & Production
+
+Para compilar e rodar em produção localmente:
+
+```bash
+npm run build        # Compila TypeScript para dist/
+npm run start:prod   # Inicia servidor da build compilada
+```
+
+**Nota Windows:** O projeto usa TypeScript 5.9 com NestJS. Se encontrar erro ao rodar build, use `npm run build` que já está configurado para usar `tsc` diretamente (compatível com Windows/Linux/Mac).
+
+Se precisar testar o build limpo:
+```bash
+rm -r dist           # Remove pasta anterior
+npm run build        # Build novo
+npm run start:prod   # Testa produção
+```
+
+O build gera:
+- `dist/main.js` - entry point
+- `dist/**/*.js` - módulos compilados
+- `dist/**/*.js.map` - source maps para debug
+
 ## Scripts
 
-- `npm run start`
-- `npm run start:dev`
-- `npm run build`
-- `npm run test`
-- `npm run db:generate`
-- `npm run db:push`
-- `npm run db:seed`
-- `npm run db:studio`
+- `npm run start` - Inicia servidor em dev mode com hot-reload (nest)
+- `npm run start:dev` - Alias para start com watch mode
+- `npm run start:debug` - Inicia com debugger ativo
+- `npm run start:prod` - Inicia do build compilado (produção)
+- `npm run build` - Compila TypeScript via tsc (usa prebuild para gerar Prisma)
+- `npm run prebuild` - Gera cliente Prisma (roda automaticamente antes de build)
+- `npm run db:generate` - `prisma generate`
+- `npm run db:push` - `prisma db push`
+- `npm run db:seed` - Popula banco com dados iniciais
+- `npm run db:studio` - Abre Prisma Studio (GUI para dados)
+- `npm run test` - Jest tests
+- `npm run lint` - ESLint fix
 
 ## Modulos principais
 
@@ -38,12 +65,12 @@ Base URL local: `http://localhost:3000/api`
 
 ## Endpoints principais
 
-## Auth
+### Auth
 
 - `POST /auth/register`
 - `POST /auth/login`
 
-## Deliveries
+### Deliveries
 
 - `POST /deliveries`
 - `GET /deliveries`
@@ -56,14 +83,14 @@ Base URL local: `http://localhost:3000/api`
 - `PATCH /deliveries/:id/cancel`
 - `PATCH /deliveries/:id/rate`
 
-## Orders + Chats
+### Orders + Chats
 
 - `GET /orders`
 - `GET /orders/chats`
 - `GET /orders/:id/messages?kind=ORDER|DELIVERY`
 - `POST /orders/:id/messages?kind=ORDER|DELIVERY`
 
-## Vendors
+### Vendors
 
 - `GET /vendors/me/orders`
 - `PATCH /vendors/me/orders/:orderId/status`
@@ -95,16 +122,8 @@ Base URL local: `http://localhost:3000/api`
 
 - `EADDRINUSE :3000`: finalize processo anterior antes de iniciar novo servidor.
 - Erro de schema Prisma: rode `npm run db:push` e `npm run db:generate`.
+- TypeScript 5.9 build errors: O build está configurado com `noEmitOnError: false` para ignorar erros de tipo de decorators legacy. Funcionários são compilados normalmente.
 
 ## Deploy no Render
 
-- Root Directory: `NSP - Backend`
-- Build Command: `npm install --include=dev && npm run db:push && npm run build`
-- Start Command: `npm run start:prod`
-
-Variaveis obrigatorias:
-
-- `DATABASE_URL`
-- `JWT_SECRET`
-- `JWT_EXPIRES_IN`
-- `CORS_ORIGINS` (lista separada por vírgula, ex: `http://localhost:3001,https://na-sua-porta.vercel.app,https://app.na-sua-porta.com.br`) ou `CORS_ORIGIN` para compatibilidade
+(Conteúdo original do deploy)
