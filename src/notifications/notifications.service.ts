@@ -34,11 +34,9 @@ export class NotificationsService {
     }
 
     const metadata =
-      input.metadata === null ||
-      input.metadata === undefined ||
-      typeof input.metadata === 'string'
-        ? input.metadata
-        : JSON.stringify(input.metadata);
+      typeof input.metadata === 'object' && input.metadata !== null
+        ? JSON.stringify(input.metadata)
+        : input.metadata;
 
     return this.prisma.$transaction(
       normalizedUserIds.map((userId) =>
@@ -51,7 +49,7 @@ export class NotificationsService {
             link: input.link ?? null,
             orderId: input.orderId ?? null,
             deliveryId: input.deliveryId ?? null,
-            metadata: metadata ?? null,
+            metadata,
           },
         }),
       ),
