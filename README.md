@@ -41,8 +41,8 @@ O build gera:
 
 ## Scripts
 
-- `npm run start` - Inicia servidor em dev mode com hot-reload (nest)
-- `npm run start:dev` - Alias para start com watch mode
+- `npm run start` - Inicia servidor da build compilada (produção)
+- `npm run start:dev` - Inicia servidor em modo desenvolvimento com watch
 - `npm run start:debug` - Inicia com debugger ativo
 - `npm run start:prod` - Inicia do build compilado (produção)
 - `npm run build` - Compila TypeScript via tsc (usa prebuild para gerar Prisma)
@@ -126,4 +126,6 @@ O build gera:
 
 ## Deploy no Render
 
-(Conteúdo original do deploy)
+- Build Command: `npm ci && npm run db:generate && npm run db:push && npm run build`
+- Start Command: `npm start`
+- O script `start` usa `node dist/main`, evitando dependência de `@nestjs/cli` em runtime.
